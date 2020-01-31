@@ -1,8 +1,26 @@
 @import 'mixins';
+@import 'fonts';
 
 .term {
-  background-color: var(--main-bd-color);
+  font-family: 'Ubuntu Mono', monospace;
+  font-weight: 400;
+  font-size: 16px;
+  background-color: var(--main-bg-color);
   color: var(--main-text-color);
 
   @include full-size;
+}
+
+.header {
+  height: 2.5rem;
+  background-color: var(--header-bg-color);
+
+  @include flex-center;
+  @include padding-horizontal(1rem);
+  @include truncated;
+}
+
+.headerText {
+  font-size: 0.875rem;
+  color: var(--header-text-color);
 }
