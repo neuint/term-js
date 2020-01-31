@@ -1,0 +1,8 @@
+@import 'mixins';
+
+.term {
+  background-color: var(--main-bd-color);
+  color: var(--main-text-color);
+
+  @include full-size;
+}
