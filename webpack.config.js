@@ -2,6 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CSS_MODULES_BLACK_LIST } = require('./webpack.const');
+const { resolve } = require('./webpack.resolve');
 
 const isProduction = typeof process.env.NODE_ENV !== undefined
   && process.env.NODE_ENV === 'production';
@@ -78,10 +79,7 @@ module.exports = {
     path: path.resolve(__dirname, './dist'),
     filename: 'index.js',
   },
-  resolve: {
-    extensions: ['.ts', '.js', '.json'],
-    modules: ['node_modules'],
-  },
+  resolve,
   externals: {},
   plugins: [
     new MiniCssExtractPlugin({ filename: 'termjs.css' }),

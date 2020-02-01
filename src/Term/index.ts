@@ -1,5 +1,7 @@
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
+import Line from './Line';
+import ILine from './Line/ILine';
 
 import css from './index.scss';
 import './theme.scss';
@@ -7,14 +9,16 @@ import './theme.scss';
 class Term implements ITerm {
   private readonly container: Element;
   private header: string = '';
+  private lines: ILine[] = [];
 
-  private readonly containers: {
+  protected readonly containers: {
     [key: string]: Element;
   } = {};
 
   constructor(container: Element) {
     this.container = container;
     this.addElements();
+    this.addLines();
   }
 
   public addEventListener<K extends keyof ITermEventMap>(
@@ -62,6 +66,12 @@ class Term implements ITerm {
     containers.header = header;
     containers.headerText = headerText;
     header.appendChild(headerText);
+  }
+
+  protected addLines() {
+    const { containers: { main } } = this;
+    const line = new Line(main);
+    this.lines.push(line);
   }
 }
 

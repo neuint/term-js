@@ -1,8 +1,11 @@
 @import './colors';
 
 :root {
-  --main-bg-color: var(--bunker);
-  --main-text-color: var(--alabaster);
-  --header-text-color: var(--silver-chalic);
-  --header-bg-color: var(--ebony-clay);
+  --main-bg-color: #{$bunker};
+  --main-text-color: #{$alabaster};
+
+  --header-text-color: #{darken($alabaster, 30)};
+  --header-bg-color: #{lighten($bunker, 10)};
+
+  --line-lable-text-color: #{darken($alabaster, 50)};
 }
