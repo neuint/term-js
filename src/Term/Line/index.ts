@@ -3,19 +3,24 @@ import { noop } from 'lodash';
 import ILine from './ILine';
 import { NON_BREAKING_SPACE } from '../constants/strings';
 
+import { ENTER_CODE } from '@Term/constants/keyCodes';
+import { getKeyCode } from '@Term/utils/event';
 import lineTemplate from './template.html';
 import TemplateEngine from '../TemplateEngine';
 
 import css from './index.scss';
-import { ENTER_CODE } from '@Term/constants/keyCodes';
-import { getKeyCode } from '@Term/utils/event';
 
 class Line extends TemplateEngine implements ILine {
-  private value: string = '';
+  private valueField: string = '';
+  public get value(): string {
+    return this.valueField;
+  }
+
   private label: string = '';
   private delimiter: string = '';
   private editable: boolean;
   private onSubmit: (value: string) => void = noop;
+  private onChange: (value: string) => void = noop;
 
   constructor(
     container: Element,
@@ -24,15 +29,18 @@ class Line extends TemplateEngine implements ILine {
       label?: string;
       delimiter?: string;
       onSubmit?: (value: string) => void;
+      onChange?: (value: string) => void;
       editable?: boolean;
     } = {},
   ) {
     super(lineTemplate, container);
-    const { label = '', value = '', delimiter = '~', onSubmit = noop, editable = true } = params;
-    this.value = value;
+    const { label = '', value = '', delimiter = '~', onChange = noop, onSubmit = noop,
+      editable = true } = params;
+    this.valueField = value;
     this.label = label;
     this.delimiter = delimiter;
     this.onSubmit = onSubmit;
+    this.onChange = onChange;
     this.editable = editable;
     this.container = container;
     this.render();
@@ -44,11 +52,29 @@ class Line extends TemplateEngine implements ILine {
     return { width: offsetWidth, height: offsetHeight };
   }
 
+  public stopEdit() {
+    this.editable = false;
+    this.render();
+  }
+
+  public focus() {
+    const input = this.getRef('input') as HTMLInputElement;
+    if (!input) return;
+    if (document.activeElement === input) return;
+    input.focus();
+    input.value = input.value;
+  }
+
   public render() {
     const { label, delimiter, value, editable } = this;
     super.render({
-      css, label, delimiter, value, editable, nbs: NON_BREAKING_SPACE,
-    });
+      css,
+      label,
+      delimiter,
+      editable,
+      value: editable ? value : value.replace(/\s/g, NON_BREAKING_SPACE),
+      nbs: NON_BREAKING_SPACE,
+    }, this.getRef('root'));
     if (editable) this.updateInputSize();
   }
 
@@ -57,9 +83,9 @@ class Line extends TemplateEngine implements ILine {
     if (editable) {
       const input = this.getRef('input') as HTMLElement;
       input.addEventListener('keydown', this.keyDownHandler);
-      input.addEventListener('input', this.updateInputSize);
-      input.addEventListener('cut', this.updateInputSize);
-      input.addEventListener('paste', this.updateInputSize);
+      input.addEventListener('input', this.changeHandler);
+      input.addEventListener('cut', this.changeHandler);
+      input.addEventListener('paste', this.changeHandler);
     }
   }
 
@@ -72,7 +98,14 @@ class Line extends TemplateEngine implements ILine {
   private submitHandler = (e: KeyboardEvent): void => {
     const { onSubmit } = this;
     e.preventDefault();
-    return onSubmit((this.getRef('input') as HTMLInputElement).value);
+    this.valueField = (this.getRef('input') as HTMLInputElement).value;
+    return onSubmit(this.value);
+  }
+
+  private changeHandler = () => {
+    const value = (this.getRef('input') as HTMLInputElement).value;
+    this.updateInputSize();
+    this.onChange(value);
   }
 
   private updateInputSize = () => {

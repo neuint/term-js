@@ -1,3 +1,4 @@
+export const CLASS_NAME_PATTERN = /class="[^"]+"/ig;
 export const REF_PATTERN = /ref="[^"]+"/ig;
 export const IF_OPEN_PATTERN = /<If\scondition="\{[^"]+}">/g;
 export const IF_CLOSE_PATTERN = /<\/If>/g;

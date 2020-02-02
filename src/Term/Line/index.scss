@@ -6,6 +6,7 @@
   position: relative;
 
   @include padding-horizontal(0.5rem);
+  @include padding-vertical(0.25rem);
 
   &:last-of-type {
     padding-bottom: 0.5rem;
@@ -44,6 +45,7 @@
 .input {
   width: 100%;
   resize: none;
+  word-break: break-all;
   //TODO: use for custom caret feature request (#2)
   //color: transparent;
   //text-shadow: 0 0 0 var(--main-text-color);

@@ -1,4 +1,4 @@
-import { template as lodashTemplate, omit } from 'lodash';
+import { template as lodashTemplate, omit, isArray } from 'lodash';
 
 import ITemplateEngine from './ITemplateEngine';
 import {
@@ -14,6 +14,7 @@ import {
   WHEN_OPEN_PATTERN,
   OTHERWISE_OPEN_PATTERN,
   OTHERWISE_CLOSE_PATTERN,
+  CLASS_NAME_PATTERN,
 } from './constants';
 
 class TemplateEngine implements ITemplateEngine {
@@ -23,9 +24,14 @@ class TemplateEngine implements ITemplateEngine {
   } = {}): string {
     const { css } = params;
     if (!css) return renderString;
-    return Object.keys(css).reduce((acc: string, key: string): string => {
-      const pattern = new RegExp(`class="${key}"`, 'g');
-      return acc.replace(pattern, `class="${css[key]}"`);
+    const classNameStringList = renderString.match(CLASS_NAME_PATTERN);
+    if (!classNameStringList) return renderString;
+    return classNameStringList.reduce((acc: string, classNameString: string): string => {
+      const classNameList = classNameString.replace('class="', '').replace('"', '').split(' ');
+      const replacedClassNameList = classNameList
+        .map((item: string): string => css[item] || item).join(' ');
+      const pattern = new RegExp(`class="${classNameList.join('\\s')}"`);
+      return acc.replace(pattern, `class="${replacedClassNameList}"`);
     }, renderString);
   }
 
@@ -78,7 +84,7 @@ class TemplateEngine implements ITemplateEngine {
       if (!openBlockList) return acc;
       const openBlock = openBlockList[0];
       const condition = openBlock.replace(/^<When\scondition="\{/, '').replace(/}">$/, '');
-      const processedBlock = item.replace(openBlock, `<%${index ? ' else' : ''} if (${condition}) { %>`)
+      const processedBlock = item.replace(openBlock, `<%${index ? ' else' : ''} if (${condition}) { %>`);
       return acc.replace(item, processedBlock);
     }, template).replace(WHEN_CLOSE_PATTERN, '<% } %>');
     return otherwiseList.length === 1
@@ -130,10 +136,13 @@ class TemplateEngine implements ITemplateEngine {
       css?: { [key: string]: string },
       [p: string]: string | number | boolean | undefined | { [key: string]: string },
     },
+    replace?: Element | Element[] | null,
   ) {
     const { container, template } = this;
     if (!container || !template) return;
-    container.innerHTML = this.getRenderString(params);
+    let replaceList: Element[] = [];
+    if (replace) replaceList = isArray(replace) ? replace : [replace];
+    this.insertRenderString(this.getRenderString(params), replaceList);
     this.saveRefs();
   }
 
@@ -158,9 +167,25 @@ class TemplateEngine implements ITemplateEngine {
       if (!name) return acc;
       const element = container?.querySelector(`[ref="${name}"]`);
       if (!element) return acc;
+      element.removeAttribute('ref');
       acc[name] = element;
       return acc;
     }, {}) : {};
+  }
+
+  private insertRenderString(renderString: string, replace: Element[]) {
+    const container = this.container as Element;
+    if (!container.innerHTML) return container.innerHTML = renderString;
+    const proxyContainer = document.createElement('div');
+    const { childNodes } = container;
+    proxyContainer.innerHTML = renderString;
+    proxyContainer.childNodes.forEach((childNode: ChildNode, index: number) => {
+      const replaceItem = replace[index];
+      const needReplace = replaceItem && Array.prototype.includes.call(childNodes, replaceItem);
+      return needReplace
+        ? container.replaceChild(childNode, replaceItem)
+        : container.appendChild(childNode);
+    });
   }
 }
 

@@ -1,24 +1,33 @@
+import { noop, last } from 'lodash';
+
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
 import Line from './Line';
 import ILine from './Line/ILine';
 
+import TemplateEngine from '@Term/TemplateEngine';
+import template from './template.html';
+
 import css from './index.scss';
 import './theme.scss';
 
-class Term implements ITerm {
-  private readonly container: Element;
-  private header: string = '';
+class Term extends TemplateEngine implements ITerm {
   private lines: ILine[] = [];
+  private onSubmit: (line: string, lines: string[]) => void;
+  private readonly onChange: (line: string) => void;
 
-  protected readonly containers: {
-    [key: string]: Element;
-  } = {};
-
-  constructor(container: Element) {
-    this.container = container;
-    this.addElements();
-    this.addLines();
+  constructor(container: Element, params: {
+    lines: string[];
+    header?: string;
+    onSubmit?: (line: string, lines: string[]) => void;
+    onChange?: (line: string) => void;
+  } = { lines: [''] }) {
+    super(template, container);
+    this.onSubmit = params.onSubmit || noop;
+    this.onChange = params.onChange || noop;
+    this.render({ css, header: params.header });
+    this.addLines(params.lines);
+    this.addListeners();
   }
 
   public addEventListener<K extends keyof ITermEventMap>(
@@ -38,40 +47,59 @@ class Term implements ITerm {
   }
 
   public setHeader(text: string) {
-    const { main, header, headerText } = this.containers;
-    this.header = text;
+    const header = this.getRef('header');
+    const headerText = this.getRef('headerText') as Element;
     if (text) {
       headerText.innerHTML = text;
-      main.appendChild(header);
+      header?.classList.remove(css.hidden);
     } else {
-      main.removeChild(header);
+      header?.classList.add(css.hidden);
     }
   }
 
-  protected addElements() {
-    const { container, containers } = this;
-    const main = document.createElement('div');
-    main.className = css.term;
-    containers.main = main;
-    this.addHeader();
-    container.appendChild(main);
+  private addListeners() {
+    const root = this.getRef('root') as HTMLElement;
+    if (!root) return;
+    root.addEventListener('click', this.clickHandler);
   }
 
-  protected addHeader() {
-    const { containers } = this;
-    const header = document.createElement('div');
-    const headerText = document.createElement('span');
-    header.className = css.header;
-    headerText.className = css.headerText;
-    containers.header = header;
-    containers.headerText = headerText;
-    header.appendChild(headerText);
+  protected addLines(lines: string[]) {
+    const linesContainer = this.getRef('linesContainer') as Element;
+    const lastLineIndex = lines.length - 1;
+    this.lines = lines.map((lineValue: string, index: number): ILine => {
+      return new Line(linesContainer, index === lastLineIndex ? {
+        editable: true, onSubmit: this.submitHandler, onChange: this.changeHandler,
+      } : {});
+    });
   }
 
-  protected addLines() {
-    const { containers: { main } } = this;
-    const line = new Line(main);
-    this.lines.push(line);
+  private clickHandler = (e: MouseEvent) => {
+    const lastLine = last(this.lines) as ILine;
+    lastLine.focus();
+  }
+
+  private submitHandler = (value: string) => {
+    const { onSubmit, lines } = this;
+    const linesContainer = this.getRef('linesContainer') as HTMLElement;
+    last(lines)?.stopEdit();
+    const newLine = new Line(linesContainer, {
+      editable: true, onSubmit: this.submitHandler, onChange: this.changeHandler,
+    });
+    lines.push(newLine);
+    this.scrollBottom();
+    newLine.focus();
+    onSubmit(value, lines.map((line): string => line.value));
+  }
+
+  private changeHandler = (value: string) => {
+    this.onChange(value);
+    this.scrollBottom();
+  }
+
+  private scrollBottom() {
+    const linesContainer = this.getRef('linesContainer') as HTMLElement;
+    if (!linesContainer) return;
+    linesContainer.scrollTop = linesContainer.scrollHeight + linesContainer.offsetHeight;
   }
 }
 

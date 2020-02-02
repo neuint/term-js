@@ -36,6 +36,38 @@ describe('TemplateEngine', () => {
     expect(container.innerHTML).toBe('<div></div>');
   });
 
+  it('Renders template to the container with class list', () => {
+    const container = document.createElement('div');
+    const template = '<div class="test1 test2"></div>';
+    const te = new TemplateEngine(template, container);
+    te.render({
+      css: {
+        test1: 'className1',
+        test2: 'className2',
+      },
+    });
+    expect(container.innerHTML).toBe('<div class="className1 className2"></div>');
+  });
+
+  it('Does not replace exist content on render', () => {
+    const container = document.createElement('div');
+    container.innerHTML = '<div class="className1 className2"></div>';
+    const template = '<div></div>';
+    const te = new TemplateEngine(template, container);
+    te.render();
+    expect(container.innerHTML).toBe('<div class="className1 className2"></div><div></div>');
+  });
+
+  it('Replaces block from argument on render', () => {
+    const container = document.createElement('div');
+    container.innerHTML =
+      '<div class="className1 className2"></div><div class="testReplace"></div>';
+    const template = '<div></div>';
+    const te = new TemplateEngine(template, container);
+    te.render({}, container.querySelector('.testReplace') || undefined);
+    expect(container.innerHTML).toBe('<div class="className1 className2"></div><div></div>');
+  });
+
   it('Changes css classes correctly', () => {
     const container = document.createElement('div');
     const template = '<div class="test_"></div><div class="test2"></div>';

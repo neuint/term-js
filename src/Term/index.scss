@@ -1,9 +1,22 @@
 @import 'mixins';
 @import 'fonts';
+@import 'theme';
 
 .term {
   background-color: var(--main-bg-color);
   color: var(--main-text-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-bg-color);
+  }
 
   @include full-size;
 
@@ -17,7 +30,6 @@
     background: none;
     border: none;
     display: inline-block;
-    word-break: break-all;
     padding: 0;
     color: var(--main-text-color);
 
@@ -38,9 +50,25 @@
   @include flex-center;
   @include padding-horizontal(1rem);
   @include truncated;
+
+  &.hidden {
+    display: none;
+  }
 }
 
 .headerText {
   font-size: 0.875rem;
   color: var(--header-text-color);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.linesContainer {
+  flex: 1;
+  @include overflow-y(auto);
 }
