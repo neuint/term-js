@@ -3,6 +3,7 @@
 :root {
   --main-bg-color: #{$bunker};
   --main-text-color: #{$alabaster};
+  --main-selectoin-color: #{darken($alabaster, 20)};
 
   --header-text-color: #{darken($alabaster, 30)};
   --header-bg-color: #{lighten($bunker, 10)};

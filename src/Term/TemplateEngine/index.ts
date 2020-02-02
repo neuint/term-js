@@ -14,7 +14,7 @@ import {
   WHEN_OPEN_PATTERN,
   OTHERWISE_OPEN_PATTERN,
   OTHERWISE_CLOSE_PATTERN,
-} from '@Term/TemplateEngine/constants';
+} from './constants';
 
 class TemplateEngine implements ITemplateEngine {
   private static getRenderStringWithClassNames(renderString: string, params: {
@@ -45,7 +45,7 @@ class TemplateEngine implements ITemplateEngine {
       .getTemplateExecutorStringWithLodashConditions(template);
     processedTemplate = TemplateEngine
       .getTemplateExecutorStringWithLodashSwitches(processedTemplate)
-      .replace(/\s*%><%\s*/, ' ');
+      .replace(/\s*%>[\s\n]*<%\s*/g, ' ');
     return lodashTemplate(processedTemplate);
   }
 

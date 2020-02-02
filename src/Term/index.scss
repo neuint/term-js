@@ -2,13 +2,33 @@
 @import 'fonts';
 
 .term {
-  font-family: 'Ubuntu Mono', monospace;
-  font-weight: 400;
-  font-size: 16px;
   background-color: var(--main-bg-color);
   color: var(--main-text-color);
 
   @include full-size;
+
+  &, input, textarea, select, button, pre {
+    font-family: 'Ubuntu Mono', sans-serif, monospace;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  input, textarea {
+    background: none;
+    border: none;
+    display: inline-block;
+    word-break: break-all;
+    padding: 0;
+    color: var(--main-text-color);
+
+    &::selection {
+      background-color: var(--main-selectoin-color);
+    }
+  }
+
+  input:focus, textarea:focus, button:focus {
+    outline: none;
+  }
 }
 
 .header {

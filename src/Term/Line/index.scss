@@ -1,8 +1,26 @@
 @import 'mixins';
 @import 'theme';
 
-.wrapper {
+.root {
   display: flex;
+  position: relative;
+
+  @include padding-horizontal(0.5rem);
+
+  &:last-of-type {
+    padding-bottom: 0.5rem;
+  }
+
+  &:first-of-type {
+    padding-top: 0.5rem;
+  }
+}
+
+.helpContainer {
+  top: 0;
+  right: 0;
+  position: absolute;
+  visibility: hidden;
 }
 
 .label {
@@ -20,13 +38,15 @@
 }
 
 .inputContainer {
-
+  flex: 1;
 }
 
 .input {
-
+  width: 100%;
+  resize: none;
+  //TODO: use for custom caret feature request (#2)
+  //color: transparent;
+  //text-shadow: 0 0 0 var(--main-text-color);
 }
 
-.caret {
-
-}
+.caret {}
