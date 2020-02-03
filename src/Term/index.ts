@@ -106,7 +106,7 @@ class Term extends TemplateEngine implements ITerm {
     });
   }
 
-  private clickHandler = (e: MouseEvent) => {
+  private clickHandler = () => {
     const lastLine = last(this.lines) as ILine;
     lastLine.focus();
   }
