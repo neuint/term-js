@@ -16,6 +16,16 @@
     "url": "https://github.com/nc-kage/termjs.git"
   },
   "author": "Pavlo Gusar",
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest",
+      "^.+\\.html?$": "html-loader-jest",
+      "^.+\\.(css|scss)?$": "<rootDir>/tests/__mocks__/styleMock.js"
+    },
+    "moduleNameMapper": {
+      "^@Term/(.*)$": "<rootDir>/src/Term/$1"
+    }
+  },
   "dependencies": {
     "@types/lodash": "^4.14.149",
     "guid-typescript": "^1.0.9",
@@ -35,6 +45,7 @@
     "css-loader": "^3.4.2",
     "file-loader": "^5.0.2",
     "html-loader": "^0.5.5",
+    "html-loader-jest": "^0.2.1",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^25.1.0",
     "mini-css-extract-plugin": "^0.9.0",
@@ -50,6 +61,6 @@
     "typescript": "^3.7.5",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.1"
+    "webpack-dev-server": "^3.10.2"
   }
 }

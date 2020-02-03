@@ -1,0 +1,35 @@
+<div ref="root" class="root">
+  <div ref="helpContainer" class="labelText helpContainer">{nbs}</div>
+  <If condition="{label || delimiter}">
+    <div class="label">
+      <If condition="{label}">
+        <div class="labelTextContainer">
+          <span class="labelText">{label}</span>
+        </div>
+        <div>
+          <span class="labelText">{nbs}</span>
+        </div>
+      </If>
+      <If condition="{delimiter}">
+        <div class="labelTextContainer">
+          <span class="labelText">{delimiter}</span>
+        </div>
+        <div>
+          <span class="labelText">{nbs}</span>
+        </div>
+      </If>
+    </div>
+  </If>
+  <div ref="inputContainer" class="inputContainer">
+    <Choose>
+      <When condition="{editable}">
+        <textarea spellCheck="false" class="input" ref="input" rows="2">{value}</textarea>
+<!--        TODO: use for custom caret feature request (#2)-->
+<!--        <span ref="caret" class="caret"></span>-->
+      </When>
+      <Otherwise>
+        <div class="input">{value}</div>
+      </Otherwise>
+    </Choose>
+  </div>
+</div>

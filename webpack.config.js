@@ -1,6 +1,8 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CSS_MODULES_BLACK_LIST } = require('./webpack.const');
+const { resolve } = require('./webpack.resolve');
 
 const isProduction = typeof process.env.NODE_ENV !== undefined
   && process.env.NODE_ENV === 'production';
@@ -38,13 +40,28 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                getLocalIdent: (context, localIdentName, localName) => {
+                  if (CSS_MODULES_BLACK_LIST.some((item) => context.resourcePath.includes(item)
+                    || localName.includes(item))) {
+                    return localName;
+                  }
+                  return isProduction
+                    ? `${localName}-️${md5(context.resourcePath.split(/[\\/]Term[\\/]/)[1])}`
+                    : `${localName}➖️${context.resourcePath.split(/[\\/]src[\\/]/)[1].replace(/\/[^/]+.scss/, '').replace(/\//g, '➡️')}`;
+                },
+              },
+            },
+          },
           'postcss-loader',
           {
             loader: 'sass-loader',
             options: {
               sassOptions: {
-                includePaths: ['./'],
+                includePaths: ['./src/Term', './'],
               },
             },
           },
@@ -62,10 +79,7 @@ module.exports = {
     path: path.resolve(__dirname, './dist'),
     filename: 'index.js',
   },
-  resolve: {
-    extensions: ['.ts', '.js', '.json'],
-    modules: ['node_modules'],
-  },
+  resolve,
   externals: {},
   plugins: [
     new MiniCssExtractPlugin({ filename: 'termjs.css' }),

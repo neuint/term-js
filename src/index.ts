@@ -8,4 +8,5 @@ const container = document.querySelector('#root');
 
 if (container) {
   const term = new Term(container);
+  term.setHeader('Test');
 }
