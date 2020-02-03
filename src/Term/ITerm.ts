@@ -12,4 +12,5 @@ export default interface ITerm {
     handler: (e: ITermEventMap[K]) => void,
     options?: EventListenerOptions,
   ): void;
+  destroy(): void;
 }

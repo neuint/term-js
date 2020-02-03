@@ -20,7 +20,7 @@ class Line extends TemplateEngine implements ILine {
   private delimiter: string = '';
   private editable: boolean;
   private onSubmit: (value: string) => void = noop;
-  private onChange: (value: string) => void = noop;
+  private readonly onChange: (value: string) => void = noop;
 
   constructor(
     container: Element,
@@ -53,6 +53,7 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public stopEdit() {
+    this.removeEventListeners();
     this.editable = false;
     this.render();
   }
@@ -78,6 +79,15 @@ class Line extends TemplateEngine implements ILine {
     if (editable) this.updateInputSize();
   }
 
+  public updateViewport() {
+    this.updateInputSize();
+  }
+
+  public destroy() {
+    super.destroy();
+    this.removeEventListeners();
+  }
+
   private addEventListeners() {
     const { editable } = this;
     if (editable) {
@@ -86,6 +96,17 @@ class Line extends TemplateEngine implements ILine {
       input.addEventListener('input', this.changeHandler);
       input.addEventListener('cut', this.changeHandler);
       input.addEventListener('paste', this.changeHandler);
+    }
+  }
+
+  private removeEventListeners() {
+    const { editable } = this;
+    if (editable) {
+      const input = this.getRef('input') as HTMLElement;
+      input.removeEventListener('keydown', this.keyDownHandler);
+      input.removeEventListener('input', this.changeHandler);
+      input.removeEventListener('cut', this.changeHandler);
+      input.removeEventListener('paste', this.changeHandler);
     }
   }
 

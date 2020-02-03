@@ -1,4 +1,5 @@
-import { noop, last } from 'lodash-es';
+import { noop, last, get } from 'lodash-es';
+import ResizeObserver from 'resize-observer-polyfill';
 
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
@@ -15,6 +16,8 @@ class Term extends TemplateEngine implements ITerm {
   private lines: ILine[] = [];
   private onSubmit: (line: string, lines: string[]) => void;
   private readonly onChange: (line: string) => void;
+  private readonly ro: ResizeObserver;
+  private size: { width: number; height: number } = { width: 0, height: 0 };
 
   constructor(container: Element, params: {
     lines: string[];
@@ -23,6 +26,10 @@ class Term extends TemplateEngine implements ITerm {
     onChange?: (line: string) => void;
   } = { lines: [''] }) {
     super(template, container);
+    this.size.width = (container as HTMLElement).offsetWidth;
+    this.size.height = (container as HTMLElement).offsetHeight;
+    this.ro = new ResizeObserver(this.observeHandler);
+    this.ro.observe(container);
     this.onSubmit = params.onSubmit || noop;
     this.onChange = params.onChange || noop;
     this.render({ css, header: params.header });
@@ -42,6 +49,14 @@ class Term extends TemplateEngine implements ITerm {
     throw new Error('No implementation');
   }
 
+  destroy() {
+    this.lines.forEach((line) => {
+      line.destroy();
+    });
+    this.removeListeners();
+    super.destroy();
+  }
+
   public write(data: string | string[], duration?: number) {
     throw new Error('No implementation');
   }
@@ -57,10 +72,28 @@ class Term extends TemplateEngine implements ITerm {
     }
   }
 
+  private observeHandler = (entries: ResizeObserverEntry[]) => {
+    const { size, lines } = this;
+    const { width, height } = get(entries, '[0].contentRect');
+    if (size.width !== width || size.height !== height) {
+      size.width = width;
+      size.height = height;
+      lines.forEach((line: ILine) => {
+        line.updateViewport();
+      });
+    }
+  }
+
   private addListeners() {
     const root = this.getRef('root') as HTMLElement;
     if (!root) return;
     root.addEventListener('click', this.clickHandler);
+  }
+
+  private removeListeners() {
+    const root = this.getRef('root') as HTMLElement;
+    if (!root) return;
+    root.removeEventListener('click', this.clickHandler);
   }
 
   protected addLines(lines: string[]) {
