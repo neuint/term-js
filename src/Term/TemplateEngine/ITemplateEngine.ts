@@ -9,4 +9,5 @@ export default interface ITemplateEngine {
   ): void;
   getRefMap(): { [name: string]: Element | undefined };
   getRef(name: string): Element | undefined;
+  destroy(): void;
 }

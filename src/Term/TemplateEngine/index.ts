@@ -1,4 +1,4 @@
-import { template as lodashTemplate, omit, isArray } from 'lodash';
+import { template as lodashTemplate, omit, isArray } from 'lodash-es';
 
 import ITemplateEngine from './ITemplateEngine';
 import {
@@ -96,6 +96,8 @@ class TemplateEngine implements ITemplateEngine {
       : processedString;
   }
 
+  private childNodes?: NodeListOf<ChildNode> | ChildNode[];
+
   private templateField: string = '';
   private templateExecutor?: (params: { [k: string]: any }) => string;
   public get template(): string {
@@ -114,6 +116,13 @@ class TemplateEngine implements ITemplateEngine {
 
   public set container(value: Element | undefined) {
     this.containerField = value;
+  }
+
+  public destroy() {
+    const { container, childNodes } = this;
+    childNodes?.forEach((childNode: ChildNode) => {
+      container?.removeChild(childNode);
+    });
   }
 
   protected refMap: { [name: string]: Element | undefined } = {};
@@ -175,17 +184,23 @@ class TemplateEngine implements ITemplateEngine {
 
   private insertRenderString(renderString: string, replace: Element[]) {
     const container = this.container as Element;
-    if (!container.innerHTML) return container.innerHTML = renderString;
+    if (!container.innerHTML) {
+      container.innerHTML = renderString;
+      return this.childNodes = container.childNodes;
+    }
     const proxyContainer = document.createElement('div');
+    const templateChildNodes: ChildNode[] = [];
     const { childNodes } = container;
     proxyContainer.innerHTML = renderString;
     proxyContainer.childNodes.forEach((childNode: ChildNode, index: number) => {
       const replaceItem = replace[index];
       const needReplace = replaceItem && Array.prototype.includes.call(childNodes, replaceItem);
+      templateChildNodes.push(childNode);
       return needReplace
         ? container.replaceChild(childNode, replaceItem)
         : container.appendChild(childNode);
     });
+    this.childNodes = templateChildNodes;
   }
 }
 
