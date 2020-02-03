@@ -1,4 +1,4 @@
-import { noop } from 'lodash';
+import { noop } from 'lodash-es';
 
 import ILine from './ILine';
 import { NON_BREAKING_SPACE } from '../constants/strings';

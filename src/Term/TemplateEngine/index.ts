@@ -1,4 +1,4 @@
-import { template as lodashTemplate, omit, isArray } from 'lodash';
+import { template as lodashTemplate, omit, isArray } from 'lodash-es';
 
 import ITemplateEngine from './ITemplateEngine';
 import {

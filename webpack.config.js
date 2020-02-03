@@ -1,4 +1,5 @@
 const path = require('path');
+const md5 = require('md5');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CSS_MODULES_BLACK_LIST } = require('./webpack.const');

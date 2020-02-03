@@ -1,4 +1,4 @@
-import { noop, last } from 'lodash';
+import { noop, last } from 'lodash-es';
 
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
