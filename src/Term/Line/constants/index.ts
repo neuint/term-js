@@ -1,2 +1,1 @@
-export const CARRIAGE_RETURN_SIZE = 0.68;
-export const CARRIAGE_RETURN_TOP = (1 - CARRIAGE_RETURN_SIZE) / 2;
+export const LOCK_TIMEOUT = 600;

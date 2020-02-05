@@ -14,24 +14,23 @@ import './theme.scss';
 
 class Term extends TemplateEngine implements ITerm {
   private lines: ILine[] = [];
-  private onSubmit: (line: string, lines: string[]) => void;
-  private readonly onChange: (line: string) => void;
   private readonly ro: ResizeObserver;
   private size: { width: number; height: number } = { width: 0, height: 0 };
+  private caret?: string;
 
   constructor(container: Element, params: {
     lines: string[];
     header?: string;
     onSubmit?: (line: string, lines: string[]) => void;
     onChange?: (line: string) => void;
+    caret?: string;
   } = { lines: [''] }) {
     super(template, container);
     this.size.width = (container as HTMLElement).offsetWidth;
     this.size.height = (container as HTMLElement).offsetHeight;
     this.ro = new ResizeObserver(this.observeHandler);
     this.ro.observe(container);
-    this.onSubmit = params.onSubmit || noop;
-    this.onChange = params.onChange || noop;
+    this.caret = params.caret;
     this.render({ css, header: params.header });
     this.addLines(params.lines);
     this.addListeners();
@@ -59,6 +58,13 @@ class Term extends TemplateEngine implements ITerm {
 
   public write(data: string | string[], duration?: number) {
     throw new Error('No implementation');
+  }
+
+  public setCaret(caret: string) {
+    this.caret = caret;
+    const line = last(this.lines);
+    if (!line) return;
+    line.setCaret(caret);
   }
 
   public setHeader(text: string) {
@@ -101,31 +107,34 @@ class Term extends TemplateEngine implements ITerm {
     const lastLineIndex = lines.length - 1;
     this.lines = lines.map((lineValue: string, index: number): ILine => {
       return new Line(linesContainer, index === lastLineIndex ? {
-        editable: true, onSubmit: this.submitHandler, onChange: this.changeHandler,
+        editable: true,
+        onSubmit: this.submitHandler,
+        onChange: this.changeHandler,
+        caret: this.caret,
       } : {});
     });
   }
 
   private clickHandler = (e: MouseEvent) => {
-    const lastLine = last(this.lines) as ILine;
-    lastLine.focus();
+    if (e.target === this.getRef('linesContainer')) {
+      const lastLine = last(this.lines) as ILine;
+      lastLine.focus();
+    }
   }
 
   private submitHandler = (value: string) => {
-    const { onSubmit, lines } = this;
+    const { lines } = this;
     const linesContainer = this.getRef('linesContainer') as HTMLElement;
     last(lines)?.stopEdit();
     const newLine = new Line(linesContainer, {
-      editable: true, onSubmit: this.submitHandler, onChange: this.changeHandler,
+      editable: true, onSubmit: this.submitHandler, onChange: this.changeHandler, caret: this.caret,
     });
     lines.push(newLine);
     this.scrollBottom();
     newLine.focus();
-    onSubmit(value, lines.map((line): string => line.value));
   }
 
   private changeHandler = (value: string) => {
-    this.onChange(value);
     this.scrollBottom();
   }
 

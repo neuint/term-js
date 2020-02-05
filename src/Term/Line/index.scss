@@ -40,15 +40,18 @@
 
 .inputContainer {
   flex: 1;
+  position: relative;
 }
 
 .input {
   width: 100%;
   resize: none;
   word-break: break-all;
-  //TODO: use for custom caret feature request (#2)
-  //color: transparent;
-  //text-shadow: 0 0 0 var(--main-text-color);
+
+  &.customCaret {
+    color: transparent;
+    text-shadow: 0 0 0 var(--main-text-color);
+  }
 }
 
 .caret {}
