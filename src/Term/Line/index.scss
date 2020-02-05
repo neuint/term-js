@@ -1,0 +1,57 @@
+@import 'mixins';
+@import 'theme';
+
+.root {
+  display: flex;
+  position: relative;
+
+  @include padding-horizontal(0.5rem);
+  @include padding-vertical(0.25rem);
+
+  &:last-of-type {
+    padding-bottom: 0.5rem;
+  }
+
+  &:first-of-type {
+    padding-top: 0.5rem;
+  }
+}
+
+.helpContainer {
+  top: 0;
+  right: 0;
+  position: absolute;
+  visibility: hidden;
+}
+
+.label {
+  display: flex;
+}
+
+.labelTextContainer {
+  max-width: 10rem;
+
+  @include truncated;
+}
+
+.labelText {
+  color: var(--line-lable-text-color);
+}
+
+.inputContainer {
+  flex: 1;
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  resize: none;
+  word-break: break-all;
+
+  &.customCaret {
+    color: transparent;
+    text-shadow: 0 0 0 var(--main-text-color);
+  }
+}
+
+.caret {}
