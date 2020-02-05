@@ -5,5 +5,6 @@ export default interface ILine extends ITemplateEngine {
   stopEdit(): void;
   focus(): void;
   updateViewport(): void;
+  setCaret(name: string): void;
   destroy(): void;
 }
