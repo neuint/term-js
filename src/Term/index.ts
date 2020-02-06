@@ -1,4 +1,4 @@
-import { noop, last, get } from 'lodash-es';
+import { noop, last, get, mergeWith } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import ITerm from './ITerm';
@@ -7,12 +7,21 @@ import Line from './Line';
 import ILine from './Line/ILine';
 
 import TemplateEngine from '@Term/TemplateEngine';
+import { getKeyCode } from '@Term/utils/event';
 import template from './template.html';
 
 import css from './index.scss';
 import './theme.scss';
+import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
 
 class Term extends TemplateEngine implements ITerm {
+  private historyField: string[] = [];
+  private historyIndex: number = -1;
+  private stopHistory: boolean = false;
+  public get history(): string[] {
+    return this.historyField;
+  }
+
   private lines: ILine[] = [];
   private readonly ro: ResizeObserver;
   private size: { width: number; height: number } = { width: 0, height: 0 };
@@ -106,13 +115,15 @@ class Term extends TemplateEngine implements ITerm {
     const linesContainer = this.getRef('linesContainer') as Element;
     const lastLineIndex = lines.length - 1;
     this.lines = lines.map((lineValue: string, index: number): ILine => {
-      return new Line(linesContainer, index === lastLineIndex ? {
+      return  new Line(linesContainer, index === lastLineIndex ? {
         editable: true,
         onSubmit: this.submitHandler,
         onChange: this.changeHandler,
         caret: this.caret,
       } : {});
     });
+    this.clearHistoryState();
+    this.addKeyDownHandler();
   }
 
   private clickHandler = (e: MouseEvent) => {
@@ -123,18 +134,24 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private submitHandler = (value: string) => {
-    const { lines } = this;
+    const { lines, history } = this;
     const linesContainer = this.getRef('linesContainer') as HTMLElement;
+    this.removeKeyDownHandler();
     last(lines)?.stopEdit();
+    if (value && last(history) !== value) this.historyField.push(value);
     const newLine = new Line(linesContainer, {
       editable: true, onSubmit: this.submitHandler, onChange: this.changeHandler, caret: this.caret,
     });
     lines.push(newLine);
     this.scrollBottom();
     newLine.focus();
+    this.clearHistoryState();
+    this.addKeyDownHandler();
   }
 
   private changeHandler = (value: string) => {
+    const { historyIndex, history } = this;
+    if (history[historyIndex] !== value) this.stopHistory = true;
     this.scrollBottom();
   }
 
@@ -142,6 +159,62 @@ class Term extends TemplateEngine implements ITerm {
     const linesContainer = this.getRef('linesContainer') as HTMLElement;
     if (!linesContainer) return;
     linesContainer.scrollTop = linesContainer.scrollHeight + linesContainer.offsetHeight;
+  }
+
+  private clearHistoryState() {
+    this.historyIndex = -1;
+    this.stopHistory = false;
+  }
+
+  private getLastLineInput(): HTMLTextAreaElement | null {
+    const line = last(this.lines);
+    if (!line) return null;
+    return  line.getRef('input') as HTMLTextAreaElement;
+  }
+
+  private addKeyDownHandler() {
+    const input = this.getLastLineInput();
+    if (!input) return;
+    input.addEventListener('keydown', this.lineKeydownHandler);
+  }
+
+  private removeKeyDownHandler() {
+    const input = this.getLastLineInput();
+    if (!input) return;
+    input.removeEventListener('keydown', this.lineKeydownHandler);
+  }
+
+  private lineKeydownHandler = (e: KeyboardEvent) => {
+    (({
+      [UP_CODE]: this.prevHistory,
+      [DOWN_CODE]: this.nextHistory,
+    } as { [code: number]: (e: KeyboardEvent) => void })[Number(getKeyCode(e))] || noop)(e);
+  }
+
+  private prevHistory = (e: KeyboardEvent) => {
+    const { historyIndex, history, stopHistory, lines } = this;
+    const input = this.getLastLineInput();
+    const line = last(lines);
+    if (!history.length || !input || stopHistory) return;
+    const newIndex = historyIndex < 0 ? history.length - 1 : Math.max(0, historyIndex - 1);
+    if (historyIndex === newIndex) return;
+    this.historyIndex = newIndex;
+    input.value = history[newIndex];
+    (line as ILine).moveCaretToEnd();
+    e.preventDefault();
+  }
+
+  private nextHistory = (e: KeyboardEvent) => {
+    const { historyIndex, history, stopHistory, lines } = this;
+    const input = this.getLastLineInput();
+    const line = last(lines);
+    if (!history.length || !input || stopHistory || historyIndex < 0) return;
+    const newIndex = historyIndex === history.length - 1 ? -1 : historyIndex + 1;
+    if (historyIndex === newIndex) return;
+    this.historyIndex = newIndex;
+    input.value = newIndex >= 0 ? history[newIndex] : '';
+    (line as ILine).moveCaretToEnd();
+    e.preventDefault();
   }
 }
 
