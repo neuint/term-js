@@ -7,4 +7,5 @@ export default interface ILine extends ITemplateEngine {
   updateViewport(): void;
   setCaret(name: string): void;
   destroy(): void;
+  moveCaretToEnd(): void;
 }

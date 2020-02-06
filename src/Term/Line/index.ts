@@ -115,6 +115,12 @@ class Line extends TemplateEngine implements ILine {
     this.removeEventListeners();
   }
 
+  public moveCaretToEnd() {
+    const input = this.getRef('input') as HTMLTextAreaElement;
+    if (!input || document.activeElement !== input) return;
+    input.selectionStart = input.selectionEnd = input.value.length;
+  }
+
   private addEventListeners() {
     const { editable } = this;
     if (editable) {
