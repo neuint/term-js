@@ -1,8 +1,13 @@
 @import 'mixins';
 
 .root {
-  display: flex;
   position: relative;
+}
+
+.content {
+  display: flex;
+
+  @include padding-vertical(0.25rem);
 }
 
 .helpContainer {

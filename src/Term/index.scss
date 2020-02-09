@@ -1,6 +1,4 @@
 @import 'mixins';
-@import 'fonts';
-@import 'theme';
 
 .term {
   background-color: var(--main-bg-color);
@@ -76,6 +74,5 @@
 }
 
 .line {
-  @include padding-vertical(0.25rem);
-  @include padding-horizontal(0.5rem);
+  @include margin-horizontal(0.5rem);
 }

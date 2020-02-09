@@ -10,4 +10,5 @@ export default interface IVirtualizedList<T extends IVirtualizedItem> extends IT
   getVirtualItems(): T[];
   getGeneralItems(): T[];
   scrollBottom(): void;
+  updatePositions(): void;
 }

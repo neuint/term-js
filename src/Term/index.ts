@@ -1,5 +1,8 @@
 import { noop, last, get } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
+import './fonts.scss';
+import './theme.scss';
+import css from './index.scss';
 
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
@@ -11,7 +14,6 @@ import { getKeyCode } from '@Term/utils/event';
 import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
 
-import css from './index.scss';
 import template from './template.html';
 import VirtualizedList from '@Term/VirtualizedList';
 
@@ -67,6 +69,7 @@ class Term extends TemplateEngine implements ITerm {
 
   public destroy() {
     const { vl } = this;
+    this.removeKeyDownHandler();
     vl.getGeneralItems().forEach(line => line.destroy());
     vl.getVirtualItems().forEach(line => line.destroy());
     this.removeListeners();
@@ -103,6 +106,7 @@ class Term extends TemplateEngine implements ITerm {
       size.height = height;
       vl.getVirtualItems().forEach((line: ILine) => line.updateViewport());
       vl.getGeneralItems().forEach((line: ILine) => line.updateViewport());
+      vl.updatePositions();
     }
   }
 

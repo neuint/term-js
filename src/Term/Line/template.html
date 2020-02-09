@@ -1,33 +1,35 @@
 <div ref="root" class="root {className}">
-  <div ref="helpContainer" class="labelText helpContainer">{nbs}</div>
-  <If condition="{label || delimiter}">
-    <div class="label">
-      <If condition="{label}">
-        <div class="labelTextContainer">
-          <span class="labelText">{label}</span>
-        </div>
-        <div>
-          <span class="labelText">{nbs}</span>
-        </div>
-      </If>
-      <If condition="{delimiter}">
-        <div class="labelTextContainer">
-          <span class="labelText">{delimiter}</span>
-        </div>
-        <div>
-          <span class="labelText">{nbs}</span>
-        </div>
-      </If>
+  <div ref="content" class="content">
+    <div ref="helpContainer" class="labelText helpContainer">{nbs}</div>
+    <If condition="{label || delimiter}">
+      <div class="label">
+        <If condition="{label}">
+          <div class="labelTextContainer">
+            <span class="labelText">{label}</span>
+          </div>
+          <div>
+            <span class="labelText">{nbs}</span>
+          </div>
+        </If>
+        <If condition="{delimiter}">
+          <div class="labelTextContainer">
+            <span class="labelText">{delimiter}</span>
+          </div>
+          <div>
+            <span class="labelText">{nbs}</span>
+          </div>
+        </If>
+      </div>
+    </If>
+    <div ref="inputContainer" class="inputContainer">
+      <Choose>
+        <When condition="{editable}">
+          <textarea spellCheck="false" class="input" ref="input" rows="2">{value}</textarea>
+        </When>
+        <Otherwise>
+          <div ref="input" class="input">{value}</div>
+        </Otherwise>
+      </Choose>
     </div>
-  </If>
-  <div ref="inputContainer" class="inputContainer">
-    <Choose>
-      <When condition="{editable}">
-        <textarea spellCheck="false" class="input" ref="input" rows="2">{value}</textarea>
-      </When>
-      <Otherwise>
-        <div class="input">{value}</div>
-      </Otherwise>
-    </Choose>
   </div>
 </div>

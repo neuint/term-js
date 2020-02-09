@@ -68,6 +68,7 @@ class Line extends TemplateEngine implements ILine {
     this.render();
     this.setCaret(caret);
     this.addEventListeners();
+    this.updateHeight();
   }
 
   get characterSize() {
@@ -120,7 +121,10 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public updateViewport() {
+    const { hiddenField } = this;
+    if (hiddenField) this.show();
     this.updateInputSize();
+    if (hiddenField) this.hide();
   }
 
   public destroy() {
@@ -137,17 +141,16 @@ class Line extends TemplateEngine implements ILine {
     input.selectionStart = input.selectionEnd = input.value.length;
   }
 
-  public show(append: boolean = false, target?: HTMLElement) {
+  public show() {
+    if (!this.hiddenField) return;
     this.hiddenField = false;
-    return target ? this.showWithTarget(append, target) : this.showWithoutTarget(append);
+    // TODO: add implementation
   }
 
   public hide() {
-    const { container } = this;
-    const root = this.getRef('root');
+    if (this.hiddenField) return;
     this.hiddenField = true;
-    if (!root || !container) return;
-    container.removeChild(root);
+    // TODO: add implementation
   }
 
   public clear() {
@@ -157,35 +160,6 @@ class Line extends TemplateEngine implements ILine {
     } else {
       (input as HTMLElement).innerHTML = '';
     }
-  }
-
-  private showWithoutTarget(append: boolean) {
-    const container = this.container as HTMLElement;
-    const root = this.getRef('root') as HTMLElement;
-    if (append) return container.appendChild(root);
-    const { childNodes } = container;
-    if (!childNodes.length) return container.appendChild(root);
-    container.insertBefore(root, childNodes[0]);
-  }
-
-  private showWithTarget(append: boolean = false, target: HTMLElement) {
-    const container = this.container as HTMLElement;
-    const root = this.getRef('root') as HTMLElement;
-    const { childNodes } = container;
-    if (!childNodes.length) return container.appendChild(root);
-    if (!Array.prototype.includes.call(childNodes, target)) return;
-    if (!append) return container.insertBefore(root, target);
-    let refElement;
-    Array.prototype.find.call(childNodes, (childNode: HTMLElement, index: number): boolean => {
-      if (childNode === target) {
-        refElement = childNodes[index + 1];
-        return true;
-      }
-      return false;
-    });
-    return refElement
-      ? container.insertBefore(root, refElement)
-      : container.appendChild(root);
   }
 
   private addEventListeners() {
@@ -248,10 +222,10 @@ class Line extends TemplateEngine implements ILine {
 
   private updateRowsCount(count: number) {
     const input = this.getRef('input') as HTMLInputElement;
-    if (Number(input.getAttribute('rows')) !== count) {
+    if (this.editable && input && Number(input.getAttribute('rows')) !== count) {
       input.setAttribute('rows', String(count));
-      this.updateHeight();
     }
+    this.updateHeight();
   }
 
   private updateHeight = () => {
