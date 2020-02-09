@@ -30,6 +30,7 @@ class Line extends TemplateEngine implements ILine {
   private caret?: ICaret;
   private animationFrame?: any;
   private delimiter: string = '';
+  private className: string = '';
   private editable: boolean;
   private onSubmit: (value: string) => void = noop;
   private readonly onChange: (value: string) => void = noop;
@@ -45,12 +46,14 @@ class Line extends TemplateEngine implements ILine {
       onSubmit?: (value: string) => void;
       onChange?: (value: string) => void;
       editable?: boolean;
+      className?: string;
     } = {},
   ) {
     super(lineTemplate, container);
     const { label = '', value = '', delimiter = '~', onChange = noop, onSubmit = noop,
-      editable = true, caret = 'simple' } = params;
+      editable = true, caret = 'simple', className = '' } = params;
     this.valueField = value;
+    this.className = className;
     this.label = label;
     this.delimiter = delimiter;
     this.onSubmit = onSubmit;
@@ -83,15 +86,17 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public render() {
-    const { label, delimiter, value, editable } = this;
+    const { label, delimiter, value, editable, className } = this;
+    const root = this.getRef('root');
     super.render({
       css,
       label,
       delimiter,
       editable,
+      className,
       value: editable ? value : value.replace(/\s/g, NON_BREAKING_SPACE),
       nbs: NON_BREAKING_SPACE,
-    }, this.getRef('root'));
+    }, root);
     if (editable) this.updateInputSize();
   }
 
@@ -136,6 +141,15 @@ class Line extends TemplateEngine implements ILine {
     const root = this.getRef('root');
     if (!root || !container) return;
     container.removeChild(root);
+  }
+
+  public clear() {
+    const input = this.getRef('input');
+    if (this.editable) {
+      (input as HTMLInputElement).value = '';
+    } else {
+      (input as HTMLElement).innerHTML = '';
+    }
   }
 
   private showWithoutTarget(append: boolean) {
@@ -244,7 +258,7 @@ class Line extends TemplateEngine implements ILine {
     const { activeElement } = document;
     if (!editable || !input || !caret) return;
     const { selectionStart, selectionEnd } = input as HTMLInputElement;
-    if (selectionStart === selectionEnd && activeElement === input) {
+    if (selectionStart === selectionEnd && activeElement === input && document.hasFocus()) {
       this.showCaret();
     } else {
       this.hideCaret();

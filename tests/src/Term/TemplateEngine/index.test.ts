@@ -149,4 +149,14 @@ describe('TemplateEngine', () => {
     });
     expect(container.innerHTML).toBe('<div>test-2</div>');
   });
+
+  it('Replaces variable in className', () => {
+    const container = document.createElement('div');
+    const template = '<div class="root {classNameTest}">test</div>';
+    const te = new TemplateEngine(template, container);
+    te.render({
+      css: { root: 'test1' }, classNameTest: 'test2',
+    });
+    expect(container.innerHTML).toBe('<div class="test1 test2">test</div>');
+  });
 });

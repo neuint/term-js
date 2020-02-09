@@ -4,17 +4,6 @@
 .root {
   display: flex;
   position: relative;
-
-  @include padding-horizontal(0.5rem);
-  @include padding-vertical(0.25rem);
-
-  &:last-of-type {
-    padding-bottom: 0.5rem;
-  }
-
-  &:first-of-type {
-    padding-top: 0.5rem;
-  }
 }
 
 .helpContainer {

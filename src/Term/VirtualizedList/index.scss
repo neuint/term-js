@@ -1,0 +1,7 @@
+@import 'mixins';
+
+.root {
+  height: 100%;
+
+  @include overflow-y(scroll);
+}

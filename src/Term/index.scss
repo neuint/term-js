@@ -70,5 +70,12 @@
 
 .linesContainer {
   flex: 1;
-  @include overflow-y(auto);
+  overflow: hidden;
+
+  @include margin-vertical(0.25rem);
+}
+
+.line {
+  @include padding-vertical(0.25rem);
+  @include padding-horizontal(0.5rem);
 }

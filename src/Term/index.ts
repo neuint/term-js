@@ -1,4 +1,4 @@
-import { noop, last, get, mergeWith } from 'lodash-es';
+import { noop, last, get } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import ITerm from './ITerm';
@@ -8,11 +8,13 @@ import ILine from './Line/ILine';
 
 import TemplateEngine from '@Term/TemplateEngine';
 import { getKeyCode } from '@Term/utils/event';
-import template from './template.html';
+import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
+import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
 
 import css from './index.scss';
 import './theme.scss';
-import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
+import template from './template.html';
+import VirtualizedList from '@Term/VirtualizedList';
 
 class Term extends TemplateEngine implements ITerm {
   private historyField: string[] = [];
@@ -22,18 +24,22 @@ class Term extends TemplateEngine implements ITerm {
     return this.historyField;
   }
 
-  private lines: ILine[] = [];
   private readonly ro: ResizeObserver;
+  private readonly vl: IVirtualizedList<ILine>;
   private size: { width: number; height: number } = { width: 0, height: 0 };
   private caret?: string;
+  private get lines(): ILine[] {
+    return this.vl.getItems();
+  }
 
   constructor(container: Element, params: {
     lines: string[];
+    editLine?: string;
     header?: string;
     onSubmit?: (line: string, lines: string[]) => void;
     onChange?: (line: string) => void;
     caret?: string;
-  } = { lines: [''] }) {
+  } = { lines: [], editLine: '' }) {
     super(template, container);
     this.size.width = (container as HTMLElement).offsetWidth;
     this.size.height = (container as HTMLElement).offsetHeight;
@@ -41,8 +47,11 @@ class Term extends TemplateEngine implements ITerm {
     this.ro.observe(container);
     this.caret = params.caret;
     this.render({ css, header: params.header });
-    this.addLines(params.lines);
+    this.vl = new VirtualizedList(this.getRef('linesContainer') as Element);
+    this.addLines(params.lines, params.editLine || '');
     this.addListeners();
+    this.vl.scrollBottom();
+    this.lastLineFocus();
   }
 
   public addEventListener<K extends keyof ITermEventMap>(
@@ -58,9 +67,9 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   destroy() {
-    this.lines.forEach((line) => {
-      line.destroy();
-    });
+    const { vl } = this;
+    vl.getGeneralItems().forEach(line => line.destroy());
+    vl.getVirtualItems().forEach(line => line.destroy());
     this.removeListeners();
     super.destroy();
   }
@@ -71,7 +80,7 @@ class Term extends TemplateEngine implements ITerm {
 
   public setCaret(caret: string) {
     this.caret = caret;
-    const line = last(this.lines);
+    const line = last(this.vl.getGeneralItems());
     if (!line) return;
     line.setCaret(caret);
   }
@@ -88,77 +97,72 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private observeHandler = (entries: ResizeObserverEntry[]) => {
-    const { size, lines } = this;
+    const { size, vl } = this;
     const { width, height } = get(entries, '[0].contentRect');
     if (size.width !== width || size.height !== height) {
       size.width = width;
       size.height = height;
-      lines.forEach((line: ILine) => {
-        line.updateViewport();
-      });
+      vl.getVirtualItems().forEach((line: ILine) => line.updateViewport());
+      vl.getGeneralItems().forEach((line: ILine) => line.updateViewport());
     }
   }
 
   private addListeners() {
     const root = this.getRef('root') as HTMLElement;
-    if (!root) return;
-    root.addEventListener('click', this.clickHandler);
+    if (root) root.addEventListener('click', this.clickHandler);
   }
 
   private removeListeners() {
     const root = this.getRef('root') as HTMLElement;
-    if (!root) return;
-    root.removeEventListener('click', this.clickHandler);
+    if (root) root.removeEventListener('click', this.clickHandler);
   }
 
-  protected addLines(lines: string[]) {
-    const linesContainer = this.getRef('linesContainer') as Element;
-    const lastLineIndex = lines.length - 1;
-    this.lines = lines.map((lineValue: string, index: number): ILine => {
-      return  new Line(linesContainer, index === lastLineIndex ? {
-        editable: true,
-        onSubmit: this.submitHandler,
-        onChange: this.changeHandler,
-        caret: this.caret,
-      } : {});
+  protected addLines(lines: string[], editLine: string) {
+    const { vl } = this;
+    const virtualItemsContainer = vl.getVirtualItemsContainer();
+    const generalItemsContainer = vl.getGeneralItemsContainer();
+    if (!virtualItemsContainer || !generalItemsContainer) return;
+    lines.forEach((value: string) => {
+      vl.append(new Line(virtualItemsContainer, { value, editable: false, className: css.line }));
     });
+    vl.append(new Line(generalItemsContainer, {
+      className: css.line,
+      value: editLine,
+      editable: true,
+      onSubmit: this.submitHandler,
+      onChange: this.changeHandler,
+      caret: this.caret,
+    }), false);
     this.clearHistoryState();
     this.addKeyDownHandler();
   }
 
   private clickHandler = (e: MouseEvent) => {
-    if (e.target === this.getRef('linesContainer')) {
-      const lastLine = last(this.lines) as ILine;
-      lastLine.focus();
-    }
+    if (e.target === this.vl.getRef('root')) this.lastLineFocus();
+  }
+
+  private lastLineFocus() {
+    const lastLine = last(this.vl.getGeneralItems()) as ILine;
+    if (document.hasFocus()) lastLine.focus();
   }
 
   private submitHandler = (value: string) => {
-    const { lines, history } = this;
-    const linesContainer = this.getRef('linesContainer') as HTMLElement;
-    this.removeKeyDownHandler();
-    last(lines)?.stopEdit();
+    const { history, vl } = this;
+    const virtualItemsContainer = vl.getVirtualItemsContainer();
+    if (!virtualItemsContainer) return;
     if (value && last(history) !== value) this.historyField.push(value);
-    const newLine = new Line(linesContainer, {
-      editable: true, onSubmit: this.submitHandler, onChange: this.changeHandler, caret: this.caret,
-    });
-    lines.push(newLine);
-    this.scrollBottom();
-    newLine.focus();
+    vl.append(new Line(virtualItemsContainer, { value, editable: false, className: css.line }));
+    vl.scrollBottom();
     this.clearHistoryState();
-    this.addKeyDownHandler();
+    const editable = last(vl.getGeneralItems());
+    if (!editable) return;
+    editable.clear();
   }
 
   private changeHandler = (value: string) => {
-    const { historyIndex, history } = this;
+    const { historyIndex, history, vl } = this;
     if (history[historyIndex] !== value) this.stopHistory = true;
-    this.scrollBottom();
-  }
-
-  private scrollBottom() {
-    const linesContainer = this.getRef('linesContainer') as HTMLElement;
-    if (!linesContainer) return;
-    linesContainer.scrollTop = linesContainer.scrollHeight + linesContainer.offsetHeight;
+    vl.scrollBottom();
   }
 
   private clearHistoryState() {
@@ -167,9 +171,9 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private getLastLineInput(): HTMLTextAreaElement | null {
-    const line = last(this.lines);
+    const line = last(this.vl.getGeneralItems());
     if (!line) return null;
-    return  line.getRef('input') as HTMLTextAreaElement;
+    return line.getRef('input') as HTMLTextAreaElement;
   }
 
   private addKeyDownHandler() {
