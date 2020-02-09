@@ -12,7 +12,6 @@ import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
 
 import css from './index.scss';
-import './theme.scss';
 import template from './template.html';
 import VirtualizedList from '@Term/VirtualizedList';
 
@@ -66,7 +65,7 @@ class Term extends TemplateEngine implements ITerm {
     throw new Error('No implementation');
   }
 
-  destroy() {
+  public destroy() {
     const { vl } = this;
     vl.getGeneralItems().forEach(line => line.destroy());
     vl.getVirtualItems().forEach(line => line.destroy());

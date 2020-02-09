@@ -15,6 +15,7 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   constructor(container: Element) {
     super(template, container);
     this.render({ css });
+    this.addListeners();
   }
 
   public append(item: T, virtual: boolean = true) {
@@ -61,7 +62,22 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
 
   public destroy() {
     if (!isUndefined(this.scrollTimeout)) clearTimeout(this.scrollTimeout);
+    this.removeListeners();
     super.destroy();
+  }
+
+  private addListeners() {
+    const root = this.getRef('root') as HTMLElement;
+    if (root) root.addEventListener('scroll', this.scrollHandler);
+  }
+
+  private removeListeners() {
+    const root = this.getRef('root') as HTMLElement;
+    if (root) root.removeEventListener('scroll', this.scrollHandler);
+  }
+
+  private scrollHandler = (e: Event) => {
+    console.log('e', e);
   }
 }
 

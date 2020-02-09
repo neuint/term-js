@@ -21,6 +21,11 @@ class Line extends TemplateEngine implements ILine {
     return this.valueField;
   }
 
+  private hiddenField: boolean = false;
+  public get hidden(): boolean {
+    return this.hiddenField;
+  }
+
   private heightField: number = 0;
   public get height(): number {
     return this.heightField;
@@ -133,12 +138,14 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public show(append: boolean = false, target?: HTMLElement) {
+    this.hiddenField = false;
     return target ? this.showWithTarget(append, target) : this.showWithoutTarget(append);
   }
 
   public hide() {
     const { container } = this;
     const root = this.getRef('root');
+    this.hiddenField = true;
     if (!root || !container) return;
     container.removeChild(root);
   }
@@ -232,7 +239,7 @@ class Line extends TemplateEngine implements ILine {
     const inputContainer = this.getRef('inputContainer');
     const input = this.getRef('input') as HTMLInputElement;
     const { offsetWidth } = inputContainer as HTMLElement;
-    const { value } = input;
+    const value = this.editable ? input.value : input.innerHTML;
     if (!width || !value || !offsetWidth) return this.updateRowsCount(2);
     const rowLength = Math.floor(offsetWidth / width);
     this.updateRowsCount(Math.ceil(value.length / rowLength) + 1);
