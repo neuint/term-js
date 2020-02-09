@@ -239,6 +239,7 @@ class Line extends TemplateEngine implements ILine {
     const inputContainer = this.getRef('inputContainer');
     const input = this.getRef('input') as HTMLInputElement;
     const { offsetWidth } = inputContainer as HTMLElement;
+    if (!input) return this.updateRowsCount(2);
     const value = this.editable ? input.value : input.innerHTML;
     if (!width || !value || !offsetWidth) return this.updateRowsCount(2);
     const rowLength = Math.floor(offsetWidth / width);
