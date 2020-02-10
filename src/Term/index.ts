@@ -26,12 +26,11 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private readonly ro: ResizeObserver;
+  private readonly lines: string[] = [];
   private readonly vl: IVirtualizedList<ILine>;
   private size: { width: number; height: number } = { width: 0, height: 0 };
   private caret?: string;
-  private get lines(): ILine[] {
-    return this.vl.getItems();
-  }
+  private editLine?: ILine;
 
   constructor(container: Element, params: {
     lines: string[];
@@ -42,14 +41,18 @@ class Term extends TemplateEngine implements ITerm {
     caret?: string;
   } = { lines: [], editLine: '' }) {
     super(template, container);
+    this.lines = params.lines;
     this.size.width = (container as HTMLElement).offsetWidth;
     this.size.height = (container as HTMLElement).offsetHeight;
     this.ro = new ResizeObserver(this.observeHandler);
     this.ro.observe(container);
     this.caret = params.caret;
     this.render({ css, header: params.header });
-    this.vl = new VirtualizedList(this.getRef('linesContainer') as Element);
-    this.addLines(params.lines, params.editLine || '');
+    this.vl = new VirtualizedList(
+      this.getRef('linesContainer') as Element,
+      { length: this.lines.length, itemGetter: this.itemGetter, heightGetter: this.heightGetter },
+    );
+    this.addEditLine(params.editLine || '');
     this.addListeners();
     this.vl.scrollBottom();
     this.lastLineFocus();
@@ -68,10 +71,8 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   public destroy() {
-    const { vl } = this;
     this.removeKeyDownHandler();
-    vl.getGeneralItems().forEach(line => line.destroy());
-    vl.getVirtualItems().forEach(line => line.destroy());
+    this.editLine?.destroy();
     this.removeListeners();
     super.destroy();
   }
@@ -82,9 +83,8 @@ class Term extends TemplateEngine implements ITerm {
 
   public setCaret(caret: string) {
     this.caret = caret;
-    const line = last(this.vl.getGeneralItems());
-    if (!line) return;
-    line.setCaret(caret);
+    if (!this.editLine) return;
+    this.editLine.setCaret(caret);
   }
 
   public setHeader(text: string) {
@@ -98,15 +98,20 @@ class Term extends TemplateEngine implements ITerm {
     }
   }
 
+  private itemGetter = (index: number): ILine => {
+
+  }
+
+  private heightGetter = (index: number): number => {
+
+  }
+
   private observeHandler = (entries: ResizeObserverEntry[]) => {
-    const { size, vl } = this;
+    const { size } = this;
     const { width, height } = get(entries, '[0].contentRect');
     if (size.width !== width || size.height !== height) {
       size.width = width;
       size.height = height;
-      vl.getVirtualItems().forEach((line: ILine) => line.updateViewport());
-      vl.getGeneralItems().forEach((line: ILine) => line.updateViewport());
-      vl.updatePositions();
     }
   }
 
@@ -120,22 +125,18 @@ class Term extends TemplateEngine implements ITerm {
     if (root) root.removeEventListener('click', this.clickHandler);
   }
 
-  protected addLines(lines: string[], editLine: string) {
+  protected addEditLine(editLine: string) {
     const { vl } = this;
-    const virtualItemsContainer = vl.getVirtualItemsContainer();
     const generalItemsContainer = vl.getGeneralItemsContainer();
-    if (!virtualItemsContainer || !generalItemsContainer) return;
-    lines.forEach((value: string) => {
-      vl.append(new Line(virtualItemsContainer, { value, editable: false, className: css.line }));
-    });
-    vl.append(new Line(generalItemsContainer, {
+    if (!generalItemsContainer) return;
+    this.editLine = new Line(generalItemsContainer, {
       className: css.line,
       value: editLine,
       editable: true,
       onSubmit: this.submitHandler,
       onChange: this.changeHandler,
       caret: this.caret,
-    }), false);
+    });
     this.clearHistoryState();
     this.addKeyDownHandler();
   }
@@ -145,21 +146,18 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private lastLineFocus() {
-    const lastLine = last(this.vl.getGeneralItems()) as ILine;
-    if (document.hasFocus()) lastLine.focus();
+    if (document.hasFocus() && this.editLine) this.editLine.focus();
   }
 
   private submitHandler = (value: string) => {
     const { history, vl } = this;
-    const virtualItemsContainer = vl.getVirtualItemsContainer();
-    if (!virtualItemsContainer) return;
     if (value && last(history) !== value) this.historyField.push(value);
-    vl.append(new Line(virtualItemsContainer, { value, editable: false, className: css.line }));
+    this.lines.push(value);
     vl.scrollBottom();
     this.clearHistoryState();
-    const editable = last(vl.getGeneralItems());
-    if (!editable) return;
-    editable.clear();
+    vl.length = this.lines.length;
+    if (!this.editLine) return;
+    this.editLine.clear();
   }
 
   private changeHandler = (value: string) => {
@@ -174,9 +172,8 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private getLastLineInput(): HTMLTextAreaElement | null {
-    const line = last(this.vl.getGeneralItems());
-    if (!line) return null;
-    return line.getRef('input') as HTMLTextAreaElement;
+    if (!this.editLine) return null;
+    return this.editLine.getRef('input') as HTMLTextAreaElement;
   }
 
   private addKeyDownHandler() {
@@ -199,28 +196,26 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private prevHistory = (e: KeyboardEvent) => {
-    const { historyIndex, history, stopHistory, lines } = this;
+    const { historyIndex, history, stopHistory } = this;
     const input = this.getLastLineInput();
-    const line = last(lines);
     if (!history.length || !input || stopHistory) return;
     const newIndex = historyIndex < 0 ? history.length - 1 : Math.max(0, historyIndex - 1);
     if (historyIndex === newIndex) return;
     this.historyIndex = newIndex;
     input.value = history[newIndex];
-    (line as ILine).moveCaretToEnd();
+    if (this.editLine) this.editLine.moveCaretToEnd();
     e.preventDefault();
   }
 
   private nextHistory = (e: KeyboardEvent) => {
-    const { historyIndex, history, stopHistory, lines } = this;
+    const { historyIndex, history, stopHistory } = this;
     const input = this.getLastLineInput();
-    const line = last(lines);
     if (!history.length || !input || stopHistory || historyIndex < 0) return;
     const newIndex = historyIndex === history.length - 1 ? -1 : historyIndex + 1;
     if (historyIndex === newIndex) return;
     this.historyIndex = newIndex;
     input.value = newIndex >= 0 ? history[newIndex] : '';
-    (line as ILine).moveCaretToEnd();
+    if (this.editLine) this.editLine.moveCaretToEnd();
     e.preventDefault();
   }
 }
