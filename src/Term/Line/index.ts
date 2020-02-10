@@ -14,7 +14,25 @@ import { NON_BREAKING_SPACE } from '../constants/strings';
 import css from './index.scss';
 
 class Line extends TemplateEngine implements ILine {
+  public getHeight(
+    params: {
+      delimiter?: string;
+      label?: string;
+      value: string;
+      width: number;
+      itemSize: { width: number; height: number },
+    },
+  ): number {
+    const { delimiter, label, value, width, itemSize } = params;
+    const { width: itemWidth, height: itemHeight } = itemSize;
+    const labelLength = (delimiter ? delimiter.length + 1 : 0)
+      + (label ? label.length + 1 : 0);
+    const rowItemsCount = Math.floor((width - labelLength * itemWidth) / itemWidth);
+    return Math.ceil(value.length / rowItemsCount) * itemHeight + 2 * Line.itemPadding;
+  }
+
   private static cf: ICaretFactory = CaretFactory.getInstance();
+  private static itemPadding: number = 4;
 
   private valueField: string = '';
   public get value(): string {

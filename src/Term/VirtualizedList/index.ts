@@ -1,4 +1,4 @@
-import { isUndefined, last, throttle } from 'lodash-es';
+import { isUndefined } from 'lodash-es';
 import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import TemplateEngine from '@Term/TemplateEngine';
 import IVirtualizedItem from '@Term/VirtualizedList/IVirtualizedItem';
@@ -17,14 +17,15 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   }
 
   private scrollTimeout?: ReturnType<typeof setTimeout>;
-  private itemGetter: (index: number) => T;
+  private itemGetter: (index: number) => T | null;
   private heightGetter: (index: number) => number;
+  private height: number = 0;
 
   constructor(
     container: Element,
     params: {
       length: number;
-      itemGetter: (index: number) => T;
+      itemGetter: (index: number) => T | null;
       heightGetter: (index: number) => number;
     },
   ) {
@@ -54,7 +55,28 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   }
 
   public getVirtualItemsContainer(): Element | undefined {
-    return this.getRef('virtualizedList');
+    return this.getRef('itemsContainer');
+  }
+
+  public render(
+    params?: {
+      css?: { [p: string]: string };
+      [p: string]: string | number | boolean | { [p: string]: string } | undefined },
+    replace?: Element | Element[] | null,
+  ) {
+    super.render(params, replace);
+    this.updateHeight();
+  }
+
+  private updateHeight() {
+    const { length, heightGetter } = this;
+    const virtualizedList = this.getRef('virtualizedList') as HTMLElement;
+    let height = 0;
+    for (let i = 0; i < length; i += 1) {
+      height += heightGetter(i);
+    }
+    if (this.height !== height) virtualizedList.style.height = `${height}px`;
+    this.height = height;
   }
 }
 

@@ -15,4 +15,5 @@ export default interface ITerm {
     options?: EventListenerOptions,
   ): void;
   destroy(): void;
+  setLabel(params: { label?: string; delimiter?: string }): void;
 }

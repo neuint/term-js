@@ -5,3 +5,13 @@
 
   @include overflow-y(scroll);
 }
+
+.virtualizedList {
+  position: relative;
+}
+
+.itemsContainer {
+  position: absolute;
+  left: 0;
+  right: 0;
+}

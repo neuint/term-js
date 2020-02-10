@@ -1,4 +1,4 @@
-import { noop, last, get } from 'lodash-es';
+import { noop, last, get, isUndefined } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 import './fonts.scss';
 import './theme.scss';
@@ -28,9 +28,12 @@ class Term extends TemplateEngine implements ITerm {
   private readonly ro: ResizeObserver;
   private readonly lines: string[] = [];
   private readonly vl: IVirtualizedList<ILine>;
+  private heightCache: number[] = [];
   private size: { width: number; height: number } = { width: 0, height: 0 };
   private caret?: string;
   private editLine?: ILine;
+  private delimiter: string = '~';
+  private label: string = '';
 
   constructor(container: Element, params: {
     lines: string[];
@@ -77,6 +80,12 @@ class Term extends TemplateEngine implements ITerm {
     super.destroy();
   }
 
+  public setLabel(params: { label?: string; delimiter?: string }) {
+    const { label, delimiter } = params;
+    if (!isUndefined(label)) this.label = label;
+    if (!isUndefined(delimiter)) this.delimiter = delimiter;
+  }
+
   public write(data: string | string[], duration?: number) {
     throw new Error('No implementation');
   }
@@ -98,21 +107,30 @@ class Term extends TemplateEngine implements ITerm {
     }
   }
 
-  private itemGetter = (index: number): ILine => {
-
+  private itemGetter = (index: number): ILine | null => {
+    const { lines, vl, delimiter, label } = this;
+    const virtualItemsContainer = vl.getVirtualItemsContainer() as HTMLElement;
+    return virtualItemsContainer ? new Line(virtualItemsContainer, {
+      delimiter, label, editable: false, value: lines[index],
+    }) : null;
   }
 
   private heightGetter = (index: number): number => {
+    const { heightCache, size, lines } = this;
+    if (isUndefined(heightCache[index])) {
 
+    }
+    return heightCache[index];
   }
 
   private observeHandler = (entries: ResizeObserverEntry[]) => {
     const { size } = this;
     const { width, height } = get(entries, '[0].contentRect');
-    if (size.width !== width || size.height !== height) {
+    if (size.width !== width) {
       size.width = width;
-      size.height = height;
+      this.heightCache = [];
     }
+    if (size.height !== height) size.height = height;
   }
 
   private addListeners() {
@@ -126,10 +144,12 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   protected addEditLine(editLine: string) {
-    const { vl } = this;
+    const { vl, delimiter, label } = this;
     const generalItemsContainer = vl.getGeneralItemsContainer();
     if (!generalItemsContainer) return;
     this.editLine = new Line(generalItemsContainer, {
+      label,
+      delimiter,
       className: css.line,
       value: editLine,
       editable: true,
