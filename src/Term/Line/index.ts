@@ -14,7 +14,7 @@ import { NON_BREAKING_SPACE } from '../constants/strings';
 import css from './index.scss';
 
 class Line extends TemplateEngine implements ILine {
-  public getHeight(
+  public static getHeight(
     params: {
       delimiter?: string;
       label?: string;

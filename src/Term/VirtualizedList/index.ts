@@ -11,6 +11,8 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   private lengthValue: number = 0;
   public set length(value: number) {
     this.lengthValue = value;
+    this.updateHeight();
+    this.renderViewportItems();
   }
   public get length(): number {
     return this.lengthValue;
@@ -20,6 +22,17 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   private itemGetter: (index: number) => T | null;
   private heightGetter: (index: number) => number;
   private height: number = 0;
+  private readonly topOffset: number = 100;
+  private readonly bottomOffset: number = 100;
+  private itemsCache: { [key: number]: T } = {};
+  private viewportItems: number[] = [];
+  private offset: number = 0;
+
+  private static checkViewportItem(
+    params: { viewportStart, viewportEnd, itemOffsetStart, itemOffsetEnd },
+  ): boolean {
+
+  }
 
   constructor(
     container: Element,
@@ -27,12 +40,16 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
       length: number;
       itemGetter: (index: number) => T | null;
       heightGetter: (index: number) => number;
+      topOffset?: number;
+      bottomOffset?: number;
     },
   ) {
     super(template, container);
     this.lengthValue = params.length;
     this.itemGetter = params.itemGetter;
     this.heightGetter = params.heightGetter;
+    this.topOffset = params.topOffset || this.topOffset;
+    this.bottomOffset = params.bottomOffset || this.bottomOffset;
     this.render({ css });
   }
 
@@ -77,6 +94,47 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     }
     if (this.height !== height) virtualizedList.style.height = `${height}px`;
     this.height = height;
+  }
+
+  private renderViewportItems() {
+    const { length, heightGetter, topOffset, bottomOffset } = this;
+    const root = this.getRef('root');
+    if (!root) return;
+    const viewportStart = Math.max(root.scrollTop - topOffset, 0);
+    const viewportEnd = viewportStart + root.scrollHeight + bottomOffset;
+    let itemOffsetStart = 0;
+    let itemOffsetEnd = 0;
+    let isFound = false;
+    let offset;
+    const items = [];
+    for (let i = 0; i < length; i += 1) {
+      const itemHeight = heightGetter(i);
+      itemOffsetStart = itemOffsetEnd;
+      itemOffsetEnd = itemOffsetStart + itemHeight;
+      const isViewportItem = VirtualizedList.checkViewportItem({
+        viewportStart, viewportEnd, itemOffsetStart, itemOffsetEnd,
+      });
+      isFound = isViewportItem || isFound;
+      if (isFound && !isViewportItem) break;
+      if (isViewportItem) {
+        items.push(i);
+        offset = isUndefined(offset) ? itemOffsetStart : offset;
+      }
+    }
+    this.viewportItems = items;
+    this.offset = offset || 0;
+    this.renderItems();
+  }
+
+  private renderItems() {
+    const { viewportItems, offset, itemsCache, itemGetter } = this;
+    const itemsContainer = this.getRef('itemsContainer') as HTMLElement;
+    // if (itemsContainer) {
+    //   viewportItems.forEach((index: number) => {
+    //     itemsCache[index] = itemsCache[index] || itemGetter(index);
+    //   });
+    // }
+    itemsContainer.style.top  = `${Math.round(offset)}px`;
   }
 }
 

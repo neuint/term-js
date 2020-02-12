@@ -4,18 +4,19 @@ import './fonts.scss';
 import './theme.scss';
 import css from './index.scss';
 
+import VirtualizedList from '@Term/VirtualizedList';
+import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
+import TemplateEngine from '@Term/TemplateEngine';
+import { getKeyCode } from '@Term/utils/event';
+import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
+import { NON_BREAKING_SPACE } from '@Term/constants/strings';
+
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
 import Line from './Line';
 import ILine from './Line/ILine';
 
-import TemplateEngine from '@Term/TemplateEngine';
-import { getKeyCode } from '@Term/utils/event';
-import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
-import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
-
 import template from './template.html';
-import VirtualizedList from '@Term/VirtualizedList';
 
 class Term extends TemplateEngine implements ITerm {
   private historyField: string[] = [];
@@ -23,6 +24,20 @@ class Term extends TemplateEngine implements ITerm {
   private stopHistory: boolean = false;
   public get history(): string[] {
     return this.historyField;
+  }
+
+  private itemSizeField?: { width: number; height: number };
+  private get itemSize(): { width: number; height: number } {
+    const { itemSizeField } = this;
+    if (itemSizeField) return itemSizeField;
+    const root = this.getRef('root');
+    if (!root) return { width: 1, height: 1 };
+    const textContainer = document.createElement('span');
+    textContainer.innerHTML = NON_BREAKING_SPACE;
+    textContainer.className = css.checkCharacterContainer;
+    root.appendChild(textContainer);
+    this.itemSizeField = { width: textContainer.offsetWidth, height: textContainer.offsetHeight };
+    return this.itemSizeField;
   }
 
   private readonly ro: ResizeObserver;
@@ -116,9 +131,11 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private heightGetter = (index: number): number => {
-    const { heightCache, size, lines } = this;
+    const { heightCache, itemSize, size, lines, delimiter, label } = this;
     if (isUndefined(heightCache[index])) {
-
+      heightCache[index] = Line.getHeight({
+        itemSize, delimiter, label, value: lines[index], width: size.width,
+      });
     }
     return heightCache[index];
   }
