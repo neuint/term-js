@@ -29,9 +29,13 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   private offset: number = 0;
 
   private static checkViewportItem(
-    params: { viewportStart, viewportEnd, itemOffsetStart, itemOffsetEnd },
+    params: {
+      viewportStart: number; viewportEnd: number; itemOffsetStart: number; itemOffsetEnd: number;
+    },
   ): boolean {
-
+    const { viewportStart, viewportEnd, itemOffsetStart, itemOffsetEnd } = params;
+    return (viewportStart <= itemOffsetStart && viewportStart > itemOffsetEnd)
+      || (viewportEnd <= itemOffsetStart && viewportEnd > itemOffsetEnd);
   }
 
   constructor(
