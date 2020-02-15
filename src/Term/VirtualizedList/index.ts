@@ -1,4 +1,4 @@
-import { isNumber, isUndefined, last } from 'lodash-es';
+import { isUndefined, last } from 'lodash-es';
 import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import TemplateEngine from '@Term/TemplateEngine';
 import IVirtualizedItem from '@Term/VirtualizedList/IVirtualizedItem';
@@ -6,7 +6,7 @@ import IVirtualizedItem from '@Term/VirtualizedList/IVirtualizedItem';
 import template from './template.html';
 import css from './index.scss';
 
-class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
+class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
   implements IVirtualizedList<T> {
   private lengthValue: number = 0;
   public set length(value: number) {
@@ -19,7 +19,10 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   }
 
   private scrollTimeout?: ReturnType<typeof setTimeout>;
-  private itemGetter: (index: number, container?: HTMLElement) => T | null;
+  private itemGetter: (
+    index: number,
+    params?: { container?: HTMLElement, ref?: T, append?: boolean },
+  ) => T | null;
   private heightGetter: (index: number) => number;
   private height: number = 0;
   private readonly topOffset: number = 100;
@@ -43,7 +46,10 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     container: Element,
     params: {
       length: number;
-      itemGetter: (index: number, container?: HTMLElement) => T | null;
+      itemGetter: (
+        index: number,
+        params?: { container?: HTMLElement, ref?: T, append?: boolean },
+      ) => T | null;
       heightGetter: (index: number) => number;
       topOffset?: number;
       bottomOffset?: number;
@@ -148,14 +154,23 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   }
 
   private renderItem(index: number) {
-    const { itemsCache, renderedItems } = this;
-    if (renderedItems.includes(index)) return;
-    // if (!renderedItems.length) {
-    //
-    // }
-    const firstIndex = renderedItems[0];
-    const lastIndex = last(renderedItems) as number;
-    // if (itemsCache[index]) return itemsCache[index].show();
+    const { itemsCache, renderedItems, itemGetter } = this;
+    const beforeIndex = renderedItems
+      .find((checkIndex: number): boolean => checkIndex >= index);
+    const container = this.getRef('itemsContainer') as HTMLElement;
+    if (!container) return;
+    if (isUndefined(beforeIndex)) {
+      if (itemsCache[index]) return itemsCache[index].show();
+      const item = itemGetter(index, { container });
+      if (item) itemsCache[index] = item;
+    } else {
+      const beforeCacheItem = itemsCache[beforeIndex];
+      const renderCacheItem = itemsCache[index];
+      if (!beforeCacheItem) return;
+      if (renderCacheItem) return renderCacheItem.show(false, beforeCacheItem);
+      const item = itemGetter(index, { container, append: false, ref: beforeCacheItem });
+      if (item) itemsCache[index] = item;
+    }
   }
 
   private removeStartItems() {

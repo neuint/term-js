@@ -16,6 +16,6 @@ export default interface ITemplateEngine {
   getRefMap(): { [name: string]: Element | undefined };
   getRef(name: string): Element | undefined;
   destroy(): void;
-  show(append: boolean, ref?: ITemplateEngine): void;
+  show(append?: boolean, ref?: ITemplateEngine): void;
   hide(): void;
 }

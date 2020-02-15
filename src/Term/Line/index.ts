@@ -39,9 +39,8 @@ class Line extends TemplateEngine implements ILine {
     return this.valueField;
   }
 
-  private hiddenField: boolean = false;
   public get hidden(): boolean {
-    return this.hiddenField;
+    return this.isHidden;
   }
 
   private heightField: number = 0;
@@ -142,10 +141,10 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public updateViewport() {
-    const { hiddenField } = this;
-    if (hiddenField) this.show();
+    const { isHidden } = this;
+    if (isHidden) this.show();
     this.updateInputSize();
-    if (hiddenField) this.hide();
+    if (isHidden) this.hide();
   }
 
   public destroy() {

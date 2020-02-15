@@ -124,8 +124,8 @@ class TemplateEngine extends Animation implements ITemplateEngine {
   }
 
   private templateField: string = '';
-  private isHidden: boolean = false;
   private templateExecutor?: (params: { [k: string]: any }) => string;
+  protected isHidden: boolean = false;
 
   public get template(): string {
     return this.templateField;

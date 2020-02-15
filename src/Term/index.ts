@@ -122,12 +122,15 @@ class Term extends TemplateEngine implements ITerm {
     }
   }
 
-  private itemGetter = (index: number, container?: HTMLElement): ILine | null => {
+  private itemGetter = (
+    index: number, params?: { container?: HTMLElement, ref?: ILine, append?: boolean },
+  ): ILine | null => {
     const { lines, vl, delimiter, label } = this;
+    const { container, ref, append } = params || {};
     const virtualItemsContainer = container || (vl
       ? vl.getVirtualItemsContainer() as HTMLElement : undefined);
     return virtualItemsContainer ? new Line(virtualItemsContainer, {
-      delimiter, label, editable: false, value: lines[index],
+      ref, append, delimiter, label, editable: false, value: lines[index],
     }) : null;
   }
 
