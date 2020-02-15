@@ -9,7 +9,7 @@ const container = document.querySelector('#root');
 
 if (container) {
   const term = new Term(container, {
-    lines: (new Array(100).fill(null)).map((_, index): string => `Line ${index}`),
+    lines: (new Array(500).fill(null)).map((_, index): string => `Line ${index}`),
   });
   term.setHeader('Test');
   (window as unknown as { term: ITerm }).term = term;

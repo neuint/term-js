@@ -19,7 +19,7 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   }
 
   private scrollTimeout?: ReturnType<typeof setTimeout>;
-  private itemGetter: (index: number) => T | null;
+  private itemGetter: (index: number, container?: HTMLElement) => T | null;
   private heightGetter: (index: number) => number;
   private height: number = 0;
   private readonly topOffset: number = 100;
@@ -27,6 +27,7 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   private itemsCache: { [key: number]: T } = {};
   private viewportItems: number[] = [];
   private offset: number = 0;
+  private animationFrame?: any;
 
   private static checkViewportItem(
     params: {
@@ -34,7 +35,7 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     },
   ): boolean {
     const { viewportStart, viewportEnd, itemOffsetStart, itemOffsetEnd } = params;
-    return (viewportStart <= itemOffsetStart && viewportStart > itemOffsetEnd)
+    return (viewportStart <= itemOffsetStart && viewportEnd > itemOffsetEnd)
       || (viewportEnd <= itemOffsetStart && viewportEnd > itemOffsetEnd);
   }
 
@@ -42,7 +43,7 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     container: Element,
     params: {
       length: number;
-      itemGetter: (index: number) => T | null;
+      itemGetter: (index: number, container?: HTMLElement) => T | null;
       heightGetter: (index: number) => number;
       topOffset?: number;
       bottomOffset?: number;
@@ -55,6 +56,9 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     this.topOffset = params.topOffset || this.topOffset;
     this.bottomOffset = params.bottomOffset || this.bottomOffset;
     this.render({ css });
+    this.renderViewportItems();
+    this.addListeners();
+    this.animationFrame = window.requestAnimationFrame(this.renderViewportItems);
   }
 
   public scrollBottom() {
@@ -68,6 +72,7 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
 
   public destroy() {
     if (!isUndefined(this.scrollTimeout)) clearTimeout(this.scrollTimeout);
+    this.removeListeners();
     super.destroy();
   }
 
@@ -89,6 +94,14 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     this.updateHeight();
   }
 
+  private addListeners() {
+
+  }
+
+  private removeListeners() {
+
+  }
+
   private updateHeight() {
     const { length, heightGetter } = this;
     const virtualizedList = this.getRef('virtualizedList') as HTMLElement;
@@ -102,10 +115,10 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
 
   private renderViewportItems() {
     const { length, heightGetter, topOffset, bottomOffset } = this;
-    const root = this.getRef('root');
+    const root = this.getRef('root') as HTMLElement;
     if (!root) return;
     const viewportStart = Math.max(root.scrollTop - topOffset, 0);
-    const viewportEnd = viewportStart + root.scrollHeight + bottomOffset;
+    const viewportEnd = viewportStart + root.offsetHeight + bottomOffset;
     let itemOffsetStart = 0;
     let itemOffsetEnd = 0;
     let isFound = false;
@@ -128,17 +141,28 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     this.viewportItems = items;
     this.offset = offset || 0;
     this.renderItems();
+    this.animationFrame = window.requestAnimationFrame(this.renderViewportItems);
   }
 
   private renderItems() {
     const { viewportItems, offset, itemsCache, itemGetter } = this;
     const itemsContainer = this.getRef('itemsContainer') as HTMLElement;
-    // if (itemsContainer) {
-    //   viewportItems.forEach((index: number) => {
-    //     itemsCache[index] = itemsCache[index] || itemGetter(index);
-    //   });
-    // }
+    this.removeRenderedItems();
+    if (itemsContainer) {
+      viewportItems.forEach((index: number) => {
+        if (itemsCache[index]) return itemsCache[index].show();
+        const item = itemGetter(index, itemsContainer);
+        if (item) itemsCache[index] = item;
+      });
+    }
     itemsContainer.style.top  = `${Math.round(offset)}px`;
+  }
+
+  private removeRenderedItems() {
+    const { viewportItems, itemsCache } = this;
+    if (viewportItems.length) {
+      viewportItems.forEach(index => itemsCache[index] ? itemsCache[index].hide() : null);
+    }
   }
 }
 

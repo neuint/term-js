@@ -151,6 +151,7 @@ class Line extends TemplateEngine implements ILine {
     if (lockTimeout) clearTimeout(lockTimeout);
     this.removeCaret();
     this.removeEventListeners();
+    window.cancelAnimationFrame(this.animationFrame);
   }
 
   public moveCaretToEnd() {
@@ -162,13 +163,17 @@ class Line extends TemplateEngine implements ILine {
   public show() {
     if (!this.hiddenField) return;
     this.hiddenField = false;
-    // TODO: add implementation
+    const root = this.getRef('root');
+    const { container } = this;
+    if (root && container) container.appendChild(root);
   }
 
   public hide() {
     if (this.hiddenField) return;
     this.hiddenField = true;
-    // TODO: add implementation
+    const root = this.getRef('root');
+    const { container } = this;
+    if (root && container) container.removeChild(root);
   }
 
   public clear() {
