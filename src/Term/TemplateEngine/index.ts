@@ -1,5 +1,6 @@
 import { template as lodashTemplate, omit, isArray } from 'lodash-es';
 
+import Animation from '@Term/Animation';
 import ITemplateEngine from './ITemplateEngine';
 import {
   IF_CLOSE_PATTERN,
@@ -17,7 +18,7 @@ import {
   CLASS_NAME_PATTERN,
 } from './constants';
 
-class TemplateEngine implements ITemplateEngine {
+class TemplateEngine extends Animation implements ITemplateEngine {
   private static getRenderStringWithClassNames(renderString: string, params: {
     css?: { [key: string]: string },
     [p: string]: string | number | boolean | undefined | { [key: string]: string },
@@ -119,6 +120,7 @@ class TemplateEngine implements ITemplateEngine {
   }
 
   public destroy() {
+    super.destroy();
     const { container, childNodes } = this;
     childNodes?.forEach((childNode: ChildNode) => {
       container?.removeChild(childNode);
@@ -128,6 +130,7 @@ class TemplateEngine implements ITemplateEngine {
   protected refMap: { [name: string]: Element | undefined } = {};
 
   constructor(template?: string, container?: Element) {
+    super();
     if (template) this.template = template;
     this.containerField = container || this.containerField;
   }

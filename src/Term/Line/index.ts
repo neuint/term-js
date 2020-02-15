@@ -31,6 +31,25 @@ class Line extends TemplateEngine implements ILine {
     return Math.ceil(value.length / rowItemsCount) * itemHeight + 2 * Line.itemPadding;
   }
 
+  private static insertAfter(container: HTMLElement, element: HTMLElement, ref: HTMLElement) {
+    const { childNodes } = container;
+    const index = Array.prototype.indexOf.call(childNodes, ref);
+    if (index >= 0) {
+      return index === childNodes.length - 1
+        ? container.appendChild(element)
+        : container.insertBefore(element, childNodes[index + 1]);
+    }
+  }
+
+  private static prepend(container: HTMLElement, element: HTMLElement) {
+    const { childNodes } = container;
+    if (childNodes.length) {
+      container.insertBefore(element, childNodes[0]);
+    } else {
+      container.appendChild(element);
+    }
+  }
+
   private static cf: ICaretFactory = CaretFactory.getInstance();
   private static itemPadding: number = 4;
 
@@ -51,7 +70,6 @@ class Line extends TemplateEngine implements ILine {
 
   private label: string = '';
   private caret?: ICaret;
-  private animationFrame?: any;
   private delimiter: string = '';
   private className: string = '';
   private editable: boolean;
@@ -87,6 +105,8 @@ class Line extends TemplateEngine implements ILine {
     this.setCaret(caret);
     this.addEventListeners();
     this.updateHeight();
+    this.frameHandler = this.updateCaretData;
+    if (this.editable) this.registerFrameHandler();
   }
 
   get characterSize() {
@@ -98,6 +118,7 @@ class Line extends TemplateEngine implements ILine {
     this.removeCaret();
     this.removeEventListeners();
     this.editable = false;
+    this.unregisterFrameHandler();
     this.render();
   }
 
@@ -151,7 +172,6 @@ class Line extends TemplateEngine implements ILine {
     if (lockTimeout) clearTimeout(lockTimeout);
     this.removeCaret();
     this.removeEventListeners();
-    window.cancelAnimationFrame(this.animationFrame);
   }
 
   public moveCaretToEnd() {
@@ -160,12 +180,14 @@ class Line extends TemplateEngine implements ILine {
     input.selectionStart = input.selectionEnd = input.value.length;
   }
 
-  public show() {
+  public show(append: boolean = true, target?: ILine) {
     if (!this.hiddenField) return;
     this.hiddenField = false;
-    const root = this.getRef('root');
-    const { container } = this;
-    if (root && container) container.appendChild(root);
+    if (target) {
+      this.showTarget(append, target);
+    } else {
+      this.showGeneral(append);
+    }
   }
 
   public hide() {
@@ -182,6 +204,27 @@ class Line extends TemplateEngine implements ILine {
       (input as HTMLInputElement).value = '';
     } else {
       (input as HTMLElement).innerHTML = '';
+    }
+  }
+
+  private showTarget(append: boolean = false, target: ILine) {
+    const container = this.container as HTMLElement;
+    const targetRoot = target.getRef('root') as HTMLElement;
+    const currentRoot = this.getRef('root') as HTMLElement;
+    if (container && currentRoot && targetRoot) {
+      return append
+        ? Line.insertAfter(container, currentRoot, targetRoot)
+        : container.insertBefore(currentRoot, targetRoot);
+    }
+  }
+
+  private showGeneral(append: boolean = false) {
+    const container = this.container as HTMLElement;
+    const currentRoot = this.getRef('root') as HTMLElement;
+    if (container && currentRoot) {
+      return append
+        ? container.appendChild(currentRoot)
+        : Line.prepend(container, currentRoot);
     }
   }
 
@@ -268,7 +311,6 @@ class Line extends TemplateEngine implements ILine {
     } else {
       this.hideCaret();
     }
-    this.animationFrame = window.requestAnimationFrame(this.updateCaretData);
   }
 
   private showCaret() {

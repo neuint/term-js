@@ -27,7 +27,6 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   private itemsCache: { [key: number]: T } = {};
   private viewportItems: number[] = [];
   private offset: number = 0;
-  private animationFrame?: any;
 
   private static checkViewportItem(
     params: {
@@ -58,7 +57,8 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     this.render({ css });
     this.renderViewportItems();
     this.addListeners();
-    this.animationFrame = window.requestAnimationFrame(this.renderViewportItems);
+    this.frameHandler = this.renderViewportItems;
+    this.registerFrameHandler();
   }
 
   public scrollBottom() {
@@ -113,7 +113,7 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     this.height = height;
   }
 
-  private renderViewportItems() {
+  private renderViewportItems = () => {
     const { length, heightGetter, topOffset, bottomOffset } = this;
     const root = this.getRef('root') as HTMLElement;
     if (!root) return;
@@ -141,7 +141,6 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     this.viewportItems = items;
     this.offset = offset || 0;
     this.renderItems();
-    this.animationFrame = window.requestAnimationFrame(this.renderViewportItems);
   }
 
   private renderItems() {
@@ -149,11 +148,11 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     const itemsContainer = this.getRef('itemsContainer') as HTMLElement;
     this.removeRenderedItems();
     if (itemsContainer) {
-      viewportItems.forEach((index: number) => {
-        if (itemsCache[index]) return itemsCache[index].show();
-        const item = itemGetter(index, itemsContainer);
-        if (item) itemsCache[index] = item;
-      });
+      // viewportItems.forEach((index: number) => {
+      //   if (itemsCache[index]) return itemsCache[index].show();
+      //   const item = itemGetter(index, itemsContainer);
+      //   if (item) itemsCache[index] = item;
+      // });
     }
     itemsContainer.style.top  = `${Math.round(offset)}px`;
   }
