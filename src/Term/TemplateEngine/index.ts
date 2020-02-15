@@ -1,4 +1,4 @@
-import { template as lodashTemplate, omit, last, first } from 'lodash-es';
+import { template as lodashTemplate, omit } from 'lodash-es';
 
 import Animation from '@Term/Animation';
 import ITemplateEngine from './ITemplateEngine';
