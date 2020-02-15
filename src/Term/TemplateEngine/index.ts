@@ -124,6 +124,7 @@ class TemplateEngine extends Animation implements ITemplateEngine {
   }
 
   private templateField: string = '';
+  private isHidden: boolean = false;
   private templateExecutor?: (params: { [k: string]: any }) => string;
 
   public get template(): string {
@@ -161,11 +162,24 @@ class TemplateEngine extends Animation implements ITemplateEngine {
   protected refMap: { [name: string]: Element | undefined } = {};
 
   public show(append: boolean = true, ref?: ITemplateEngine | undefined) {
-    throw new Error('Method not implemented.');
+    if (!this.isHidden) return;
+    this.isHidden = false;
+    const { container, childNodes } = this;
+    if (container && childNodes) {
+      if (ref) return this.addChildNodesWithRef(append, ref);
+      this.addChildNodesWithoutRef(append);
+    }
   }
 
   public hide() {
-    throw new Error('Method not implemented.');
+    if (this.isHidden) return;
+    this.isHidden = true;
+    const { container, childNodes } = this;
+    if (container && childNodes) {
+      childNodes.forEach((childNode: ChildNode) => {
+        container.removeChild(childNode);
+      });
+    }
   }
 
   public getRefMap(): { [name: string]: Element | undefined } {
@@ -255,35 +269,45 @@ class TemplateEngine extends Animation implements ITemplateEngine {
   }
 
   private addRenderStringWithoutRef(append: boolean, renderString: string) {
+    this.childNodes = TemplateEngine.getProxyChildNodes(renderString);
+    this.addChildNodesWithoutRef(append);
+  }
+
+  private addChildNodesWithoutRef(append: boolean) {
     const container = this.container as Element;
-    const proxyChildNodes = TemplateEngine.getProxyChildNodes(renderString);
+    const childNodes = this.childNodes as ChildNode[];
     const firstChild = container.firstChild;
-    proxyChildNodes.forEach((childNode: ChildNode) => {
+    childNodes.forEach((childNode: ChildNode) => {
       if (append) {
         container.appendChild(childNode);
       } else {
         container.insertBefore(childNode, firstChild);
       }
     });
-    this.childNodes = proxyChildNodes;
+    this.childNodes = childNodes;
   }
 
   private addRenderStringWithRef(append: boolean, renderString: string, ref: ITemplateEngine) {
+    this.childNodes = TemplateEngine.getProxyChildNodes(renderString);
+    this.addChildNodesWithRef(append, ref);
+  }
+
+  private addChildNodesWithRef(append: boolean, ref: ITemplateEngine) {
     const container = this.container as HTMLElement;
-    const proxyChildNodes = TemplateEngine.getProxyChildNodes(renderString);
+    const childNodes = this.childNodes as ChildNode[];
     const refNodeList = ref.nodeList;
     if (!refNodeList?.length) return;
     const refNode = (append ? refNodeList[refNodeList.length - 1] : refNodeList[0]) as HTMLElement;
-    (append ? Array.prototype.reverse.call(proxyChildNodes) : proxyChildNodes)
+    (append ? Array.prototype.reverse.call(childNodes) : childNodes)
       .forEach((childNode: ChildNode, index: number) => {
         if (append) {
           return index
-            ? container.insertBefore(childNode, proxyChildNodes[0])
+            ? container.insertBefore(childNode, childNodes[0])
             : TemplateEngine.insertAfter(container, childNode as HTMLElement, refNode);
         }
         container.insertBefore(childNode, refNode);
       });
-    this.childNodes = append ? Array.prototype.reverse.call(proxyChildNodes) : proxyChildNodes;
+    this.childNodes = append ? Array.prototype.reverse.call(childNodes) : childNodes;
   }
 }
 

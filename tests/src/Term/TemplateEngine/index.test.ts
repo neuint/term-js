@@ -185,4 +185,32 @@ describe('TemplateEngine', () => {
     });
     expect(container.innerHTML).toBe('<div class="test1 test2">test</div>');
   });
+
+  it('Removes content from container on hide', () => {
+    const container = document.createElement('div');
+    const template = '<div class="root {classNameTest}">test</div>';
+    container.innerHTML = '<div class="test"></div>';
+    const te = new TemplateEngine(template, container);
+    te.render({
+      css: { root: 'test1' }, classNameTest: 'test2',
+    });
+    expect(container.innerHTML).toBe('<div class="test"></div><div class="test1 test2">test</div>');
+    te.hide();
+    expect(container.innerHTML).toBe('<div class="test"></div>');
+  });
+
+  it('Returns content to the container on show', () => {
+    const container = document.createElement('div');
+    const template = '<div class="root {classNameTest}">test</div>';
+    container.innerHTML = '<div class="test"></div>';
+    const te = new TemplateEngine(template, container);
+    te.render({
+      css: { root: 'test1' }, classNameTest: 'test2',
+    });
+    expect(container.innerHTML).toBe('<div class="test"></div><div class="test1 test2">test</div>');
+    te.hide();
+    expect(container.innerHTML).toBe('<div class="test"></div>');
+    te.show();
+    expect(container.innerHTML).toBe('<div class="test"></div><div class="test1 test2">test</div>');
+  });
 });
