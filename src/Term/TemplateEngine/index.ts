@@ -1,4 +1,4 @@
-import { template as lodashTemplate, omit, isArray } from 'lodash-es';
+import { template as lodashTemplate, omit, last, first } from 'lodash-es';
 
 import Animation from '@Term/Animation';
 import ITemplateEngine from './ITemplateEngine';
@@ -19,6 +19,27 @@ import {
 } from './constants';
 
 class TemplateEngine extends Animation implements ITemplateEngine {
+  private static getProxyChildNodes(renderString: string): NodeListOf<ChildNode> | ChildNode[] {
+    const proxyContainer = document.createElement('div');
+    const proxyChildNodes: ChildNode[] = [];
+    proxyContainer.innerHTML = renderString;
+    const { childNodes } = proxyContainer;
+    for (let i = 0, ln = childNodes.length; i < ln; i += 1) {
+      proxyChildNodes.push(childNodes[i]);
+    }
+    return proxyChildNodes;
+  }
+
+  private static insertAfter(container: HTMLElement, element: HTMLElement, ref: HTMLElement) {
+    const { childNodes } = container;
+    const index = Array.prototype.indexOf.call(childNodes, ref);
+    if (index >= 0) {
+      return index === childNodes.length - 1
+        ? container.appendChild(element)
+        : container.insertBefore(element, childNodes[index + 1]);
+    }
+  }
+
   private static getRenderStringWithClassNames(renderString: string, params: {
     css?: { [key: string]: string },
     [p: string]: string | number | boolean | undefined | { [key: string]: string },
@@ -97,10 +118,14 @@ class TemplateEngine extends Animation implements ITemplateEngine {
       : processedString;
   }
 
-  private childNodes?: NodeListOf<ChildNode> | ChildNode[];
+  private childNodes?: NodeListOf<ChildNode> | ChildNode[] = [];
+  public get nodeList(): NodeListOf<ChildNode> | ChildNode[] {
+    return this.childNodes || [];
+  }
 
   private templateField: string = '';
   private templateExecutor?: (params: { [k: string]: any }) => string;
+
   public get template(): string {
     return this.templateField;
   }
@@ -119,6 +144,12 @@ class TemplateEngine extends Animation implements ITemplateEngine {
     this.containerField = value;
   }
 
+  constructor(template?: string, container?: Element) {
+    super();
+    if (template) this.template = template;
+    this.containerField = container || this.containerField;
+  }
+
   public destroy() {
     super.destroy();
     const { container, childNodes } = this;
@@ -129,10 +160,12 @@ class TemplateEngine extends Animation implements ITemplateEngine {
 
   protected refMap: { [name: string]: Element | undefined } = {};
 
-  constructor(template?: string, container?: Element) {
-    super();
-    if (template) this.template = template;
-    this.containerField = container || this.containerField;
+  public show(append: boolean = true, ref?: ITemplateEngine | undefined) {
+    throw new Error('Method not implemented.');
+  }
+
+  public hide() {
+    throw new Error('Method not implemented.');
   }
 
   public getRefMap(): { [name: string]: Element | undefined } {
@@ -148,13 +181,15 @@ class TemplateEngine extends Animation implements ITemplateEngine {
       css?: { [key: string]: string },
       [p: string]: string | number | boolean | undefined | { [key: string]: string },
     },
-    replace?: Element | Element[] | null,
+    options?: {
+      replace?: ITemplateEngine,
+      ref?: ITemplateEngine,
+      append?: boolean,
+    },
   ) {
     const { container, template } = this;
     if (!container || !template) return;
-    let replaceList: Element[] = [];
-    if (replace) replaceList = isArray(replace) ? replace : [replace];
-    this.insertRenderString(this.getRenderString(params), replaceList);
+    this.insertRenderString(this.getRenderString(params), options || {});
     this.saveRefs();
   }
 
@@ -185,25 +220,70 @@ class TemplateEngine extends Animation implements ITemplateEngine {
     }, {}) : {};
   }
 
-  private insertRenderString(renderString: string, replace: Element[]) {
+  private insertRenderString(
+    renderString: string,
+    options: {
+      replace?: ITemplateEngine,
+      ref?: ITemplateEngine,
+      append?: boolean,
+    },
+  ) {
+    const { replace, append = true, ref } = options;
     const container = this.container as Element;
-    if (!container.innerHTML) {
+    if (!container.childNodes.length) {
       container.innerHTML = renderString;
       return this.childNodes = container.childNodes;
     }
-    const proxyContainer = document.createElement('div');
-    const templateChildNodes: ChildNode[] = [];
+    if (replace) return this.replaceRenderString(renderString, replace);
+    if (ref) return this.addRenderStringWithRef(append, renderString, ref);
+    this.addRenderStringWithoutRef(append, renderString);
+  }
+
+  private replaceRenderString(renderString: string, replace: ITemplateEngine) {
+    const container = this.container as Element;
     const { childNodes } = container;
-    proxyContainer.innerHTML = renderString;
-    proxyContainer.childNodes.forEach((childNode: ChildNode, index: number) => {
-      const replaceItem = replace[index];
-      const needReplace = replaceItem && Array.prototype.includes.call(childNodes, replaceItem);
-      templateChildNodes.push(childNode);
-      return needReplace
-        ? container.replaceChild(childNode, replaceItem)
-        : container.appendChild(childNode);
+    const proxyChildNodes = TemplateEngine.getProxyChildNodes(renderString);
+    const replaceNodeList = replace.nodeList;
+    if (!replaceNodeList || replaceNodeList.length !== proxyChildNodes.length) return;
+    proxyChildNodes.forEach((childNode: ChildNode, index: number) => {
+      const replaceItem = replaceNodeList[index];
+      if (replaceItem && Array.prototype.includes.call(childNodes, replaceItem)) {
+        container.replaceChild(childNode, replaceItem);
+      }
     });
-    this.childNodes = templateChildNodes;
+    this.childNodes = proxyChildNodes;
+  }
+
+  private addRenderStringWithoutRef(append: boolean, renderString: string) {
+    const container = this.container as Element;
+    const proxyChildNodes = TemplateEngine.getProxyChildNodes(renderString);
+    const firstChild = container.firstChild;
+    proxyChildNodes.forEach((childNode: ChildNode) => {
+      if (append) {
+        container.appendChild(childNode);
+      } else {
+        container.insertBefore(childNode, firstChild);
+      }
+    });
+    this.childNodes = proxyChildNodes;
+  }
+
+  private addRenderStringWithRef(append: boolean, renderString: string, ref: ITemplateEngine) {
+    const container = this.container as HTMLElement;
+    const proxyChildNodes = TemplateEngine.getProxyChildNodes(renderString);
+    const refNodeList = ref.nodeList;
+    if (!refNodeList?.length) return;
+    const refNode = (append ? refNodeList[refNodeList.length - 1] : refNodeList[0]) as HTMLElement;
+    (append ? Array.prototype.reverse.call(proxyChildNodes) : proxyChildNodes)
+      .forEach((childNode: ChildNode, index: number) => {
+        if (append) {
+          return index
+            ? container.insertBefore(childNode, proxyChildNodes[0])
+            : TemplateEngine.insertAfter(container, childNode as HTMLElement, refNode);
+        }
+        container.insertBefore(childNode, refNode);
+      });
+    this.childNodes = append ? Array.prototype.reverse.call(proxyChildNodes) : proxyChildNodes;
   }
 }
 

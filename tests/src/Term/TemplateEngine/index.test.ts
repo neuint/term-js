@@ -58,13 +58,39 @@ describe('TemplateEngine', () => {
     expect(container.innerHTML).toBe('<div class="className1 className2"></div><div></div>');
   });
 
+  it('Does not replace exist content on render with prepend', () => {
+    const container = document.createElement('div');
+    container.innerHTML = '<div class="className1 className2"></div>';
+    const template = '<div class="test1"></div>';
+    const te = new TemplateEngine(template, container);
+    te.render({}, { append: false });
+    expect(container.innerHTML)
+      .toBe('<div class="test1"></div><div class="className1 className2"></div>');
+  });
+
+  it('Renders content before ref element', () => {
+    const container = document.createElement('div');
+    container.innerHTML = '<div class="className1 className2"></div>';
+    const template = '<div class="className"></div>';
+    const te1 = new TemplateEngine(template, container);
+    const te2 = new TemplateEngine(template, container);
+    const te3 = new TemplateEngine(template, container);
+    te1.render({ css: { className: 'test1' } });
+    te2.render({ css: { className: 'test2' } });
+    te3.render({ css: { className: 'test3' } }, { append: false, ref: te1 });
+    expect(container.innerHTML)
+      .toBe('<div class="className1 className2"></div><div class="test3"></div><div class="test1"></div><div class="test2"></div>');
+  });
+
   it('Replaces block from argument on render', () => {
     const container = document.createElement('div');
     container.innerHTML =
-      '<div class="className1 className2"></div><div class="testReplace"></div>';
+      '<div class="className1 className2"></div>';
     const template = '<div></div>';
+    const replaceTe = new TemplateEngine(template, container);
     const te = new TemplateEngine(template, container);
-    te.render({}, container.querySelector('.testReplace') || undefined);
+    replaceTe.render({});
+    te.render({}, { replace: replaceTe });
     expect(container.innerHTML).toBe('<div class="className1 className2"></div><div></div>');
   });
 

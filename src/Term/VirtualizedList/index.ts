@@ -1,4 +1,4 @@
-import { isUndefined } from 'lodash-es';
+import { isNumber, isUndefined, last } from 'lodash-es';
 import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import TemplateEngine from '@Term/TemplateEngine';
 import IVirtualizedItem from '@Term/VirtualizedList/IVirtualizedItem';
@@ -26,6 +26,7 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   private readonly bottomOffset: number = 100;
   private itemsCache: { [key: number]: T } = {};
   private viewportItems: number[] = [];
+  private renderedItems: number[] = [];
   private offset: number = 0;
 
   private static checkViewportItem(
@@ -56,7 +57,6 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     this.bottomOffset = params.bottomOffset || this.bottomOffset;
     this.render({ css });
     this.renderViewportItems();
-    this.addListeners();
     this.frameHandler = this.renderViewportItems;
     this.registerFrameHandler();
   }
@@ -72,7 +72,6 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
 
   public destroy() {
     if (!isUndefined(this.scrollTimeout)) clearTimeout(this.scrollTimeout);
-    this.removeListeners();
     super.destroy();
   }
 
@@ -88,18 +87,9 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
     params?: {
       css?: { [p: string]: string };
       [p: string]: string | number | boolean | { [p: string]: string } | undefined },
-    replace?: Element | Element[] | null,
   ) {
-    super.render(params, replace);
+    super.render(params);
     this.updateHeight();
-  }
-
-  private addListeners() {
-
-  }
-
-  private removeListeners() {
-
   }
 
   private updateHeight() {
@@ -144,24 +134,63 @@ class VirtualizedList<T extends IVirtualizedItem> extends TemplateEngine
   }
 
   private renderItems() {
-    const { viewportItems, offset, itemsCache, itemGetter } = this;
+    const { viewportItems, offset } = this;
     const itemsContainer = this.getRef('itemsContainer') as HTMLElement;
-    this.removeRenderedItems();
-    if (itemsContainer) {
-      // viewportItems.forEach((index: number) => {
-      //   if (itemsCache[index]) return itemsCache[index].show();
-      //   const item = itemGetter(index, itemsContainer);
-      //   if (item) itemsCache[index] = item;
-      // });
+    if (itemsContainer && viewportItems.length) {
+      if (!viewportItems.length) this.removeAllItems();
+      this.removeStartItems();
+      this.removeEndItems();
+      viewportItems.forEach((index: number) => {
+        this.renderItem(index);
+      });
     }
     itemsContainer.style.top  = `${Math.round(offset)}px`;
   }
 
-  private removeRenderedItems() {
-    const { viewportItems, itemsCache } = this;
+  private renderItem(index: number) {
+    const { itemsCache, renderedItems } = this;
+    if (renderedItems.includes(index)) return;
+    // if (!renderedItems.length) {
+    //
+    // }
+    const firstIndex = renderedItems[0];
+    const lastIndex = last(renderedItems) as number;
+    // if (itemsCache[index]) return itemsCache[index].show();
+  }
+
+  private removeStartItems() {
+    const { viewportItems, renderedItems } = this;
     if (viewportItems.length) {
-      viewportItems.forEach(index => itemsCache[index] ? itemsCache[index].hide() : null);
+      const firstItem = viewportItems[0];
+      renderedItems.some((itemIndex: number) => {
+        if (itemIndex >= firstItem) return true;
+        this.removeItem(itemIndex);
+      });
     }
+  }
+
+  private removeEndItems() {
+    const { viewportItems, renderedItems } = this;
+    if (viewportItems.length) {
+      const lastItem = last(viewportItems) as number;
+      renderedItems.reverse().some((itemIndex: number) => {
+        if (itemIndex <= lastItem) return true;
+        this.removeItem(itemIndex);
+      });
+    }
+  }
+
+  private removeAllItems() {
+    const { renderedItems } = this;
+    renderedItems.forEach((itemIndex: number) => this.removeItem(itemIndex));
+    this.renderedItems = [];
+  }
+
+  private removeItem(index: number) {
+    const { itemsCache, renderedItems } = this;
+    const position = renderedItems.indexOf(index);
+    if (itemsCache[index]) itemsCache[index].hide();
+    if (position >= 0) renderedItems.splice(position, 1);
   }
 }
 

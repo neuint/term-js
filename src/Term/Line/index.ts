@@ -31,25 +31,6 @@ class Line extends TemplateEngine implements ILine {
     return Math.ceil(value.length / rowItemsCount) * itemHeight + 2 * Line.itemPadding;
   }
 
-  private static insertAfter(container: HTMLElement, element: HTMLElement, ref: HTMLElement) {
-    const { childNodes } = container;
-    const index = Array.prototype.indexOf.call(childNodes, ref);
-    if (index >= 0) {
-      return index === childNodes.length - 1
-        ? container.appendChild(element)
-        : container.insertBefore(element, childNodes[index + 1]);
-    }
-  }
-
-  private static prepend(container: HTMLElement, element: HTMLElement) {
-    const { childNodes } = container;
-    if (childNodes.length) {
-      container.insertBefore(element, childNodes[0]);
-    } else {
-      container.appendChild(element);
-    }
-  }
-
   private static cf: ICaretFactory = CaretFactory.getInstance();
   private static itemPadding: number = 4;
 
@@ -88,11 +69,13 @@ class Line extends TemplateEngine implements ILine {
       onChange?: (value: string) => void;
       editable?: boolean;
       className?: string;
+      append?: boolean;
+      ref?: ILine;
     } = {},
   ) {
     super(lineTemplate, container);
     const { label = '', value = '', delimiter = '~', onChange = noop, onSubmit = noop,
-      editable = true, caret = 'simple', className = '' } = params;
+      editable = true, caret = 'simple', className = '', append = true, ref } = params;
     this.valueField = value;
     this.className = className;
     this.label = label;
@@ -132,7 +115,6 @@ class Line extends TemplateEngine implements ILine {
 
   public render() {
     const { label, delimiter, value, editable, className } = this;
-    const root = this.getRef('root');
     super.render({
       css,
       label,
@@ -141,7 +123,7 @@ class Line extends TemplateEngine implements ILine {
       className,
       value: editable ? value : value.replace(/\s/g, NON_BREAKING_SPACE),
       nbs: NON_BREAKING_SPACE,
-    }, root);
+    }, { replace: this });
     if (editable) this.updateInputSize();
   }
 
@@ -180,51 +162,12 @@ class Line extends TemplateEngine implements ILine {
     input.selectionStart = input.selectionEnd = input.value.length;
   }
 
-  public show(append: boolean = true, target?: ILine) {
-    if (!this.hiddenField) return;
-    this.hiddenField = false;
-    if (target) {
-      this.showTarget(append, target);
-    } else {
-      this.showGeneral(append);
-    }
-  }
-
-  public hide() {
-    if (this.hiddenField) return;
-    this.hiddenField = true;
-    const root = this.getRef('root');
-    const { container } = this;
-    if (root && container) container.removeChild(root);
-  }
-
   public clear() {
     const input = this.getRef('input');
     if (this.editable) {
       (input as HTMLInputElement).value = '';
     } else {
       (input as HTMLElement).innerHTML = '';
-    }
-  }
-
-  private showTarget(append: boolean = false, target: ILine) {
-    const container = this.container as HTMLElement;
-    const targetRoot = target.getRef('root') as HTMLElement;
-    const currentRoot = this.getRef('root') as HTMLElement;
-    if (container && currentRoot && targetRoot) {
-      return append
-        ? Line.insertAfter(container, currentRoot, targetRoot)
-        : container.insertBefore(currentRoot, targetRoot);
-    }
-  }
-
-  private showGeneral(append: boolean = false) {
-    const container = this.container as HTMLElement;
-    const currentRoot = this.getRef('root') as HTMLElement;
-    if (container && currentRoot) {
-      return append
-        ? container.appendChild(currentRoot)
-        : Line.prepend(container, currentRoot);
     }
   }
 
