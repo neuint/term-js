@@ -177,7 +177,7 @@ class TemplateEngine extends Animation implements ITemplateEngine {
     const { container, childNodes } = this;
     if (container && childNodes) {
       childNodes.forEach((childNode: ChildNode) => {
-        container.removeChild(childNode);
+        if (this.checkChildExists(childNode)) container.removeChild(childNode);
       });
     }
   }
@@ -276,12 +276,12 @@ class TemplateEngine extends Animation implements ITemplateEngine {
   private addChildNodesWithoutRef(append: boolean) {
     const container = this.container as Element;
     const childNodes = this.childNodes as ChildNode[];
-    const firstChild = container.firstChild;
+    const firstChild = container.firstChild as HTMLElement;
     childNodes.forEach((childNode: ChildNode) => {
       if (append) {
-        container.appendChild(childNode);
+        this.appendChild(childNode);
       } else {
-        container.insertBefore(childNode, firstChild);
+        this.insertBefore(childNode, firstChild);
       }
     });
     this.childNodes = childNodes;
@@ -293,7 +293,6 @@ class TemplateEngine extends Animation implements ITemplateEngine {
   }
 
   private addChildNodesWithRef(append: boolean, ref: ITemplateEngine) {
-    const container = this.container as HTMLElement;
     const childNodes = this.childNodes as ChildNode[];
     const refNodeList = ref.nodeList;
     if (!refNodeList?.length) return;
@@ -302,12 +301,40 @@ class TemplateEngine extends Animation implements ITemplateEngine {
       .forEach((childNode: ChildNode, index: number) => {
         if (append) {
           return index
-            ? container.insertBefore(childNode, childNodes[0])
-            : TemplateEngine.insertAfter(container, childNode as HTMLElement, refNode);
+            ? this.insertBefore(childNode, childNodes[0])
+            : this.insertAfter(childNode, refNode);
         }
-        container.insertBefore(childNode, refNode);
+        this.insertBefore(childNode, refNode);
       });
-    this.childNodes = append ? Array.prototype.reverse.call(childNodes) : childNodes;
+  }
+
+  private checkChildExists(childNode: ChildNode): boolean {
+    const { container } = this;
+    if (container) {
+      const containerChildNodes = container.childNodes;
+      return Array.prototype.includes.call(containerChildNodes, childNode);
+    }
+    return false;
+  }
+
+  private insertBefore(childNode: ChildNode, ref: ChildNode) {
+    const { container } = this;
+    if (container && this.checkChildExists(ref)) {
+      container.insertBefore(childNode, ref);
+    }
+  }
+
+  private insertAfter(childNode: ChildNode, ref: ChildNode) {
+    const { container } = this;
+    if (container && this.checkChildExists(ref)) {
+      TemplateEngine
+        .insertAfter(container as HTMLElement, childNode as HTMLElement, ref as HTMLElement);
+    }
+  }
+
+  private appendChild(childNode: ChildNode) {
+    const { container } = this;
+    if (container) container.appendChild(childNode);
   }
 }
 

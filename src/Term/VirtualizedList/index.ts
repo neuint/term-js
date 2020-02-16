@@ -25,8 +25,8 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
   ) => T | null;
   private heightGetter: (index: number) => number;
   private height: number = 0;
-  private readonly topOffset: number = 100;
-  private readonly bottomOffset: number = 100;
+  private readonly topOffset: number = 0;
+  private readonly bottomOffset: number = 0;
   private itemsCache: { [key: number]: T } = {};
   private viewportItems: number[] = [];
   private renderedItems: number[] = [];
@@ -140,29 +140,40 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
   }
 
   private renderItems() {
-    const { viewportItems, offset } = this;
+    const { viewportItems, offset, renderedItems } = this;
     const itemsContainer = this.getRef('itemsContainer') as HTMLElement;
-    if (itemsContainer && viewportItems.length) {
+    const rerenderRequired = itemsContainer
+      && (viewportItems.length !== renderedItems.length
+      || renderedItems.some((index, i): boolean => index !== renderedItems[i]));
+    if (rerenderRequired) {
       if (!viewportItems.length) this.removeAllItems();
       this.removeStartItems();
       this.removeEndItems();
+      console.log('viewportItems', viewportItems);
       viewportItems.forEach((index: number) => {
         this.renderItem(index);
       });
+      itemsContainer.style.top  = `${Math.round(offset)}px`;
     }
-    itemsContainer.style.top  = `${Math.round(offset)}px`;
   }
 
   private renderItem(index: number) {
     const { itemsCache, renderedItems, itemGetter } = this;
-    const beforeIndex = renderedItems
-      .find((checkIndex: number): boolean => checkIndex >= index);
+    let beforeRenderArrayIndex = -1;
+    const beforeIndex = renderedItems.find((checkIndex: number, i: number): boolean => {
+      if (checkIndex > index) {
+        beforeRenderArrayIndex = i;
+        return true;
+      }
+      return false;
+    });
     const container = this.getRef('itemsContainer') as HTMLElement;
     if (!container) return;
     if (isUndefined(beforeIndex)) {
       if (itemsCache[index]) return itemsCache[index].show();
       const item = itemGetter(index, { container });
       if (item) itemsCache[index] = item;
+      renderedItems.push(index);
     } else {
       const beforeCacheItem = itemsCache[beforeIndex];
       const renderCacheItem = itemsCache[index];
@@ -170,6 +181,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       if (renderCacheItem) return renderCacheItem.show(false, beforeCacheItem);
       const item = itemGetter(index, { container, append: false, ref: beforeCacheItem });
       if (item) itemsCache[index] = item;
+      renderedItems.splice(beforeRenderArrayIndex, 0, index);
     }
   }
 
@@ -177,21 +189,28 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     const { viewportItems, renderedItems } = this;
     if (viewportItems.length) {
       const firstItem = viewportItems[0];
+      let removeCount = 0;
       renderedItems.some((itemIndex: number) => {
         if (itemIndex >= firstItem) return true;
+        removeCount += 1;
         this.removeItem(itemIndex);
       });
+      renderedItems.splice(0, removeCount);
     }
   }
 
   private removeEndItems() {
     const { viewportItems, renderedItems } = this;
     if (viewportItems.length) {
+      let removeCount = 0;
       const lastItem = last(viewportItems) as number;
       renderedItems.reverse().some((itemIndex: number) => {
         if (itemIndex <= lastItem) return true;
+        removeCount += 1;
         this.removeItem(itemIndex);
       });
+      renderedItems.splice(0, removeCount);
+      renderedItems.reverse();
     }
   }
 
@@ -205,7 +224,6 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     const { itemsCache, renderedItems } = this;
     const position = renderedItems.indexOf(index);
     if (itemsCache[index]) itemsCache[index].hide();
-    if (position >= 0) renderedItems.splice(position, 1);
   }
 }
 

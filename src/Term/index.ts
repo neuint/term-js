@@ -72,7 +72,7 @@ class Term extends TemplateEngine implements ITerm {
     );
     this.addEditLine(params.editLine || '');
     this.addListeners();
-    this.vl.scrollBottom();
+    // this.vl.scrollBottom();
     this.lastLineFocus();
   }
 

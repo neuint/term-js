@@ -114,6 +114,7 @@ class Line extends TemplateEngine implements ILine {
 
   public render() {
     const { label, delimiter, value, editable, className } = this;
+    const root = this.getRef('root');
     super.render({
       css,
       label,
@@ -122,7 +123,7 @@ class Line extends TemplateEngine implements ILine {
       className,
       value: editable ? value : value.replace(/\s/g, NON_BREAKING_SPACE),
       nbs: NON_BREAKING_SPACE,
-    }, { replace: this });
+    }, root ? { replace: this } : {});
     if (editable) this.updateInputSize();
   }
 
