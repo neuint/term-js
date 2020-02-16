@@ -56,6 +56,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     },
   ) {
     super(template, container);
+    (window as unknown as { vl: IVirtualizedList<any> }).vl = this;
     this.lengthValue = params.length;
     this.itemGetter = params.itemGetter;
     this.heightGetter = params.heightGetter;
@@ -95,6 +96,11 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       [p: string]: string | number | boolean | { [p: string]: string } | undefined },
   ) {
     super.render(params);
+    this.updateHeight();
+  }
+
+  public updateViewport() {
+    this.removeAllItems();
     this.updateHeight();
   }
 
@@ -149,7 +155,6 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       if (!viewportItems.length) this.removeAllItems();
       this.removeStartItems();
       this.removeEndItems();
-      console.log('viewportItems', viewportItems);
       viewportItems.forEach((index: number) => {
         this.renderItem(index);
       });
@@ -170,7 +175,10 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     const container = this.getRef('itemsContainer') as HTMLElement;
     if (!container) return;
     if (isUndefined(beforeIndex)) {
-      if (itemsCache[index]) return itemsCache[index].show();
+      if (itemsCache[index]) {
+        itemsCache[index].show();
+        return renderedItems.push(index);
+      }
       const item = itemGetter(index, { container });
       if (item) itemsCache[index] = item;
       renderedItems.push(index);
@@ -178,7 +186,10 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       const beforeCacheItem = itemsCache[beforeIndex];
       const renderCacheItem = itemsCache[index];
       if (!beforeCacheItem) return;
-      if (renderCacheItem) return renderCacheItem.show(false, beforeCacheItem);
+      if (renderCacheItem) {
+        renderCacheItem.show(false, beforeCacheItem);
+        return renderedItems.splice(beforeRenderArrayIndex, 0, index);
+      }
       const item = itemGetter(index, { container, append: false, ref: beforeCacheItem });
       if (item) itemsCache[index] = item;
       renderedItems.splice(beforeRenderArrayIndex, 0, index);

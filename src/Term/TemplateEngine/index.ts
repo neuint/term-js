@@ -118,7 +118,13 @@ class TemplateEngine extends Animation implements ITemplateEngine {
       : processedString;
   }
 
-  private childNodes?: NodeListOf<ChildNode> | ChildNode[] = [];
+  private childNodesField?: NodeListOf<ChildNode> | ChildNode[] = [];
+  private get childNodes(): NodeListOf<ChildNode> | ChildNode[] | undefined {
+    return this.childNodesField;
+  }
+  private set childNodes(value: NodeListOf<ChildNode> | ChildNode[] | undefined) {
+    this.childNodesField = value;
+  }
   public get nodeList(): NodeListOf<ChildNode> | ChildNode[] {
     return this.childNodes || [];
   }
@@ -243,11 +249,6 @@ class TemplateEngine extends Animation implements ITemplateEngine {
     },
   ) {
     const { replace, append = true, ref } = options;
-    const container = this.container as Element;
-    if (!container.childNodes.length) {
-      container.innerHTML = renderString;
-      return this.childNodes = container.childNodes;
-    }
     if (replace) return this.replaceRenderString(renderString, replace);
     if (ref) return this.addRenderStringWithRef(append, renderString, ref);
     this.addRenderStringWithoutRef(append, renderString);

@@ -6,4 +6,5 @@ export default interface IVirtualizedList<T extends IVirtualizedItem<any>> exten
   getVirtualItemsContainer(): Element | undefined;
   getGeneralItemsContainer(): Element | undefined;
   scrollBottom(): void;
+  updateViewport(): void;
 }

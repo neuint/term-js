@@ -145,13 +145,18 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private observeHandler = (entries: ResizeObserverEntry[]) => {
-    const { size } = this;
+    const { size, vl } = this;
     const { width, height } = get(entries, '[0].contentRect');
     if (size.width !== width) {
       size.width = width;
+      size.height = height;
       this.heightCache = [];
+      vl.updateViewport();
+    } else if (size.height !== height) {
+      size.width = width;
+      size.height = height;
+      vl.updateViewport();
     }
-    if (size.height !== height) size.height = height;
   }
 
   private addListeners() {
