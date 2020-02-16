@@ -72,7 +72,7 @@ class Term extends TemplateEngine implements ITerm {
     );
     this.addEditLine(params.editLine || '');
     this.addListeners();
-    // this.vl.scrollBottom();
+    this.vl.scrollBottom();
     this.lastLineFocus();
   }
 
@@ -130,7 +130,7 @@ class Term extends TemplateEngine implements ITerm {
     const virtualItemsContainer = container || (vl
       ? vl.getVirtualItemsContainer() as HTMLElement : undefined);
     return virtualItemsContainer ? new Line(virtualItemsContainer, {
-      ref, append, delimiter, label, editable: false, value: lines[index],
+      ref, append, delimiter, label, editable: false, value: lines[index], className: css.line,
     }) : null;
   }
 
