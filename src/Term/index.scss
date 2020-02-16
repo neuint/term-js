@@ -1,6 +1,4 @@
 @import 'mixins';
-@import 'fonts';
-@import 'theme';
 
 .term {
   background-color: var(--main-bg-color);
@@ -43,6 +41,15 @@
   }
 }
 
+.checkCharacterContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
 .header {
   height: 2.5rem;
   background-color: var(--header-bg-color);
@@ -70,5 +77,11 @@
 
 .linesContainer {
   flex: 1;
-  @include overflow-y(auto);
+  overflow: hidden;
+
+  @include margin-vertical(0.25rem);
+}
+
+.line {
+  @include margin-horizontal(0.5rem);
 }

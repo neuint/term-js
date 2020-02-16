@@ -14,16 +14,44 @@ import { NON_BREAKING_SPACE } from '../constants/strings';
 import css from './index.scss';
 
 class Line extends TemplateEngine implements ILine {
+  public static getHeight(
+    params: {
+      delimiter?: string;
+      label?: string;
+      value: string;
+      width: number;
+      itemSize: { width: number; height: number },
+    },
+  ): number {
+    const { delimiter, label, value, width, itemSize } = params;
+    const { width: itemWidth, height: itemHeight } = itemSize;
+    const labelLength = (delimiter ? delimiter.length + 1 : 0)
+      + (label ? label.length + 1 : 0);
+    const rowItemsCount = Math.floor((width - labelLength * itemWidth) / itemWidth);
+    return Math.ceil(value.length / rowItemsCount) * itemHeight + 2 * Line.itemPadding;
+  }
+
   private static cf: ICaretFactory = CaretFactory.getInstance();
+  private static itemPadding: number = 4;
+
   private valueField: string = '';
   public get value(): string {
     return this.valueField;
   }
 
+  public get hidden(): boolean {
+    return this.isHidden;
+  }
+
+  private heightField: number = 0;
+  public get height(): number {
+    return this.heightField;
+  }
+
   private label: string = '';
   private caret?: ICaret;
-  private animationFrame?: any;
   private delimiter: string = '';
+  private className: string = '';
   private editable: boolean;
   private onSubmit: (value: string) => void = noop;
   private readonly onChange: (value: string) => void = noop;
@@ -39,12 +67,16 @@ class Line extends TemplateEngine implements ILine {
       onSubmit?: (value: string) => void;
       onChange?: (value: string) => void;
       editable?: boolean;
+      className?: string;
+      append?: boolean;
+      ref?: ILine;
     } = {},
   ) {
     super(lineTemplate, container);
     const { label = '', value = '', delimiter = '~', onChange = noop, onSubmit = noop,
-      editable = true, caret = 'simple' } = params;
+      editable = true, caret = 'simple', className = '', append = true, ref } = params;
     this.valueField = value;
+    this.className = className;
     this.label = label;
     this.delimiter = delimiter;
     this.onSubmit = onSubmit;
@@ -54,6 +86,9 @@ class Line extends TemplateEngine implements ILine {
     this.render();
     this.setCaret(caret);
     this.addEventListeners();
+    this.updateHeight();
+    this.frameHandler = this.updateCaretData;
+    if (this.editable) this.registerFrameHandler();
   }
 
   get characterSize() {
@@ -65,6 +100,7 @@ class Line extends TemplateEngine implements ILine {
     this.removeCaret();
     this.removeEventListeners();
     this.editable = false;
+    this.unregisterFrameHandler();
     this.render();
   }
 
@@ -77,15 +113,17 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public render() {
-    const { label, delimiter, value, editable } = this;
+    const { label, delimiter, value, editable, className } = this;
+    const root = this.getRef('root');
     super.render({
       css,
       label,
       delimiter,
       editable,
+      className,
       value: editable ? value : value.replace(/\s/g, NON_BREAKING_SPACE),
       nbs: NON_BREAKING_SPACE,
-    }, this.getRef('root'));
+    }, root ? { replace: this } : {});
     if (editable) this.updateInputSize();
   }
 
@@ -104,7 +142,10 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public updateViewport() {
+    const { isHidden } = this;
+    if (isHidden) this.show();
     this.updateInputSize();
+    if (isHidden) this.hide();
   }
 
   public destroy() {
@@ -119,6 +160,15 @@ class Line extends TemplateEngine implements ILine {
     const input = this.getRef('input') as HTMLTextAreaElement;
     if (!input || document.activeElement !== input) return;
     input.selectionStart = input.selectionEnd = input.value.length;
+  }
+
+  public clear() {
+    const input = this.getRef('input');
+    if (this.editable) {
+      (input as HTMLInputElement).value = '';
+    } else {
+      (input as HTMLElement).innerHTML = '';
+    }
   }
 
   private addEventListeners() {
@@ -172,7 +222,8 @@ class Line extends TemplateEngine implements ILine {
     const inputContainer = this.getRef('inputContainer');
     const input = this.getRef('input') as HTMLInputElement;
     const { offsetWidth } = inputContainer as HTMLElement;
-    const { value } = input;
+    if (!input) return this.updateRowsCount(2);
+    const value = this.editable ? input.value : input.innerHTML;
     if (!width || !value || !offsetWidth) return this.updateRowsCount(2);
     const rowLength = Math.floor(offsetWidth / width);
     this.updateRowsCount(Math.ceil(value.length / rowLength) + 1);
@@ -180,9 +231,16 @@ class Line extends TemplateEngine implements ILine {
 
   private updateRowsCount(count: number) {
     const input = this.getRef('input') as HTMLInputElement;
-    if (Number(input.getAttribute('rows')) !== count) {
+    if (this.editable && input && Number(input.getAttribute('rows')) !== count) {
       input.setAttribute('rows', String(count));
     }
+    this.updateHeight();
+  }
+
+  private updateHeight = () => {
+    const root = this.getRef('root') as HTMLInputElement;
+    if (!root) return;
+    this.heightField = root.offsetHeight;
   }
 
   private updateCaretData = () => {
@@ -191,12 +249,11 @@ class Line extends TemplateEngine implements ILine {
     const { activeElement } = document;
     if (!editable || !input || !caret) return;
     const { selectionStart, selectionEnd } = input as HTMLInputElement;
-    if (selectionStart === selectionEnd && activeElement === input) {
+    if (selectionStart === selectionEnd && activeElement === input && document.hasFocus()) {
       this.showCaret();
     } else {
       this.hideCaret();
     }
-    this.animationFrame = window.requestAnimationFrame(this.updateCaretData);
   }
 
   private showCaret() {

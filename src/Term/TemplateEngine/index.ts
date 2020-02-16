@@ -1,5 +1,6 @@
-import { template as lodashTemplate, omit, isArray } from 'lodash-es';
+import { template as lodashTemplate, omit } from 'lodash-es';
 
+import Animation from '@Term/Animation';
 import ITemplateEngine from './ITemplateEngine';
 import {
   IF_CLOSE_PATTERN,
@@ -17,7 +18,28 @@ import {
   CLASS_NAME_PATTERN,
 } from './constants';
 
-class TemplateEngine implements ITemplateEngine {
+class TemplateEngine extends Animation implements ITemplateEngine {
+  private static getProxyChildNodes(renderString: string): NodeListOf<ChildNode> | ChildNode[] {
+    const proxyContainer = document.createElement('div');
+    const proxyChildNodes: ChildNode[] = [];
+    proxyContainer.innerHTML = renderString;
+    const { childNodes } = proxyContainer;
+    for (let i = 0, ln = childNodes.length; i < ln; i += 1) {
+      proxyChildNodes.push(childNodes[i]);
+    }
+    return proxyChildNodes;
+  }
+
+  private static insertAfter(container: HTMLElement, element: HTMLElement, ref: HTMLElement) {
+    const { childNodes } = container;
+    const index = Array.prototype.indexOf.call(childNodes, ref);
+    if (index >= 0) {
+      return index === childNodes.length - 1
+        ? container.appendChild(element)
+        : container.insertBefore(element, childNodes[index + 1]);
+    }
+  }
+
   private static getRenderStringWithClassNames(renderString: string, params: {
     css?: { [key: string]: string },
     [p: string]: string | number | boolean | undefined | { [key: string]: string },
@@ -96,10 +118,21 @@ class TemplateEngine implements ITemplateEngine {
       : processedString;
   }
 
-  private childNodes?: NodeListOf<ChildNode> | ChildNode[];
+  private childNodesField?: NodeListOf<ChildNode> | ChildNode[] = [];
+  private get childNodes(): NodeListOf<ChildNode> | ChildNode[] | undefined {
+    return this.childNodesField;
+  }
+  private set childNodes(value: NodeListOf<ChildNode> | ChildNode[] | undefined) {
+    this.childNodesField = value;
+  }
+  public get nodeList(): NodeListOf<ChildNode> | ChildNode[] {
+    return this.childNodes || [];
+  }
 
   private templateField: string = '';
   private templateExecutor?: (params: { [k: string]: any }) => string;
+  protected isHidden: boolean = false;
+
   public get template(): string {
     return this.templateField;
   }
@@ -118,7 +151,14 @@ class TemplateEngine implements ITemplateEngine {
     this.containerField = value;
   }
 
+  constructor(template?: string, container?: Element) {
+    super();
+    if (template) this.template = template;
+    this.containerField = container || this.containerField;
+  }
+
   public destroy() {
+    super.destroy();
     const { container, childNodes } = this;
     childNodes?.forEach((childNode: ChildNode) => {
       container?.removeChild(childNode);
@@ -127,9 +167,25 @@ class TemplateEngine implements ITemplateEngine {
 
   protected refMap: { [name: string]: Element | undefined } = {};
 
-  constructor(template?: string, container?: Element) {
-    if (template) this.template = template;
-    this.containerField = container || this.containerField;
+  public show(append: boolean = true, ref?: ITemplateEngine | undefined) {
+    if (!this.isHidden) return;
+    this.isHidden = false;
+    const { container, childNodes } = this;
+    if (container && childNodes) {
+      if (ref) return this.addChildNodesWithRef(append, ref);
+      this.addChildNodesWithoutRef(append);
+    }
+  }
+
+  public hide() {
+    if (this.isHidden) return;
+    this.isHidden = true;
+    const { container, childNodes } = this;
+    if (container && childNodes) {
+      childNodes.forEach((childNode: ChildNode) => {
+        if (this.checkChildExists(childNode)) container.removeChild(childNode);
+      });
+    }
   }
 
   public getRefMap(): { [name: string]: Element | undefined } {
@@ -145,13 +201,15 @@ class TemplateEngine implements ITemplateEngine {
       css?: { [key: string]: string },
       [p: string]: string | number | boolean | undefined | { [key: string]: string },
     },
-    replace?: Element | Element[] | null,
+    options?: {
+      replace?: ITemplateEngine,
+      ref?: ITemplateEngine,
+      append?: boolean,
+    },
   ) {
     const { container, template } = this;
     if (!container || !template) return;
-    let replaceList: Element[] = [];
-    if (replace) replaceList = isArray(replace) ? replace : [replace];
-    this.insertRenderString(this.getRenderString(params), replaceList);
+    this.insertRenderString(this.getRenderString(params), options || {});
     this.saveRefs();
   }
 
@@ -182,25 +240,102 @@ class TemplateEngine implements ITemplateEngine {
     }, {}) : {};
   }
 
-  private insertRenderString(renderString: string, replace: Element[]) {
+  private insertRenderString(
+    renderString: string,
+    options: {
+      replace?: ITemplateEngine,
+      ref?: ITemplateEngine,
+      append?: boolean,
+    },
+  ) {
+    const { replace, append = true, ref } = options;
+    if (replace) return this.replaceRenderString(renderString, replace);
+    if (ref) return this.addRenderStringWithRef(append, renderString, ref);
+    this.addRenderStringWithoutRef(append, renderString);
+  }
+
+  private replaceRenderString(renderString: string, replace: ITemplateEngine) {
     const container = this.container as Element;
-    if (!container.innerHTML) {
-      container.innerHTML = renderString;
-      return this.childNodes = container.childNodes;
-    }
-    const proxyContainer = document.createElement('div');
-    const templateChildNodes: ChildNode[] = [];
     const { childNodes } = container;
-    proxyContainer.innerHTML = renderString;
-    proxyContainer.childNodes.forEach((childNode: ChildNode, index: number) => {
-      const replaceItem = replace[index];
-      const needReplace = replaceItem && Array.prototype.includes.call(childNodes, replaceItem);
-      templateChildNodes.push(childNode);
-      return needReplace
-        ? container.replaceChild(childNode, replaceItem)
-        : container.appendChild(childNode);
+    const proxyChildNodes = TemplateEngine.getProxyChildNodes(renderString);
+    const replaceNodeList = replace.nodeList;
+    if (!replaceNodeList || replaceNodeList.length !== proxyChildNodes.length) return;
+    proxyChildNodes.forEach((childNode: ChildNode, index: number) => {
+      const replaceItem = replaceNodeList[index];
+      if (replaceItem && Array.prototype.includes.call(childNodes, replaceItem)) {
+        container.replaceChild(childNode, replaceItem);
+      }
     });
-    this.childNodes = templateChildNodes;
+    this.childNodes = proxyChildNodes;
+  }
+
+  private addRenderStringWithoutRef(append: boolean, renderString: string) {
+    this.childNodes = TemplateEngine.getProxyChildNodes(renderString);
+    this.addChildNodesWithoutRef(append);
+  }
+
+  private addChildNodesWithoutRef(append: boolean) {
+    const container = this.container as Element;
+    const childNodes = this.childNodes as ChildNode[];
+    const firstChild = container.firstChild as HTMLElement;
+    childNodes.forEach((childNode: ChildNode) => {
+      if (append) {
+        this.appendChild(childNode);
+      } else {
+        this.insertBefore(childNode, firstChild);
+      }
+    });
+    this.childNodes = childNodes;
+  }
+
+  private addRenderStringWithRef(append: boolean, renderString: string, ref: ITemplateEngine) {
+    this.childNodes = TemplateEngine.getProxyChildNodes(renderString);
+    this.addChildNodesWithRef(append, ref);
+  }
+
+  private addChildNodesWithRef(append: boolean, ref: ITemplateEngine) {
+    const childNodes = this.childNodes as ChildNode[];
+    const refNodeList = ref.nodeList;
+    if (!refNodeList?.length) return;
+    const refNode = (append ? refNodeList[refNodeList.length - 1] : refNodeList[0]) as HTMLElement;
+    (append ? Array.prototype.reverse.call(childNodes) : childNodes)
+      .forEach((childNode: ChildNode, index: number) => {
+        if (append) {
+          return index
+            ? this.insertBefore(childNode, childNodes[0])
+            : this.insertAfter(childNode, refNode);
+        }
+        this.insertBefore(childNode, refNode);
+      });
+  }
+
+  private checkChildExists(childNode: ChildNode): boolean {
+    const { container } = this;
+    if (container) {
+      const containerChildNodes = container.childNodes;
+      return Array.prototype.includes.call(containerChildNodes, childNode);
+    }
+    return false;
+  }
+
+  private insertBefore(childNode: ChildNode, ref: ChildNode) {
+    const { container } = this;
+    if (container && this.checkChildExists(ref)) {
+      container.insertBefore(childNode, ref);
+    }
+  }
+
+  private insertAfter(childNode: ChildNode, ref: ChildNode) {
+    const { container } = this;
+    if (container && this.checkChildExists(ref)) {
+      TemplateEngine
+        .insertAfter(container as HTMLElement, childNode as HTMLElement, ref as HTMLElement);
+    }
+  }
+
+  private appendChild(childNode: ChildNode) {
+    const { container } = this;
+    if (container) container.appendChild(childNode);
   }
 }
 

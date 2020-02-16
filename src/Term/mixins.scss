@@ -26,6 +26,16 @@
   align-items: center;
 }
 
+@mixin margin-vertical($value) {
+  margin-top: $value;
+  margin-bottom: $value;
+}
+
+@mixin margin-horizontal($value) {
+  margin-left: $value;
+  margin-right: $value;
+}
+
 @mixin padding-vertical($value) {
   padding-top: $value;
   padding-bottom: $value;
