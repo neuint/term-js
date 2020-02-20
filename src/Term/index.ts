@@ -158,7 +158,6 @@ class Term extends TemplateEngine implements ITerm {
 
   private heightGetter = (index: number): number => {
     const { heightCache, itemSize, size, lines, delimiter, label } = this;
-    console.log('Term.scrollbarSize', Term.scrollbarSize);
     if (isUndefined(heightCache[index])) {
       heightCache[index] = Line.getHeight({
         itemSize, delimiter, label, value: lines[index], width: size.width - Term.scrollbarSize,

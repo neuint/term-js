@@ -153,7 +153,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     const itemsContainer = this.getRef('itemsContainer') as HTMLElement;
     const rerenderRequired = itemsContainer
       && (viewportItems.length !== renderedItems.length
-      || renderedItems.some((index, i): boolean => index !== renderedItems[i]));
+      || renderedItems.some((index, i): boolean => index !== viewportItems[i]));
     if (rerenderRequired) {
       if (!viewportItems.length) this.removeAllItems();
       this.removeStartItems();
