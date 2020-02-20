@@ -1,5 +1,6 @@
 import { noop, last, get, isUndefined } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
+
 import './fonts.scss';
 import './theme.scss';
 import css from './index.scss';
@@ -10,6 +11,7 @@ import TemplateEngine from '@Term/TemplateEngine';
 import { getKeyCode } from '@Term/utils/event';
 import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { NON_BREAKING_SPACE } from '@Term/constants/strings';
+import { scrollbarSize } from '@Term/utils/viewport';
 
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
@@ -19,6 +21,8 @@ import ILine from './Line/ILine';
 import template from './template.html';
 
 class Term extends TemplateEngine implements ITerm {
+  private static scrollbarSize: number = 20;
+
   private historyField: string[] = [];
   private historyIndex: number = -1;
   private stopHistory: boolean = false;
@@ -27,6 +31,7 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private itemSizeField?: { width: number; height: number };
+  private itemSizeContainer?: HTMLElement;
   private get itemSize(): { width: number; height: number } {
     const { itemSizeField } = this;
     if (itemSizeField) return itemSizeField;
@@ -37,6 +42,7 @@ class Term extends TemplateEngine implements ITerm {
     textContainer.className = css.checkCharacterContainer;
     root.appendChild(textContainer);
     this.itemSizeField = { width: textContainer.offsetWidth, height: textContainer.offsetHeight };
+    this.itemSizeContainer = textContainer;
     return this.itemSizeField;
   }
 
@@ -66,6 +72,7 @@ class Term extends TemplateEngine implements ITerm {
     this.ro.observe(container);
     this.caret = params.caret;
     this.render({ css, header: params.header });
+    Term.scrollbarSize = scrollbarSize(this.getRef('root') as HTMLElement);
     this.vl = new VirtualizedList(
       this.getRef('linesContainer') as Element,
       { length: this.lines.length, itemGetter: this.itemGetter, heightGetter: this.heightGetter },
@@ -74,6 +81,8 @@ class Term extends TemplateEngine implements ITerm {
     this.addListeners();
     this.vl.scrollBottom();
     this.lastLineFocus();
+    this.frameHandler = this.characterUpdater;
+    this.registerFrameHandler();
   }
 
   public addEventListener<K extends keyof ITermEventMap>(
@@ -122,6 +131,19 @@ class Term extends TemplateEngine implements ITerm {
     }
   }
 
+  private characterUpdater = () => {
+    const { width, height } = this.itemSize;
+    const { itemSizeContainer, vl } = this;
+    if (itemSizeContainer) {
+      const { offsetWidth, offsetHeight } = itemSizeContainer;
+      this.itemSizeField = { width: offsetWidth, height: offsetHeight };
+      if (offsetWidth !== width || offsetHeight !== height) {
+        this.heightCache = [];
+        vl.updateViewport();
+      }
+    }
+  }
+
   private itemGetter = (
     index: number, params?: { container?: HTMLElement, ref?: ILine, append?: boolean },
   ): ILine | null => {
@@ -138,7 +160,7 @@ class Term extends TemplateEngine implements ITerm {
     const { heightCache, itemSize, size, lines, delimiter, label } = this;
     if (isUndefined(heightCache[index])) {
       heightCache[index] = Line.getHeight({
-        itemSize, delimiter, label, value: lines[index], width: size.width,
+        itemSize, delimiter, label, value: lines[index], width: size.width - Term.scrollbarSize,
       });
     }
     return heightCache[index];
@@ -199,9 +221,9 @@ class Term extends TemplateEngine implements ITerm {
     const { history, vl } = this;
     if (value && last(history) !== value) this.historyField.push(value);
     this.lines.push(value);
-    vl.scrollBottom();
     this.clearHistoryState();
     vl.length = this.lines.length;
+    vl.scrollBottom();
     if (!this.editLine) return;
     this.editLine.clear();
   }

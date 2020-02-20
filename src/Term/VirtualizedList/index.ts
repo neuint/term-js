@@ -53,6 +53,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       heightGetter: (index: number) => number;
       topOffset?: number;
       bottomOffset?: number;
+      className?: string;
     },
   ) {
     super(template, container);
@@ -62,7 +63,9 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     this.heightGetter = params.heightGetter;
     this.topOffset = params.topOffset || this.topOffset;
     this.bottomOffset = params.bottomOffset || this.bottomOffset;
-    this.render({ css });
+    this.render({
+      css: { ...css, className: params.className || '' },
+    });
     this.renderViewportItems();
     this.frameHandler = this.renderViewportItems;
     this.registerFrameHandler();
@@ -150,7 +153,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     const itemsContainer = this.getRef('itemsContainer') as HTMLElement;
     const rerenderRequired = itemsContainer
       && (viewportItems.length !== renderedItems.length
-      || renderedItems.some((index, i): boolean => index !== renderedItems[i]));
+      || renderedItems.some((index, i): boolean => index !== viewportItems[i]));
     if (rerenderRequired) {
       if (!viewportItems.length) this.removeAllItems();
       this.removeStartItems();
