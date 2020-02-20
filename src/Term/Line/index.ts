@@ -27,12 +27,15 @@ class Line extends TemplateEngine implements ILine {
     const { width: itemWidth, height: itemHeight } = itemSize;
     const labelLength = (delimiter ? delimiter.length + 1 : 0)
       + (label ? label.length + 1 : 0);
-    const rowItemsCount = Math.floor((width - labelLength * itemWidth) / itemWidth);
-    return Math.ceil(value.length / rowItemsCount) * itemHeight + 2 * Line.itemPadding;
+    const rowItemsCount = Math
+      .floor((width - Line.itemHorizontalPadding - labelLength * itemWidth) / itemWidth);
+    return Math.ceil((value.length || 1) / rowItemsCount) * itemHeight
+      + 2 * Line.itemVerticalPadding;
   }
 
   private static cf: ICaretFactory = CaretFactory.getInstance();
-  private static itemPadding: number = 4;
+  private static itemVerticalPadding: number = 4;
+  private static itemHorizontalPadding: number = 16;
 
   private valueField: string = '';
   public get value(): string {

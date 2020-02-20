@@ -2,7 +2,7 @@
 
 :root {
   --main-bg-color: #{$bunker};
-  --scrollbar-bg-color: #{lighten($bunker, 3)};
+  --scrollbar-bg-color: #{lighten($bunker, 20)};
   --main-text-color: #{$alabaster};
   --main-selectoin-color: #{darken($alabaster, 20)};
 

@@ -9,7 +9,7 @@ const container = document.querySelector('#root');
 
 if (container) {
   const term = new Term(container, {
-    lines: (new Array(500).fill(null)).map((
+    lines: (new Array(1).fill(null)).map((
       _, index,
     ): string => (new Array(10).fill(`Line ${index}`)).join(' ')),
   });
