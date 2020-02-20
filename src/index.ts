@@ -1,5 +1,6 @@
 import Term from './Term';
 import ITerm from '@Term/ITerm';
+import { ValueType } from '@Term/types';
 
 import './index.scss';
 
@@ -9,9 +10,9 @@ const container = document.querySelector('#root');
 
 if (container) {
   const term = new Term(container, {
-    lines: (new Array(500).fill(null)).map((
+    lines: (new Array(1).fill(null)).map((
       _, index,
-    ): string => (new Array(20).fill(`Line ${index}`)).join(' ')),
+    ): ValueType => ([{ str: 'test' }])),
   });
   term.setHeader('Test');
   (window as unknown as { term: ITerm }).term = term;

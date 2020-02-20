@@ -1,4 +1,4 @@
-import { isNull, isUndefined, noop } from 'lodash-es';
+import { isArray, isNull, isUndefined, noop } from 'lodash-es';
 
 import { DOWN_CODE, ENTER_CODE, LEFT_CODE, RIGHT_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { getKeyCode } from '@Term/utils/event';
@@ -6,6 +6,7 @@ import ICaret from '@Term/BaseCaret/ICaret';
 import ICaretFactory from '@Term/CaretFactory/ICaretFactory';
 import CaretFactory from '@Term/CaretFactory';
 import { LOCK_TIMEOUT } from '@Term/Line/constants';
+import { ValueType } from '@Term/types';
 import lineTemplate from './template.html';
 import TemplateEngine from '../TemplateEngine';
 import ILine from './ILine';
@@ -14,6 +15,10 @@ import { NON_BREAKING_SPACE } from '../constants/strings';
 import css from './index.scss';
 
 class Line extends TemplateEngine implements ILine {
+  public static getValueString(value: ValueType): string {
+    return isArray(value) ? value.reduce((acc, item) => acc + item.str, '') : value;
+  }
+
   public static getHeight(
     params: {
       delimiter?: string;
@@ -37,9 +42,9 @@ class Line extends TemplateEngine implements ILine {
   private static itemVerticalPadding: number = 4;
   private static itemHorizontalPadding: number = 16;
 
-  private valueField: string = '';
+  private valueField: ValueType = '';
   public get value(): string {
-    return this.valueField;
+    return Line.getValueString(this.valueField);
   }
 
   public get hidden(): boolean {
@@ -64,7 +69,7 @@ class Line extends TemplateEngine implements ILine {
     container: Element,
     params: {
       caret?: string;
-      value?: string;
+      value?: ValueType;
       label?: string;
       delimiter?: string;
       onSubmit?: (value: string) => void;
@@ -116,7 +121,7 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public render() {
-    const { label, delimiter, value, editable, className } = this;
+    const { label, delimiter, editable, className, value } = this;
     const root = this.getRef('root');
     super.render({
       css,

@@ -12,6 +12,7 @@ import { getKeyCode } from '@Term/utils/event';
 import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { NON_BREAKING_SPACE } from '@Term/constants/strings';
 import { scrollbarSize } from '@Term/utils/viewport';
+import { ValueType } from '@Term/types';
 
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
@@ -47,7 +48,7 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private readonly ro: ResizeObserver;
-  private readonly lines: string[] = [];
+  private readonly lines: ValueType[] = [];
   private readonly vl: IVirtualizedList<ILine>;
   private heightCache: number[] = [];
   private size: { width: number; height: number } = { width: 0, height: 0 };
@@ -57,7 +58,7 @@ class Term extends TemplateEngine implements ITerm {
   private label: string = '';
 
   constructor(container: Element, params: {
-    lines: string[];
+    lines: ValueType[];
     editLine?: string;
     header?: string;
     onSubmit?: (line: string, lines: string[]) => void;
@@ -160,7 +161,11 @@ class Term extends TemplateEngine implements ITerm {
     const { heightCache, itemSize, size, lines, delimiter, label } = this;
     if (isUndefined(heightCache[index])) {
       heightCache[index] = Line.getHeight({
-        itemSize, delimiter, label, value: lines[index], width: size.width - Term.scrollbarSize,
+        itemSize,
+        delimiter,
+        label,
+        value: Line.getValueString(lines[index]),
+        width: size.width - Term.scrollbarSize,
       });
     }
     return heightCache[index];
