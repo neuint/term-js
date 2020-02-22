@@ -25,9 +25,10 @@
       <Choose>
         <When condition="{editable}">
           <textarea spellCheck="false" class="input" ref="input" rows="2">{value}</textarea>
+          <div ref="inputView" class="inputView">{valueTemplate}</div>
         </When>
         <Otherwise>
-          <div ref="input" class="input">{value}</div>
+          <div ref="input" class="input">{valueTemplate}</div>
         </Otherwise>
       </Choose>
     </div>

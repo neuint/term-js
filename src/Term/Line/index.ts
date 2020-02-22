@@ -1,4 +1,5 @@
-import { isArray, isNull, isUndefined, noop } from 'lodash-es';
+import { isNull, isString, isUndefined, noop } from 'lodash-es';
+import escapeHTML from 'escape-html';
 
 import { DOWN_CODE, ENTER_CODE, LEFT_CODE, RIGHT_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { getKeyCode } from '@Term/utils/event';
@@ -6,7 +7,7 @@ import ICaret from '@Term/BaseCaret/ICaret';
 import ICaretFactory from '@Term/CaretFactory/ICaretFactory';
 import CaretFactory from '@Term/CaretFactory';
 import { LOCK_TIMEOUT } from '@Term/Line/constants';
-import { ValueType } from '@Term/types';
+import { ValueFragmentType, ValueType } from '@Term/types';
 import lineTemplate from './template.html';
 import TemplateEngine from '../TemplateEngine';
 import ILine from './ILine';
@@ -15,10 +16,6 @@ import { NON_BREAKING_SPACE } from '../constants/strings';
 import css from './index.scss';
 
 class Line extends TemplateEngine implements ILine {
-  public static getValueString(value: ValueType): string {
-    return isArray(value) ? value.reduce((acc, item) => acc + item.str, '') : value;
-  }
-
   public static getHeight(
     params: {
       delimiter?: string;
@@ -38,6 +35,31 @@ class Line extends TemplateEngine implements ILine {
       + 2 * Line.itemVerticalPadding;
   }
 
+  public static getValueString(value: ValueType): string {
+    if (isString(value)) return value;
+    return value.reduce((
+      acc: string, item: ValueFragmentType,
+    ): string => `${acc}${isString(item) ? item : item.str}`, '');
+  }
+
+  private static getNormalizedTemplateString(str: string): string {
+    return escapeHTML(str).replace(/\s/g, NON_BREAKING_SPACE);
+  }
+
+  private static getValueFragmentTemplate(valueFragment: ValueFragmentType, index: number): string {
+    if (isString(valueFragment)) return Line.getNormalizedTemplateString(valueFragment);
+    const { str, className } = valueFragment;
+    const normalizedString = Line.getNormalizedTemplateString(str);
+    return `<span ref="fragment-${index}" class="${className || ''}">${normalizedString}</span>`;
+  }
+
+  private static getValueTemplate(value: ValueType): string {
+    if (isString(value)) return Line.getNormalizedTemplateString(value);
+    return value.reduce((acc: string, item: ValueFragmentType, index: number): string => {
+      return `${acc}${Line.getValueFragmentTemplate(item, index)}`;
+    }, '');
+  }
+
   private static cf: ICaretFactory = CaretFactory.getInstance();
   private static itemVerticalPadding: number = 4;
   private static itemHorizontalPadding: number = 16;
@@ -49,6 +71,10 @@ class Line extends TemplateEngine implements ILine {
 
   public get hidden(): boolean {
     return this.isHidden;
+  }
+
+  private get valueTemplate(): string {
+    return Line.getValueTemplate(this.valueField);
   }
 
   private heightField: number = 0;
@@ -121,7 +147,7 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public render() {
-    const { label, delimiter, editable, className, value } = this;
+    const { label, delimiter, editable, className, value, valueTemplate } = this;
     const root = this.getRef('root');
     super.render({
       css,
@@ -129,7 +155,8 @@ class Line extends TemplateEngine implements ILine {
       delimiter,
       editable,
       className,
-      value: editable ? value : value.replace(/\s/g, NON_BREAKING_SPACE),
+      value,
+      valueTemplate,
       nbs: NON_BREAKING_SPACE,
     }, root ? { replace: this } : {});
     if (editable) this.updateInputSize();
@@ -139,7 +166,7 @@ class Line extends TemplateEngine implements ILine {
     const input = this.getRef('input');
     this.removeCaret();
     const caret = Line.cf.create(name, this.getRef('inputContainer') as Element);
-    if (caret) {
+    if (caret && this.editable) {
       input?.classList.add(css.customCaret);
     } else {
       input?.classList.remove(css.customCaret);
@@ -172,6 +199,8 @@ class Line extends TemplateEngine implements ILine {
 
   public clear() {
     const input = this.getRef('input');
+    const inputView = this.getRef('inputView');
+    if (inputView) inputView.innerHTML = '';
     if (this.editable) {
       (input as HTMLInputElement).value = '';
     } else {
@@ -220,8 +249,11 @@ class Line extends TemplateEngine implements ILine {
 
   private changeHandler = () => {
     const value = (this.getRef('input') as HTMLInputElement).value;
+    const inputView = (this.getRef('inputView') as HTMLInputElement);
+    this.valueField = value;
     this.updateInputSize();
     this.lockCaret();
+    inputView.innerHTML = this.valueTemplate;
     this.onChange(value);
   }
 

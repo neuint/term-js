@@ -1,5 +1,10 @@
 @import 'mixins';
 
+@mixin input-general {
+  word-break: break-all;
+  resize: none;
+}
+
 .root {
   position: relative;
 }
@@ -38,13 +43,24 @@
 
 .input {
   width: 100%;
-  resize: none;
-  word-break: break-all;
+  color: var(--main-text-color);
 
   &.customCaret {
     color: transparent;
-    text-shadow: 0 0 0 var(--main-text-color);
   }
+
+  @include input-general;
+}
+
+.inputView {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+
+  @include input-general;
 }
 
 .caret {}

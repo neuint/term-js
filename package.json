@@ -28,7 +28,9 @@
     }
   },
   "dependencies": {
+    "@types/escape-html": "0.0.20",
     "@types/lodash-es": "^4.17.3",
+    "escape-html": "^1.0.3",
     "lodash-es": "^4.17.15"
   },
   "devDependencies": {

@@ -64,6 +64,8 @@ class Term extends TemplateEngine implements ITerm {
     onSubmit?: (line: string, lines: string[]) => void;
     onChange?: (line: string) => void;
     caret?: string;
+    label?: string;
+    delimiter?: string;
   } = { lines: [], editLine: '' }) {
     super(template, container);
     this.lines = params.lines;
@@ -72,6 +74,8 @@ class Term extends TemplateEngine implements ITerm {
     this.ro = new ResizeObserver(this.observeHandler);
     this.ro.observe(container);
     this.caret = params.caret;
+    this.label = params.label || this.label;
+    this.delimiter = params.delimiter || this.delimiter;
     this.render({ css, header: params.header });
     Term.scrollbarSize = scrollbarSize(this.getRef('root') as HTMLElement);
     this.vl = new VirtualizedList(
