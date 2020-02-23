@@ -4,6 +4,7 @@ import ResizeObserver from 'resize-observer-polyfill';
 import './fonts.scss';
 import './theme.scss';
 import css from './index.scss';
+import template from './template.html';
 
 import VirtualizedList from '@Term/VirtualizedList';
 import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
@@ -18,8 +19,6 @@ import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
 import Line from './Line';
 import ILine from './Line/ILine';
-
-import template from './template.html';
 
 class Term extends TemplateEngine implements ITerm {
   private static scrollbarSize: number = 20;
@@ -59,7 +58,7 @@ class Term extends TemplateEngine implements ITerm {
 
   constructor(container: Element, params: {
     lines: ValueType[];
-    editLine?: string;
+    editLine?: ValueType;
     header?: string;
     onSubmit?: (line: string, lines: string[]) => void;
     onChange?: (line: string) => void;
@@ -200,7 +199,7 @@ class Term extends TemplateEngine implements ITerm {
     if (root) root.removeEventListener('click', this.clickHandler);
   }
 
-  protected addEditLine(editLine: string) {
+  protected addEditLine(editLine: ValueType) {
     const { vl, delimiter, label } = this;
     const generalItemsContainer = vl.getGeneralItemsContainer();
     if (!generalItemsContainer) return;
@@ -226,10 +225,11 @@ class Term extends TemplateEngine implements ITerm {
     if (document.hasFocus() && this.editLine) this.editLine.focus();
   }
 
-  private submitHandler = (value: string) => {
+  private submitHandler = (value: string, formattedValue: ValueType) => {
     const { history, vl } = this;
-    if (value && last(history) !== value) this.historyField.push(value);
-    this.lines.push(value);
+    const historyValue = value.substring(Line.getLockString(formattedValue).length);
+    if (historyValue && last(history) !== historyValue) this.historyField.push(historyValue);
+    this.lines.push(formattedValue);
     this.clearHistoryState();
     vl.length = this.lines.length;
     vl.scrollBottom();
@@ -273,26 +273,24 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private prevHistory = (e: KeyboardEvent) => {
-    const { historyIndex, history, stopHistory } = this;
-    const input = this.getLastLineInput();
-    if (!history.length || !input || stopHistory) return;
+    const { historyIndex, history, stopHistory, editLine } = this;
+    if (!history.length || !editLine || stopHistory) return;
     const newIndex = historyIndex < 0 ? history.length - 1 : Math.max(0, historyIndex - 1);
     if (historyIndex === newIndex) return;
     this.historyIndex = newIndex;
-    input.value = history[newIndex];
-    if (this.editLine) this.editLine.moveCaretToEnd();
+    editLine.value = history[newIndex];
+    editLine.moveCaretToEnd();
     e.preventDefault();
   }
 
   private nextHistory = (e: KeyboardEvent) => {
-    const { historyIndex, history, stopHistory } = this;
-    const input = this.getLastLineInput();
-    if (!history.length || !input || stopHistory || historyIndex < 0) return;
+    const { historyIndex, history, stopHistory, editLine } = this;
+    if (!history.length || !editLine || stopHistory || historyIndex < 0) return;
     const newIndex = historyIndex === history.length - 1 ? -1 : historyIndex + 1;
     if (historyIndex === newIndex) return;
     this.historyIndex = newIndex;
-    input.value = newIndex >= 0 ? history[newIndex] : '';
-    if (this.editLine) this.editLine.moveCaretToEnd();
+    editLine.value = newIndex >= 0 ? history[newIndex] : '';
+    editLine.moveCaretToEnd();
     e.preventDefault();
   }
 }

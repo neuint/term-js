@@ -1,19 +1,25 @@
 import { isNull, isString, isUndefined, noop } from 'lodash-es';
 import escapeHTML from 'escape-html';
 
+import css from './index.scss';
+import lineTemplate from './template.html';
+
 import { DOWN_CODE, ENTER_CODE, LEFT_CODE, RIGHT_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { getKeyCode } from '@Term/utils/event';
 import ICaret from '@Term/BaseCaret/ICaret';
 import ICaretFactory from '@Term/CaretFactory/ICaretFactory';
 import CaretFactory from '@Term/CaretFactory';
 import { LOCK_TIMEOUT } from '@Term/Line/constants';
-import { ValueFragmentType, ValueType } from '@Term/types';
-import lineTemplate from './template.html';
+import {
+  FormattedValueFragmentType,
+  FormattedValueType,
+  ValueFragmentType,
+  ValueType,
+} from '@Term/types';
+import { getStartIntersectionString } from '@Term/utils/string';
 import TemplateEngine from '../TemplateEngine';
 import ILine from './ILine';
 import { NON_BREAKING_SPACE } from '../constants/strings';
-
-import css from './index.scss';
 
 class Line extends TemplateEngine implements ILine {
   public static getHeight(
@@ -33,6 +39,42 @@ class Line extends TemplateEngine implements ILine {
       .floor((width - Line.itemHorizontalPadding - labelLength * itemWidth) / itemWidth);
     return Math.ceil((value.length || 1) / rowItemsCount) * itemHeight
       + 2 * Line.itemVerticalPadding;
+  }
+
+  public static getLockString(value: ValueType): string {
+    if (isString(value)) return '';
+    let str = '';
+    let lockStr = '';
+    value.forEach((item: ValueFragmentType) => {
+      if (isString(item)) {
+        str += item;
+      } else {
+        str += item.str;
+        if (item.lock) lockStr = str;
+      }
+    });
+    return lockStr;
+  }
+
+  private static getUpdatedValueField(value: string, prevValue: ValueType): ValueType {
+    if (isString(prevValue)) return value;
+    let checkValue = value;
+    let stop = false;
+    const updatedValueField = prevValue.reduce((
+      acc: FormattedValueType, item: ValueFragmentType,
+    ): FormattedValueType => {
+      const isStringItem = isString(item);
+      const itemStr = (isStringItem ? item : (item as FormattedValueFragmentType).str) as string;
+      const { str, isFull } = getStartIntersectionString(itemStr, value);
+      if (str && !stop) {
+        acc.push(isStringItem ? str : { ...(item as FormattedValueFragmentType), str });
+        checkValue = value.substring(str.length);
+        stop = !isFull;
+      }
+      return acc;
+    }, [] as FormattedValueType);
+    updatedValueField.push(checkValue);
+    return updatedValueField;
   }
 
   public static getValueString(value: ValueType): string {
@@ -65,8 +107,20 @@ class Line extends TemplateEngine implements ILine {
   private static itemHorizontalPadding: number = 16;
 
   private valueField: ValueType = '';
-  public get value(): string {
+  public get value(): ValueType {
     return Line.getValueString(this.valueField);
+  }
+  public set value(val: ValueType) {
+    const input = this.getRef('input');
+    const inputView = this.getRef('inputView');
+    this.valueField = val;
+    if (inputView) inputView.innerHTML = Line.getValueTemplate(val);
+    if (this.editable) {
+      (input as HTMLInputElement).value = this.value as string;
+    } else {
+      (input as HTMLElement).innerHTML = Line.getValueTemplate(val);
+    }
+    this.updateInputSize();
   }
 
   public get hidden(): boolean {
@@ -87,9 +141,10 @@ class Line extends TemplateEngine implements ILine {
   private delimiter: string = '';
   private className: string = '';
   private editable: boolean;
-  private onSubmit: (value: string) => void = noop;
+  private onSubmit: (value: string, formattedValue: ValueType) => void = noop;
   private readonly onChange: (value: string) => void = noop;
   private lockTimeout?: ReturnType<typeof setTimeout>;
+  private caretPosition: number = 0;
 
   constructor(
     container: Element,
@@ -98,7 +153,7 @@ class Line extends TemplateEngine implements ILine {
       value?: ValueType;
       label?: string;
       delimiter?: string;
-      onSubmit?: (value: string) => void;
+      onSubmit?: (value: string, formattedValue: ValueType) => void;
       onChange?: (value: string) => void;
       editable?: boolean;
       className?: string;
@@ -108,7 +163,7 @@ class Line extends TemplateEngine implements ILine {
   ) {
     super(lineTemplate, container);
     const { label = '', value = '', delimiter = '~', onChange = noop, onSubmit = noop,
-      editable = true, caret = 'simple', className = '', append = true, ref } = params;
+      editable = true, caret, className = '', append = true, ref } = params;
     this.valueField = value;
     this.className = className;
     this.label = label;
@@ -118,11 +173,14 @@ class Line extends TemplateEngine implements ILine {
     this.editable = editable;
     this.container = container;
     this.render();
-    this.setCaret(caret);
+    this.setCaret(caret || 'simple');
     this.addEventListeners();
     this.updateHeight();
     this.frameHandler = this.updateCaretData;
-    if (this.editable) this.registerFrameHandler();
+    if (this.editable) {
+      this.registerFrameHandler();
+      this.moveCaretToEnd(true);
+    }
   }
 
   get characterSize() {
@@ -155,8 +213,8 @@ class Line extends TemplateEngine implements ILine {
       delimiter,
       editable,
       className,
-      value,
       valueTemplate,
+      value: value as string,
       nbs: NON_BREAKING_SPACE,
     }, root ? { replace: this } : {});
     if (editable) this.updateInputSize();
@@ -191,21 +249,16 @@ class Line extends TemplateEngine implements ILine {
     this.removeEventListeners();
   }
 
-  public moveCaretToEnd() {
+  public moveCaretToEnd(isForce: boolean = false) {
     const input = this.getRef('input') as HTMLTextAreaElement;
+    if (isForce) this.focus();
     if (!input || document.activeElement !== input) return;
     input.selectionStart = input.selectionEnd = input.value.length;
+    this.caretPosition = input.selectionEnd;
   }
 
   public clear() {
-    const input = this.getRef('input');
-    const inputView = this.getRef('inputView');
-    if (inputView) inputView.innerHTML = '';
-    if (this.editable) {
-      (input as HTMLInputElement).value = '';
-    } else {
-      (input as HTMLElement).innerHTML = '';
-    }
+    this.value = '';
   }
 
   private addEventListeners() {
@@ -240,21 +293,46 @@ class Line extends TemplateEngine implements ILine {
     } as { [code: number]: (e: KeyboardEvent) => void })[Number(getKeyCode(e))] || noop)(e);
   }
 
-  private submitHandler = (e: KeyboardEvent): void => {
+  private submitHandler = (e: Event): void => {
     const { onSubmit } = this;
     e.preventDefault();
-    this.valueField = (this.getRef('input') as HTMLInputElement).value;
-    return onSubmit(this.value);
+    this.updateValueField();
+    return onSubmit(this.value as string, this.valueField);
   }
 
   private changeHandler = () => {
-    const value = (this.getRef('input') as HTMLInputElement).value;
-    const inputView = (this.getRef('inputView') as HTMLInputElement);
-    this.valueField = value;
-    this.updateInputSize();
-    this.lockCaret();
-    inputView.innerHTML = this.valueTemplate;
-    this.onChange(value);
+    if (!this.preventLockUpdate()) {
+      const inputView = (this.getRef('inputView') as HTMLInputElement);
+      this.updateValueField();
+      this.updateInputSize();
+      this.lockCaret();
+      inputView.innerHTML = this.valueTemplate;
+      this.onChange(this.value as string);
+    }
+  }
+
+  private preventLockUpdate(): boolean {
+    const { valueField } = this;
+    if (isString(valueField)) return false;
+    const input = this.getRef('input') as HTMLTextAreaElement;
+    const { value } = input;
+    const lockStr = Line.getLockString(valueField);
+    if (lockStr && value.indexOf(lockStr) !== 0) {
+      const newCaretPosition = lockStr.length;
+      input.value = this.value as string;
+      input.selectionStart = input.selectionEnd = newCaretPosition;
+      this.caretPosition = newCaretPosition;
+      return true;
+    }
+    this.caretPosition = input.selectionEnd;
+    return false;
+  }
+
+  private updateValueField() {
+    return this.valueField = Line.getUpdatedValueField(
+      (this.getRef('input') as HTMLInputElement).value,
+      this.valueField,
+    );
   }
 
   private updateInputSize = () => {

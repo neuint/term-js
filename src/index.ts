@@ -10,11 +10,15 @@ const container = document.querySelector('#root');
 
 if (container) {
   const term = new Term(container, {
+    caret: '',
     label: 'guest',
+    editLine: [
+      { str: 'User name: ', lock: true, className: css.granted },
+    ],
     lines: (new Array(1).fill(null)).map((
       _, index,
     ): ValueType => ([
-      { str: 'Please start', className: css.granted },
+      { str: 'Access denied please login!', className: css.denied },
     ])),
   });
   term.setHeader('Test');

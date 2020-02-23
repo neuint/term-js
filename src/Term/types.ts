@@ -1,8 +1,12 @@
-export type ValueFragmentType = string | {
+export type FormattedValueFragmentType = {
   str: string;
   clickHandler?: () => void;
   lock?: boolean;
   className?: string;
 };
 
-export type ValueType = string | ValueFragmentType[];
+export type ValueFragmentType = string | FormattedValueFragmentType;
+
+export type FormattedValueType = ValueFragmentType[];
+
+export type ValueType = string | FormattedValueType;
