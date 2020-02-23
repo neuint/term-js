@@ -8,12 +8,14 @@ if (module.hot) module.hot.accept();
 
 const container = document.querySelector('#root');
 
+const clickHandler = (...args: any[]) => console.log('args', args);
+
 if (container) {
   const term = new Term(container, {
     caret: '',
     label: 'guest',
     editLine: [
-      { str: 'User name: ', lock: true, className: css.granted },
+      { clickHandler, str: 'User name: ', lock: true, className: css.granted },
     ],
     lines: (new Array(1).fill(null)).map((
       _, index,

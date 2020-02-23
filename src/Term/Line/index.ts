@@ -65,10 +65,10 @@ class Line extends TemplateEngine implements ILine {
     ): FormattedValueType => {
       const isStringItem = isString(item);
       const itemStr = (isStringItem ? item : (item as FormattedValueFragmentType).str) as string;
-      const { str, isFull } = getStartIntersectionString(itemStr, value);
+      const { str, isFull } = getStartIntersectionString(itemStr, checkValue);
       if (str && !stop) {
         acc.push(isStringItem ? str : { ...(item as FormattedValueFragmentType), str });
-        checkValue = value.substring(str.length);
+        checkValue = checkValue.substring(str.length);
         stop = !isFull;
       }
       return acc;
