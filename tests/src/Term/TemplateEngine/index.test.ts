@@ -145,6 +145,17 @@ describe('TemplateEngine', () => {
     expect(container.innerHTML).toBe('');
   });
 
+  it('Does not skip If block if condition is true with !', () => {
+    const container = document.createElement('div');
+    const template = '<If condition="{flag1 && !flag2}"><div>test</div></If>';
+    const te = new TemplateEngine(template, container);
+    te.render({
+      flag1: true,
+      flag2: false,
+    });
+    expect(container.innerHTML).toBe('<div>test</div>');
+  });
+
   it('Does not skip If block if condition is true', () => {
     const container = document.createElement('div');
     const template = '<If condition="{flag1 || flag2}"><div>test</div></If>';

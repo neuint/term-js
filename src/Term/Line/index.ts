@@ -19,7 +19,10 @@ import {
 import { getStartIntersectionString } from '@Term/utils/string';
 import TemplateEngine from '../TemplateEngine';
 import ILine from './ILine';
+import Input from './Input';
 import { NON_BREAKING_SPACE } from '../constants/strings';
+import IInput from '@Term/Line/Input/IInput';
+import { ParamsType } from '@Term/Line/types';
 
 class Line extends TemplateEngine implements ILine {
   public static getHeight(
@@ -145,25 +148,15 @@ class Line extends TemplateEngine implements ILine {
   private readonly onChange: (value: string) => void = noop;
   private lockTimeout?: ReturnType<typeof setTimeout>;
   private caretPosition: number = 0;
+  private input?: IInput;
 
   constructor(
     container: Element,
-    params: {
-      caret?: string;
-      value?: ValueType;
-      label?: string;
-      delimiter?: string;
-      onSubmit?: (value: string, formattedValue: ValueType) => void;
-      onChange?: (value: string) => void;
-      editable?: boolean;
-      className?: string;
-      append?: boolean;
-      ref?: ILine;
-    } = {},
+    params: ParamsType = {},
   ) {
     super(lineTemplate, container);
     const { label = '', value = '', delimiter = '~', onChange = noop, onSubmit = noop,
-      editable = true, caret, className = '', append = true, ref } = params;
+      editable = true, caret, className = '' } = params;
     this.valueField = value;
     this.className = className;
     this.label = label;
@@ -197,27 +190,16 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public focus() {
-    const input = this.getRef('input') as HTMLInputElement;
-    if (!input) return;
-    if (document.activeElement === input) return;
-    input.focus();
-    input.value = input.value;
+    if (this.input) this.input.focus();
   }
 
   public render() {
-    const { label, delimiter, editable, className, value, valueTemplate } = this;
+    const { label, delimiter, editable, className, valueTemplate } = this;
     const root = this.getRef('root');
     super.render({
-      css,
-      label,
-      delimiter,
-      editable,
-      className,
-      valueTemplate,
-      value: value as string,
-      nbs: NON_BREAKING_SPACE,
+      css, label, delimiter, editable, className, valueTemplate, nbs: NON_BREAKING_SPACE,
     }, root ? { replace: this } : {});
-    if (editable) this.updateInputSize();
+    if (editable) this.input = new Input(this.getRef('inputContainer') as HTMLElement);
   }
 
   public setCaret(name: string = 'simple') {

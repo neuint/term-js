@@ -1,0 +1,13 @@
+@import 'mixins';
+
+.root {
+  &.hiddenCaret {
+    color: transparent;
+    text-shadow: 0 0 0 var(--main-text-color);
+
+    > * {
+      color: var(--main-text-color);
+      text-shadow: none;
+    }
+  }
+}
