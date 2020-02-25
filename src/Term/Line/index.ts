@@ -19,7 +19,7 @@ import {
 import { getStartIntersectionString } from '@Term/utils/string';
 import TemplateEngine from '../TemplateEngine';
 import ILine from './ILine';
-import Input from './Input';
+import { ContentEditableInput, ViewableInput } from './Input';
 import { NON_BREAKING_SPACE } from '../constants/strings';
 import IInput from '@Term/Line/Input/IInput';
 import { ParamsType } from '@Term/Line/types';
@@ -196,10 +196,14 @@ class Line extends TemplateEngine implements ILine {
   public render() {
     const { label, delimiter, editable, className, valueTemplate } = this;
     const root = this.getRef('root');
+    if (this.input) this.input.destroy();
     super.render({
       css, label, delimiter, editable, className, valueTemplate, nbs: NON_BREAKING_SPACE,
     }, root ? { replace: this } : {});
-    if (editable) this.input = new Input(this.getRef('inputContainer') as HTMLElement);
+    this.input = editable
+      ? new ContentEditableInput(this.getRef('inputContainer') as HTMLElement)
+      : new ViewableInput(this.getRef('inputContainer') as HTMLElement);
+    this.input.value = this.valueField;
   }
 
   public setCaret(name: string = 'simple') {
@@ -232,11 +236,8 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public moveCaretToEnd(isForce: boolean = false) {
-    const input = this.getRef('input') as HTMLTextAreaElement;
-    if (isForce) this.focus();
-    if (!input || document.activeElement !== input) return;
-    input.selectionStart = input.selectionEnd = input.value.length;
-    this.caretPosition = input.selectionEnd;
+    const { input, editable } = this;
+    if (input && editable) (input as ContentEditableInput).moveCaretToEnd(isForce);
   }
 
   public clear() {
@@ -244,9 +245,8 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private addEventListeners() {
-    const { editable } = this;
-    if (editable) {
-      const input = this.getRef('input') as HTMLElement;
+    const { editable, input } = this;
+    if (editable && input) {
       input.addEventListener('keydown', this.keyDownHandler);
       input.addEventListener('input', this.changeHandler);
       input.addEventListener('cut', this.changeHandler);
@@ -255,9 +255,8 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private removeEventListeners() {
-    const { editable } = this;
-    if (editable) {
-      const input = this.getRef('input') as HTMLElement;
+    const { editable, input } = this;
+    if (editable && input) {
       input.removeEventListener('keydown', this.keyDownHandler);
       input.removeEventListener('input', this.changeHandler);
       input.removeEventListener('cut', this.changeHandler);
@@ -283,30 +282,30 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private changeHandler = () => {
-    if (!this.preventLockUpdate()) {
-      const inputView = (this.getRef('inputView') as HTMLInputElement);
-      this.updateValueField();
-      this.updateInputSize();
-      this.lockCaret();
-      inputView.innerHTML = this.valueTemplate;
-      this.onChange(this.value as string);
-    }
+    // if (!this.preventLockUpdate()) {
+    //   const inputView = (this.getRef('inputView') as HTMLInputElement);
+    //   this.updateValueField();
+    //   this.updateInputSize();
+    //   this.lockCaret();
+    //   inputView.innerHTML = this.valueTemplate;
+    //   this.onChange(this.value as string);
+    // }
   }
 
   private preventLockUpdate(): boolean {
-    const { valueField } = this;
-    if (isString(valueField)) return false;
-    const input = this.getRef('input') as HTMLTextAreaElement;
-    const { value } = input;
-    const lockStr = Line.getLockString(valueField);
-    if (lockStr && value.indexOf(lockStr) !== 0) {
-      const newCaretPosition = lockStr.length;
-      input.value = this.value as string;
-      input.selectionStart = input.selectionEnd = newCaretPosition;
-      this.caretPosition = newCaretPosition;
-      return true;
-    }
-    this.caretPosition = input.selectionEnd;
+    // const { valueField } = this;
+    // if (isString(valueField)) return false;
+    // const input = this.getRef('input') as HTMLTextAreaElement;
+    // const { value } = input;
+    // const lockStr = Line.getLockString(valueField);
+    // if (lockStr && value.indexOf(lockStr) !== 0) {
+    //   const newCaretPosition = lockStr.length;
+    //   input.value = this.value as string;
+    //   input.selectionStart = input.selectionEnd = newCaretPosition;
+    //   this.caretPosition = newCaretPosition;
+    //   return true;
+    // }
+    // this.caretPosition = input.selectionEnd;
     return false;
   }
 
