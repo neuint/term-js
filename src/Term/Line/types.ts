@@ -6,7 +6,9 @@ export type ParamsType = {
   value?: ValueType;
   label?: string;
   delimiter?: string;
-  onSubmit?: (value: string, formattedValue: ValueType) => void;
+  onSubmit?: (params: {
+    value: string; formattedValue: ValueType; lockString: string;
+  }) => void;
   onChange?: (value: string) => void;
   editable?: boolean;
   className?: string;

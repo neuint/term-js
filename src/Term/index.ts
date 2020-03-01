@@ -167,7 +167,7 @@ class Term extends TemplateEngine implements ITerm {
         itemSize,
         delimiter,
         label,
-        value: Line.getValueString(lines[index]),
+        value: lines[index],
         width: size.width - Term.scrollbarSize,
       });
     }
@@ -225,9 +225,12 @@ class Term extends TemplateEngine implements ITerm {
     if (document.hasFocus() && this.editLine) this.editLine.focus();
   }
 
-  private submitHandler = (value: string, formattedValue: ValueType) => {
+  private submitHandler = (
+    params: { value: string; formattedValue: ValueType; lockString: string },
+  ) => {
+    const { value, formattedValue, lockString } = params;
     const { history, vl } = this;
-    const historyValue = value.substring(Line.getLockString(formattedValue).length);
+    const historyValue = value.substring(lockString.length);
     if (historyValue && last(history) !== historyValue) this.historyField.push(historyValue);
     this.lines.push(formattedValue);
     this.clearHistoryState();

@@ -3,10 +3,24 @@ import { isString } from 'lodash-es';
 
 import TemplateEngine from '@Term/TemplateEngine';
 import IInput from '@Term/Line/Input/IInput';
-import { ValueFragmentType, ValueType } from '@Term/types';
+import {
+  FormattedValueFragmentType,
+  FormattedValueType,
+  ValueFragmentType,
+  ValueType,
+} from '@Term/types';
 import { NON_BREAKING_SPACE } from '@Term/constants/strings';
+import { getStartIntersectionString } from '@Term/utils/string';
 
 abstract class BaseInput extends TemplateEngine implements IInput {
+  public static getValueString(value: ValueType): string {
+    return isString(value)
+      ? value
+      : value.reduce((acc: string, item: ValueFragmentType): string => {
+        return `${acc}${isString(item) ? item : item.str}`;
+      }, '');
+  }
+
   protected static getNormalizedTemplateString(str: string): string {
     return escapeHTML(str).replace(/\s/g, NON_BREAKING_SPACE);
   }
@@ -27,6 +41,42 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     }, '');
   }
 
+  protected static getUpdatedValueField(value: string, prevValue: ValueType): ValueType {
+    if (isString(prevValue)) return value;
+    let checkValue = value;
+    let stop = false;
+    const updatedValueField = prevValue.reduce((
+      acc: FormattedValueType, item: ValueFragmentType,
+    ): FormattedValueType => {
+      const isStringItem = isString(item);
+      const itemStr = (isStringItem ? item : (item as FormattedValueFragmentType).str) as string;
+      const { str, isFull } = getStartIntersectionString(itemStr, checkValue);
+      if (str && !stop) {
+        acc.push(isStringItem ? str : { ...(item as FormattedValueFragmentType), str });
+        checkValue = checkValue.substring(str.length);
+        stop = !isFull;
+      }
+      return acc;
+    }, [] as FormattedValueType);
+    updatedValueField.push(checkValue);
+    return updatedValueField;
+  }
+
+  protected static getLockString(value: ValueType): string {
+    if (isString(value)) return '';
+    let str = '';
+    let lockStr = '';
+    value.forEach((item: ValueFragmentType) => {
+      if (isString(item)) {
+        str += item;
+      } else {
+        str += item.str;
+        if (item.lock) lockStr = str;
+      }
+    });
+    return lockStr;
+  }
+
   protected characterWidth: number = 16;
   protected characterHeight: number = 8;
   public get characterSize(): { width: number; height: number } {
@@ -37,9 +87,8 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     this.characterHeight = size.height;
   }
 
-  private caretPositionField: number = 0;
   public get caretPosition(): number {
-    return this.caretPositionField;
+    return -1;
   }
   public get selectedRange(): { from: number; to: number } {
     return { from: 0, to: 0 };
@@ -51,6 +100,11 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
   public set value(val: ValueType) {
     this.valueField = val;
+  }
+
+  public get lockString(): string {
+    const { valueField } = this;
+    return BaseInput.getLockString(valueField);
   }
 
   protected isCaretHidden: boolean = false;
@@ -67,6 +121,13 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
 
   public abstract write(value: ValueType, delay?: number): Promise<boolean>;
+
+  public getSimpleValue(): string {
+    return BaseInput.getValueString(this.valueField);
+  }
+
+  // tslint:disable-next-line:no-empty
+  public moveCaretToEnd() {}
 
   public addEventListener<K extends keyof HTMLElementEventMap>(
     type: K,
