@@ -12,7 +12,6 @@ const clickHandler = (...args: any[]) => console.log('args', args);
 
 if (container) {
   const term = new Term(container, {
-    caret: '',
     label: 'guest',
     editLine: [
       { clickHandler, str: 'User name: ', lock: true, className: css.granted },

@@ -250,37 +250,30 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private updateCaretData = () => {
-    const { editable, caret } = this;
-    const input = this.getRef('input');
-    const { activeElement } = document;
+    const { editable, caret, input } = this;
     if (!editable || !input || !caret) return;
-    const { selectionStart, selectionEnd } = input as HTMLInputElement;
-    if (selectionStart === selectionEnd && activeElement === input && document.hasFocus()) {
-      this.showCaret();
+    const { caretPosition } = input;
+    if (document.hasFocus() && caretPosition >= 0) {
+      this.showCaret(caretPosition);
     } else {
       this.hideCaret();
     }
   }
 
-  private showCaret() {
-    const { caret } = this;
+  private showCaret(caretPosition: number) {
+    const { caret, input } = this;
     const { width, height } = this.characterSize;
     const inputContainer = this.getRef('inputContainer');
-    const input = this.getRef('input') as HTMLInputElement;
-    if (!caret || !inputContainer) return;
-    const { selectionStart, selectionEnd } = input as HTMLInputElement;
-    const skip = isUndefined(selectionStart) || isUndefined(selectionEnd)
-      || isNull(selectionStart) || isNull(selectionEnd);
-    if (skip) return;
+    if (!caret || !inputContainer || !input) return;
     const { offsetWidth } = inputContainer as HTMLElement;
-    const { value } = input;
+    const value = input.getSimpleValue();
     const rowLength = Math.floor(offsetWidth / width);
-    const row = Math.floor(selectionStart as number / rowLength);
+    const row = Math.floor(caretPosition / rowLength);
     caret.hidden = false;
-    const character = value[selectionStart as number] === ' '
-      ? NON_BREAKING_SPACE : value[selectionStart as number] || NON_BREAKING_SPACE;
+    const character = value[caretPosition] === ' '
+      ? NON_BREAKING_SPACE : value[caretPosition] || NON_BREAKING_SPACE;
     const top = Math.round(height * row);
-    const left = Math.round((selectionStart as number - row * rowLength) * width);
+    const left = Math.round((caretPosition - row * rowLength) * width);
     caret.setPosition(left, top);
     caret.setValue(character);
   }
@@ -299,6 +292,7 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private lockCaret = () => {
+    console.log('lock');
     const { caret, lockTimeout } = this;
     if (lockTimeout) clearTimeout(lockTimeout);
     if (!caret) return;

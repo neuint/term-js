@@ -35,7 +35,11 @@ class ContentEditableInput extends BaseInput implements IInput {
     const root = this.getRef('input') as HTMLElement;
     const selection = window.getSelection();
     if (!selection || !selection.isCollapsed) return -1;
-    return -1;
+    const isRootChild = selection.anchorNode === root
+      || selection.anchorNode?.parentNode === root
+      || selection.anchorNode?.parentNode?.parentNode === root;
+    if (!isRootChild) return -1;
+    return selection.anchorOffset;
   }
 
   constructor(container?: Element) {
@@ -101,6 +105,7 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   private changeHandler = (e: Event) => {
     this.updateValueField();
+    this.externalChangeListeners.forEach(handler => handler.call(e.target as HTMLElement, e));
   }
 
   private getInputValue(): string {
