@@ -222,7 +222,9 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private lastLineFocus() {
-    if (document.hasFocus() && this.editLine) this.editLine.focus();
+    if (document.hasFocus() && this.editLine) {
+      this.editLine.focus();
+    }
   }
 
   private submitHandler = (

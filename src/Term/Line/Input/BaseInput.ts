@@ -115,6 +115,14 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     this.isCaretHidden = isCaretHidden;
   }
 
+  public get isFocused(): boolean {
+    const { activeElement } = document;
+    const root = this.getRef('input');
+    return activeElement === root
+      || activeElement?.parentNode === root
+      || activeElement?.parentNode === root;
+  }
+
   protected constructor(template: string, container?: Element) {
     super(template, container);
     this.render();
@@ -127,7 +135,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
 
   // tslint:disable-next-line:no-empty
-  public moveCaretToEnd() {}
+  public moveCaretToEnd(isForce: boolean = false) {}
 
   public addEventListener<K extends keyof HTMLElementEventMap>(
     type: K,

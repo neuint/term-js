@@ -8,6 +8,7 @@ export default interface IInput extends ITemplateEngine {
   caretPosition: number;
   selectedRange: { from: number; to: number };
   hiddenCaret: boolean;
+  isFocused: boolean;
   getSimpleValue(): string;
   focus(): void;
   write(value: ValueType, delay?: number): Promise<boolean>;
@@ -21,5 +22,5 @@ export default interface IInput extends ITemplateEngine {
     listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
     options?: boolean | EventListenerOptions,
   ): void;
-  moveCaretToEnd(): void;
+  moveCaretToEnd(isForce?: boolean): void;
 }

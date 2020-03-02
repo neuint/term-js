@@ -1,6 +1,8 @@
 import template from './template.html';
 import css from './index.scss';
 
+import { isString } from 'lodash-es';
+
 import IInput from '@Term/Line/Input/IInput';
 import { ValueType } from '@Term/types';
 import BaseInput from '@Term/Line/Input/BaseInput';
@@ -8,9 +10,50 @@ import {
   NON_BREAKING_SPACE_PATTERN,
   STRINGIFY_HTML_PATTERN,
 } from './patterns';
-import { isString } from 'lodash-es';
+import { TEXT_NODE_TYPE } from './constants';
 
 class ContentEditableInput extends BaseInput implements IInput {
+  private static getLastTextNode(root: HTMLElement): Node | null {
+    const { lastChild } = root;
+    if (!lastChild) return null;
+    if (lastChild.nodeType === TEXT_NODE_TYPE) return lastChild;
+    return ContentEditableInput.getLastTextNode(lastChild as HTMLElement);
+  }
+
+  private static checkChildNode(root: HTMLElement, checkNode: HTMLElement | Node): boolean {
+    if (root === checkNode) return true;
+    const { parentNode } = checkNode;
+    return parentNode ? ContentEditableInput.checkChildNode(root, parentNode) : false;
+  }
+
+  private static getHtmlStringifyValue(html: string): string {
+    return html.replace(NON_BREAKING_SPACE_PATTERN, ' ').replace(STRINGIFY_HTML_PATTERN, '');
+  }
+
+  private static getNodeOffset(
+    root: HTMLElement, target: HTMLElement | Node, baseOffset: number = 0,
+  ): number {
+    const { parentNode } = target;
+    if (!parentNode) return 0;
+    let isFound = false;
+    const prevNodes = Array.prototype.filter.call(parentNode.childNodes, (
+      childNode: HTMLElement | Node,
+    ): boolean => {
+      const isTarget = childNode === target;
+      if (isTarget && !isFound) isFound = true;
+      return !isTarget && !isFound;
+    });
+    const offset = prevNodes.reduce((acc: number, node: HTMLElement | Node): number => {
+      const value = node.nodeType === TEXT_NODE_TYPE
+        ? node.nodeValue
+        : ContentEditableInput.getHtmlStringifyValue((node as HTMLElement).innerHTML);
+      return acc + (value ? value.length : 0);
+    }, 0);
+    return root === parentNode
+      ? baseOffset + offset
+      : ContentEditableInput.getNodeOffset(root, parentNode, baseOffset + offset);
+  }
+
   private externalChangeListeners: (
     (this: HTMLElement, ev: HTMLElementEventMap['change']) => any
   )[] = [];
@@ -34,12 +77,14 @@ class ContentEditableInput extends BaseInput implements IInput {
   public get caretPosition(): number {
     const root = this.getRef('input') as HTMLElement;
     const selection = window.getSelection();
-    if (!selection || !selection.isCollapsed) return -1;
-    const isRootChild = selection.anchorNode === root
-      || selection.anchorNode?.parentNode === root
-      || selection.anchorNode?.parentNode?.parentNode === root;
-    if (!isRootChild) return -1;
-    return selection.anchorOffset;
+    if (!selection || !selection.isCollapsed || !selection.anchorNode) return -1;
+    const { anchorNode } = selection;
+    if (!ContentEditableInput.checkChildNode(root, selection.anchorNode)) return -1;
+    return ContentEditableInput.getNodeOffset(
+      root,
+      anchorNode as Node,
+      anchorNode.nodeType === TEXT_NODE_TYPE ? selection.anchorOffset : 0,
+    );
   }
 
   constructor(container?: Element) {
@@ -53,14 +98,15 @@ class ContentEditableInput extends BaseInput implements IInput {
     throw new Error('Needs implementation');
   }
 
-  public moveCaretToEnd(isForce: boolean = false) {
+  public  moveCaretToEnd(isForce: boolean = false) {
     const root = this.getRef('input') as HTMLElement;
     if (isForce) this.focus();
-    console.log('document.activeElement', document.activeElement);
-    if (!root || document.activeElement !== root) return;
+    if (!root || !this.isFocused) return;
     const range = document.createRange();
     const selection = window.getSelection();
-    range.selectNodeContents(root);
+    const node = ContentEditableInput.getLastTextNode(root);
+    if (!node) return;
+    range.selectNodeContents(node);
     range.collapse(false);
     if (selection) {
       selection.removeAllRanges();
@@ -110,8 +156,7 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   private getInputValue(): string {
     const root = this.getRef('input') as HTMLElement;
-    return root.innerHTML.replace(NON_BREAKING_SPACE_PATTERN, ' ')
-      .replace(STRINGIFY_HTML_PATTERN, '');
+    return ContentEditableInput.getHtmlStringifyValue(root.innerHTML);
   }
 
   private updateValueField() {

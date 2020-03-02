@@ -15,6 +15,7 @@ if (container) {
     label: 'guest',
     editLine: [
       { clickHandler, str: 'User name: ', lock: true, className: css.granted },
+      { clickHandler, str: 'User name: ', lock: true, className: css.denied },
     ],
     lines: (new Array(1).fill(null)).map((
       _, index,

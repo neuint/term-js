@@ -100,7 +100,13 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public focus() {
-    if (this.input) this.input.focus();
+    const { input } = this;
+    if (!input) return;
+    const { isFocused } = input;
+    if (!isFocused) {
+      input.focus();
+      input.moveCaretToEnd();
+    }
   }
 
   public render() {
@@ -196,7 +202,7 @@ class Line extends TemplateEngine implements ILine {
   private setupEditing() {
     if (this.editable && this.input) {
       this.registerFrameHandler();
-      this.input.moveCaretToEnd();
+      this.input.moveCaretToEnd(true);
     }
   }
 
@@ -292,7 +298,6 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private lockCaret = () => {
-    console.log('lock');
     const { caret, lockTimeout } = this;
     if (lockTimeout) clearTimeout(lockTimeout);
     if (!caret) return;
