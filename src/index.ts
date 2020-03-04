@@ -14,8 +14,9 @@ if (container) {
   const term = new Term(container, {
     label: 'guest',
     editLine: [
-      { clickHandler, str: 'User name: ', lock: true, className: css.granted },
-      { clickHandler, str: 'User name: ', lock: true, className: css.denied },
+      { clickHandler, str: 'User ', lock: true, className: css.granted },
+      { clickHandler, str: 'name:', lock: true, className: css.denied },
+      // { clickHandler, str: ' ', lock: true },
     ],
     lines: (new Array(1).fill(null)).map((
       _, index,

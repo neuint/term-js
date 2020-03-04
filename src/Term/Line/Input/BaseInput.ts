@@ -21,6 +21,12 @@ abstract class BaseInput extends TemplateEngine implements IInput {
       }, '');
   }
 
+  protected static getFragmentTemplate(
+    str: string, className: string, index: number,
+  ): string {
+    return `<span ref="fragment-${index}" class="${className}">${str}</span>`;
+  }
+
   protected static getNormalizedTemplateString(str: string): string {
     return escapeHTML(str).replace(/\s/g, NON_BREAKING_SPACE);
   }
@@ -28,10 +34,14 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   protected static getValueFragmentTemplate(
     valueFragment: ValueFragmentType, index: number,
   ): string {
-    if (isString(valueFragment)) return BaseInput.getNormalizedTemplateString(valueFragment);
-    const { str, className } = valueFragment;
+    if (isString(valueFragment)) {
+      return BaseInput.getFragmentTemplate(
+        BaseInput.getNormalizedTemplateString(valueFragment), '', index,
+      );
+    }
+    const { str, className = '' } = valueFragment;
     const normalizedString = BaseInput.getNormalizedTemplateString(str);
-    return `<span ref="fragment-${index}" class="${className || ''}">${normalizedString}</span>`;
+    return BaseInput.getFragmentTemplate(normalizedString, className, index);
   }
 
   protected static getValueTemplate(value: ValueType): string {
@@ -58,8 +68,13 @@ abstract class BaseInput extends TemplateEngine implements IInput {
       }
       return acc;
     }, [] as FormattedValueType);
-    updatedValueField.push(checkValue);
-    return updatedValueField;
+    const lastIndex = updatedValueField.length - 1;
+    if (isString(updatedValueField[lastIndex])) {
+      updatedValueField[lastIndex] += checkValue;
+    } else {
+      updatedValueField.push(checkValue);
+    }
+    return updatedValueField.filter(item => isString(item) ? item : item.str);
   }
 
   protected static getLockString(value: ValueType): string {
@@ -123,9 +138,9 @@ abstract class BaseInput extends TemplateEngine implements IInput {
       || activeElement?.parentNode === root;
   }
 
-  protected constructor(template: string, container?: Element) {
+  protected constructor(template: string, container?: Element, css?: { [key: string]: string }) {
     super(template, container);
-    this.render();
+    this.render({ css });
   }
 
   public abstract write(value: ValueType, delay?: number): Promise<boolean>;

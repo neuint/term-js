@@ -4,7 +4,7 @@ import css from './index.scss';
 import { isString } from 'lodash-es';
 
 import IInput from '@Term/Line/Input/IInput';
-import { ValueType } from '@Term/types';
+import { FormattedValueType, ValueFragmentType, ValueType } from '@Term/types';
 import BaseInput from '@Term/Line/Input/BaseInput';
 import {
   NON_BREAKING_SPACE_PATTERN,
@@ -34,7 +34,7 @@ class ContentEditableInput extends BaseInput implements IInput {
     root: HTMLElement, target: HTMLElement | Node, baseOffset: number = 0,
   ): number {
     const { parentNode } = target;
-    if (!parentNode) return 0;
+    if (!parentNode || root === target) return 0;
     let isFound = false;
     const prevNodes = Array.prototype.filter.call(parentNode.childNodes, (
       childNode: HTMLElement | Node,
@@ -87,8 +87,32 @@ class ContentEditableInput extends BaseInput implements IInput {
     );
   }
 
+  public set caretPosition(position: number) {
+    const root = this.getRef('input') as HTMLElement;
+    let offset = 0;
+    let relativeOffset = 0;
+    const targetNode = Array.prototype.find.call(root.childNodes, (
+      childNode: HTMLElement | Node,
+    ): boolean => {
+      const length = ((childNode.nodeType === TEXT_NODE_TYPE
+        ? childNode.nodeValue
+        : ContentEditableInput.getHtmlStringifyValue((childNode as HTMLElement).innerHTML)) || '')
+        .length;
+      relativeOffset = offset;
+      offset += length;
+      return position <= offset;
+    });
+    const selection = window.getSelection();
+    if (!selection || !targetNode) return;
+    const range = new Range();
+    range.setStart(targetNode.firstChild, position - relativeOffset);
+    range.setEnd(targetNode.firstChild, position - relativeOffset);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
   constructor(container?: Element) {
-    super(template, container);
+    super(template, container, css);
     this.addEventListener('input', this.changeHandler);
     this.addEventListener('cut', this.changeHandler);
     this.addEventListener('paste', this.changeHandler);
@@ -161,7 +185,11 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   private updateValueField() {
     if (this.preventLockUpdate()) return;
+    const { caretPosition } = this;
+    const input = this.getRef('input') as HTMLElement;
     this.valueField = BaseInput.getUpdatedValueField(this.getInputValue(), this.valueField);
+    input.innerHTML = BaseInput.getValueTemplate(this.valueField);
+    this.caretPosition = caretPosition;
   }
 
   private preventLockUpdate(): boolean {
@@ -170,7 +198,18 @@ class ContentEditableInput extends BaseInput implements IInput {
     const input = this.getRef('input') as HTMLElement;
     const value = this.getInputValue();
     const lockStr = BaseInput.getLockString(valueField);
-    if (lockStr && value.indexOf(lockStr) !== 0) {
+    const deleteUnlockPart = lockStr
+      && lockStr.indexOf(value) === 0
+      && lockStr.length > value.length;
+    if (deleteUnlockPart) {
+      const lastLockIndex = (this.valueField as FormattedValueType)
+        .reduce((acc: number, item: ValueFragmentType, index: number): number => {
+          return !isString(item) && item.lock ? index : acc;
+        }, -1);
+      this.valueField = (this.valueField as FormattedValueType)
+        .filter((_, index: number): boolean => index <= lastLockIndex);
+    }
+    if ((lockStr && value.indexOf(lockStr) !== 0) || deleteUnlockPart) {
       input.innerHTML = BaseInput.getValueTemplate(this.valueField);
       this.moveCaretToEnd();
       return true;

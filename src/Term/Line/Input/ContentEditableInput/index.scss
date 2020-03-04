@@ -1,4 +1,12 @@
+@import 'mixins';
+
 .root {
+  @include input-general;
+
+  > span {
+    @include input-general;
+  }
+
   &.hiddenCaret {
     color: transparent;
     text-shadow: 0 0 0 var(--main-text-color);

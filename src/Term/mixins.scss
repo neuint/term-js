@@ -1,3 +1,8 @@
+@mixin input-general {
+  word-break: break-all;
+  resize: none;
+}
+
 @mixin touch-scrolling {
   will-change: transform;
   transform: translateZ(0);

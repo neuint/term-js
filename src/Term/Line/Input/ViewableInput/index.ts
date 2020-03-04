@@ -13,7 +13,7 @@ class ViewableInput extends BaseInput implements IInput {
   }
 
   constructor(container?: Element) {
-    super(template, container);
+    super(template, container, css);
   }
 
   public write(value: ValueType, delay?: number): Promise<boolean> {
