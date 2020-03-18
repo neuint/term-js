@@ -23,6 +23,10 @@ class ViewableInput extends BaseInput implements IInput {
   public render() {
     super.render({ css, value: BaseInput.getValueTemplate(this.valueField) });
   }
+
+  protected getRootElement(): Element | undefined {
+    return this.getRef('input');
+  }
 }
 
 export default ViewableInput;

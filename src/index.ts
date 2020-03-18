@@ -8,13 +8,15 @@ if (module.hot) module.hot.accept();
 
 const container = document.querySelector('#root');
 
-const clickHandler = (...args: any[]) => console.log('args', args);
+const clickHandler = (e: Event) => {
+  console.log('e', e);
+};
 
 if (container) {
   const term = new Term(container, {
     label: 'guest',
     editLine: [
-      { clickHandler, str: 'User name: ', lock: true, className: css.granted },
+      { clickHandler, id: 'test', str: 'User name: ', lock: true, className: css.granted },
     ],
     lines: (new Array(1).fill(null)).map((
       _, index,

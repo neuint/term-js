@@ -11,6 +11,7 @@ import {
 } from '@Term/types';
 import { NON_BREAKING_SPACE } from '@Term/constants/strings';
 import { getStartIntersectionString } from '@Term/utils/string';
+import { DATA_INDEX_ATTRIBUTE_NAME } from '@Term/Line/Input/constants';
 
 abstract class BaseInput extends TemplateEngine implements IInput {
   public static getValueString(value: ValueType): string {
@@ -24,7 +25,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   protected static getFragmentTemplate(
     str: string, className: string, index: number,
   ): string {
-    return `<span ref="fragment-${index}" class="${className}">${str}</span>`;
+    return `<span ${DATA_INDEX_ATTRIBUTE_NAME}="${index}" ref="fragment-${index}" class="${className}">${str}</span>`;
   }
 
   protected static getNormalizedTemplateString(str: string): string {
@@ -141,7 +142,40 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   protected constructor(template: string, container?: Element, css?: { [key: string]: string }) {
     super(template, container);
     this.render({ css });
+    this.addHandlers();
   }
+
+  protected addHandlers() {
+    const root = this.getRootElement();
+    if (root) {
+      root.addEventListener('click', this.clickHandler);
+      root.addEventListener('mousedown', this.mouseDownHandler);
+    }
+  }
+
+  protected removeHandlers() {
+    const root = this.getRootElement();
+    if (root) {
+      root.removeEventListener('click', this.clickHandler);
+      root.removeEventListener('mousedown', this.mouseDownHandler);
+    }
+  }
+
+  protected mouseDownHandler = (e: Event) => {
+    const valueFieldItem = this.getEventFormattedValueFragment(e);
+    if (valueFieldItem && valueFieldItem.clickHandler && valueFieldItem.lock) {
+      e.preventDefault();
+    }
+  }
+
+  protected clickHandler = (e: Event) => {
+    const valueFieldItem = this.getEventFormattedValueFragment(e);
+    if (valueFieldItem && valueFieldItem.clickHandler) {
+      valueFieldItem.clickHandler(e, valueFieldItem.id);
+    }
+  }
+
+  protected abstract getRootElement(): Element | undefined;
 
   public abstract write(value: ValueType, delay?: number): Promise<boolean>;
 
@@ -173,6 +207,26 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   public focus() {
     const root = this.getRef('input') as HTMLElement;
     if (root) root.focus();
+  }
+
+  public destroy() {
+    this.removeHandlers();
+    super.destroy();
+  }
+
+  private getEventFormattedValueFragment(e: Event): FormattedValueFragmentType | null {
+    const target = e.target as Element;
+    if (!target) return null;
+    return this.getElementFormattedValueFragment(target);
+  }
+
+  private getElementFormattedValueFragment(element: Element): FormattedValueFragmentType | null {
+    const { valueField } = this;
+    if (isString(valueField)) return null;
+    const dataIndex = element.getAttribute(DATA_INDEX_ATTRIBUTE_NAME);
+    const valueFieldItem = dataIndex ? valueField[Number(dataIndex)] : null;
+    return !valueFieldItem || isString(valueFieldItem)
+      ? null : valueFieldItem as FormattedValueFragmentType;
   }
 }
 

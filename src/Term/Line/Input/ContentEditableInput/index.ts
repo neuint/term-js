@@ -183,6 +183,10 @@ class ContentEditableInput extends BaseInput implements IInput {
     this.removeEventListener('paste', this.changeHandler);
   }
 
+  protected getRootElement(): Element | undefined {
+    return this.getRef('input');
+  }
+
   private changeHandler = (e: Event) => {
     this.updateValueField();
     this.externalChangeListeners.forEach(handler => handler.call(e.target as HTMLElement, e));

@@ -1,6 +1,7 @@
 export type FormattedValueFragmentType = {
   str: string;
-  clickHandler?: () => void;
+  clickHandler?: (e: Event, id?: string | number) => void;
+  id?: string | number;
   lock?: boolean;
   className?: string;
 };
