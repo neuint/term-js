@@ -10,9 +10,13 @@ import {
   NON_BREAKING_SPACE_PATTERN,
   STRINGIFY_HTML_PATTERN,
 } from './patterns';
-import { TEXT_NODE_TYPE } from './constants';
+import { CHANGE_EVENT_TYPE, TEXT_NODE_TYPE } from './constants';
 
 class ContentEditableInput extends BaseInput implements IInput {
+  private static getStyledValueTemplate(val: ValueType): string {
+    return BaseInput.getValueTemplate(val);
+  }
+
   private static getLastTextNode(root: HTMLElement): Node | null {
     const { lastChild } = root;
     if (!lastChild) return null;
@@ -70,8 +74,11 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   public set value(val: ValueType) {
     this.valueField = val;
-    const root = this.getRef('input') as HTMLElement;
-    if (root) root.innerHTML = BaseInput.getValueTemplate(this.valueField);
+    this.updateContent();
+  }
+
+  public get value(): ValueType {
+    return this.valueField;
   }
 
   public get caretPosition(): number {
@@ -88,6 +95,7 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   public set caretPosition(position: number) {
+    if (position < 0) return;
     const root = this.getRef('input') as HTMLElement;
     let offset = 0;
     let relativeOffset = 0;
@@ -105,8 +113,10 @@ class ContentEditableInput extends BaseInput implements IInput {
     const selection = window.getSelection();
     if (!selection || !targetNode) return;
     const range = new Range();
-    range.setStart(targetNode.firstChild, position - relativeOffset);
-    range.setEnd(targetNode.firstChild, position - relativeOffset);
+    const targetChildNode = targetNode.nodeType === TEXT_NODE_TYPE
+      ? targetNode : targetNode.firstChild;
+    range.setStart(targetChildNode, position - relativeOffset);
+    range.setEnd(targetChildNode, position - relativeOffset);
     selection.removeAllRanges();
     selection.addRange(range);
   }
@@ -143,7 +153,7 @@ class ContentEditableInput extends BaseInput implements IInput {
     listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
     options?: boolean | AddEventListenerOptions,
   ) {
-    if (type === 'change') {
+    if (type === CHANGE_EVENT_TYPE) {
       this.externalChangeListeners.push(
         listener as (this: HTMLElement, ev: HTMLElementEventMap['change']) => any,
       );
@@ -157,7 +167,7 @@ class ContentEditableInput extends BaseInput implements IInput {
     listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
     options?: boolean | EventListenerOptions,
   ) {
-    if (type === 'change') {
+    if (type === CHANGE_EVENT_TYPE) {
       this.externalChangeListeners = this.externalChangeListeners.filter((
         item,
     ): boolean => item !== listener);
@@ -186,16 +196,14 @@ class ContentEditableInput extends BaseInput implements IInput {
   private updateValueField() {
     if (this.preventLockUpdate()) return;
     const { caretPosition } = this;
-    const input = this.getRef('input') as HTMLElement;
     this.valueField = BaseInput.getUpdatedValueField(this.getInputValue(), this.valueField);
-    input.innerHTML = BaseInput.getValueTemplate(this.valueField);
+    this.updateContent();
     this.caretPosition = caretPosition;
   }
 
   private preventLockUpdate(): boolean {
     const { valueField } = this;
     if (isString(valueField)) return false;
-    const input = this.getRef('input') as HTMLElement;
     const value = this.getInputValue();
     const lockStr = BaseInput.getLockString(valueField);
     const deleteUnlockPart = lockStr
@@ -210,11 +218,39 @@ class ContentEditableInput extends BaseInput implements IInput {
         .filter((_, index: number): boolean => index <= lastLockIndex);
     }
     if ((lockStr && value.indexOf(lockStr) !== 0) || deleteUnlockPart) {
-      input.innerHTML = BaseInput.getValueTemplate(this.valueField);
+      this.updateContent();
       this.moveCaretToEnd();
       return true;
     }
     return false;
+  }
+
+  private updateContent() {
+    this.setString();
+    this.updateStyles();
+  }
+
+  private setString() {
+    const input = this.getRef('input') as HTMLElement;
+    const hidden = this.getRef('hidden') as HTMLElement;
+    if (input && hidden) {
+      const str = ContentEditableInput.getStyledValueTemplate(this.valueField);
+      input.innerHTML = str;
+      hidden.innerHTML = str;
+    }
+  }
+
+  private updateStyles() {
+    const input = this.getRef('input') as HTMLElement;
+    const hidden = this.getRef('hidden') as HTMLElement;
+    if (input && hidden) {
+      Array.prototype.forEach.call(hidden.childNodes, (childNode: HTMLElement, index: number) => {
+        if (childNode.nodeType !== TEXT_NODE_TYPE) {
+          const { color } = window.getComputedStyle(childNode);
+          if (color) (input.childNodes[index] as HTMLElement).style.textShadow = `0 0 0 ${color}`;
+        }
+      });
+    }
   }
 }
 

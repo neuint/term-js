@@ -35,27 +35,3 @@
   flex: 1;
   position: relative;
 }
-
-.input {
-  position: relative;
-  width: 100%;
-  color: var(--main-text-color);
-
-  &.customCaret {
-    color: transparent;
-  }
-
-  @include input-general;
-}
-
-.inputView {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-
-  @include input-general;
-}
-
-.caret {}

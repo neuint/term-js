@@ -1,4 +1,4 @@
-import { isNull, isUndefined, noop } from 'lodash-es';
+import { noop } from 'lodash-es';
 
 import css from './index.scss';
 import lineTemplate from './template.html';
@@ -49,7 +49,11 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public set value(val: ValueType) {
-    throw new Error('Needs implementation');
+    const { input } = this;
+    if (input) {
+      input.value = val;
+      input.caretPosition = 0;
+    }
   }
 
   public get hidden(): boolean {
@@ -126,13 +130,14 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public setCaret(name: string = 'simple') {
-    const input = this.getRef('input');
+    const { input, editable } = this;
     this.removeCaret();
     const caret = Line.cf.create(name, this.getRef('inputContainer') as Element);
-    if (caret && this.editable) {
-      input?.classList.add(css.customCaret);
+    if (!input) return;
+    if (caret && editable) {
+      input.hiddenCaret = true;
     } else {
-      input?.classList.remove(css.customCaret);
+      input.hiddenCaret = false;
       return;
     }
     this.caret = caret;
