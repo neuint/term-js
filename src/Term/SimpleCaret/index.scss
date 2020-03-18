@@ -33,13 +33,13 @@
   left: 0;
   top: 0;
   user-select: none;
+  pointer-events: none;
   background: var(--main-text-color);
   border-radius: 0.0625rem;
   animation-name: carriage-return-blink;
   animation-duration: 1s;
   animation-iteration-count: infinite;
   color: var(--main-bg-color);
-  user-select: none;
   display: inline-block;
 
   &.lock, &.busy {

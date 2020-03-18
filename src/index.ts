@@ -1,17 +1,28 @@
 import Term from './Term';
 import ITerm from '@Term/ITerm';
+import { ValueType } from '@Term/types';
 
-import './index.scss';
+import css from './index.scss';
 
 if (module.hot) module.hot.accept();
 
 const container = document.querySelector('#root');
 
+const clickHandler = (e: Event) => {
+  console.log('e', e);
+};
+
 if (container) {
   const term = new Term(container, {
-    lines: (new Array(500).fill(null)).map((
+    label: 'guest',
+    editLine: [
+      { clickHandler, id: 'test', str: 'User name: ', lock: true, className: css.granted },
+    ],
+    lines: (new Array(1).fill(null)).map((
       _, index,
-    ): string => (new Array(20).fill(`Line ${index}`)).join(' ')),
+    ): ValueType => ([
+      { str: 'Access denied please login!', className: css.denied },
+    ])),
   });
   term.setHeader('Test');
   (window as unknown as { term: ITerm }).term = term;

@@ -1,4 +1,7 @@
-import { isNull, isUndefined, noop } from 'lodash-es';
+import { noop } from 'lodash-es';
+
+import css from './index.scss';
+import lineTemplate from './template.html';
 
 import { DOWN_CODE, ENTER_CODE, LEFT_CODE, RIGHT_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { getKeyCode } from '@Term/utils/event';
@@ -6,30 +9,33 @@ import ICaret from '@Term/BaseCaret/ICaret';
 import ICaretFactory from '@Term/CaretFactory/ICaretFactory';
 import CaretFactory from '@Term/CaretFactory';
 import { LOCK_TIMEOUT } from '@Term/Line/constants';
-import lineTemplate from './template.html';
+import { ValueType } from '@Term/types';
 import TemplateEngine from '../TemplateEngine';
 import ILine from './ILine';
+import { ContentEditableInput, ViewableInput } from './Input';
 import { NON_BREAKING_SPACE } from '../constants/strings';
-
-import css from './index.scss';
+import IInput from '@Term/Line/Input/IInput';
+import { ParamsType } from '@Term/Line/types';
+import BaseInput from '@Term/Line/Input/BaseInput';
 
 class Line extends TemplateEngine implements ILine {
   public static getHeight(
     params: {
       delimiter?: string;
       label?: string;
-      value: string;
+      value: ValueType;
       width: number;
       itemSize: { width: number; height: number },
     },
   ): number {
     const { delimiter, label, value, width, itemSize } = params;
     const { width: itemWidth, height: itemHeight } = itemSize;
+    const valueString = BaseInput.getValueString(value);
     const labelLength = (delimiter ? delimiter.length + 1 : 0)
       + (label ? label.length + 1 : 0);
     const rowItemsCount = Math
       .floor((width - Line.itemHorizontalPadding - labelLength * itemWidth) / itemWidth);
-    return Math.ceil((value.length || 1) / rowItemsCount) * itemHeight
+    return Math.ceil((valueString.length || 1) / rowItemsCount) * itemHeight
       + 2 * Line.itemVerticalPadding;
   }
 
@@ -37,9 +43,17 @@ class Line extends TemplateEngine implements ILine {
   private static itemVerticalPadding: number = 4;
   private static itemHorizontalPadding: number = 16;
 
-  private valueField: string = '';
-  public get value(): string {
-    return this.valueField;
+  public get value(): ValueType {
+    const { input } = this;
+    return input ? input.value : '';
+  }
+
+  public set value(val: ValueType) {
+    const { input } = this;
+    if (input) {
+      input.value = val;
+      input.caretPosition = 0;
+    }
   }
 
   public get hidden(): boolean {
@@ -51,52 +65,34 @@ class Line extends TemplateEngine implements ILine {
     return this.heightField;
   }
 
+  private get characterSize(): { width: number; height: number } {
+    const { offsetWidth, offsetHeight } = this.getRef('helpContainer') as HTMLElement;
+    return { width: offsetWidth, height: offsetHeight };
+  }
+
+  private initialValue: ValueType = '';
   private label: string = '';
   private caret?: ICaret;
   private delimiter: string = '';
   private className: string = '';
-  private editable: boolean;
-  private onSubmit: (value: string) => void = noop;
-  private readonly onChange: (value: string) => void = noop;
+  private editable: boolean = false;
+  private onSubmit: (params: {
+    value: string; formattedValue: ValueType; lockString: string;
+  }) => void = noop;
+  private onChange: (value: string) => void = noop;
   private lockTimeout?: ReturnType<typeof setTimeout>;
+  private input?: IInput;
 
-  constructor(
-    container: Element,
-    params: {
-      caret?: string;
-      value?: string;
-      label?: string;
-      delimiter?: string;
-      onSubmit?: (value: string) => void;
-      onChange?: (value: string) => void;
-      editable?: boolean;
-      className?: string;
-      append?: boolean;
-      ref?: ILine;
-    } = {},
-  ) {
+  constructor(container: Element, params: ParamsType = {}) {
     super(lineTemplate, container);
-    const { label = '', value = '', delimiter = '~', onChange = noop, onSubmit = noop,
-      editable = true, caret = 'simple', className = '', append = true, ref } = params;
-    this.valueField = value;
-    this.className = className;
-    this.label = label;
-    this.delimiter = delimiter;
-    this.onSubmit = onSubmit;
-    this.onChange = onChange;
-    this.editable = editable;
+    this.setParams(params);
     this.container = container;
     this.render();
-    this.setCaret(caret);
+    this.setCaret(params.caret || 'simple');
     this.addEventListeners();
     this.updateHeight();
     this.frameHandler = this.updateCaretData;
-    if (this.editable) this.registerFrameHandler();
-  }
-
-  get characterSize() {
-    const { offsetWidth, offsetHeight } = this.getRef('helpContainer') as HTMLElement;
-    return { width: offsetWidth, height: offsetHeight };
+    this.setupEditing();
   }
 
   public stopEdit() {
@@ -108,36 +104,40 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public focus() {
-    const input = this.getRef('input') as HTMLInputElement;
+    const { input } = this;
     if (!input) return;
-    if (document.activeElement === input) return;
-    input.focus();
-    input.value = input.value;
+    const { isFocused } = input;
+    if (!isFocused) {
+      input.focus();
+      input.moveCaretToEnd();
+    }
   }
 
   public render() {
-    const { label, delimiter, value, editable, className } = this;
+    const { label, delimiter, editable, className } = this;
     const root = this.getRef('root');
+    if (this.input) {
+      this.initialValue = this.input.value;
+      this.input.destroy();
+    }
     super.render({
-      css,
-      label,
-      delimiter,
-      editable,
-      className,
-      value: editable ? value : value.replace(/\s/g, NON_BREAKING_SPACE),
-      nbs: NON_BREAKING_SPACE,
+      css, label, delimiter, editable, className, nbs: NON_BREAKING_SPACE,
     }, root ? { replace: this } : {});
-    if (editable) this.updateInputSize();
+    this.input = editable
+      ? new ContentEditableInput(this.getRef('inputContainer') as HTMLElement)
+      : new ViewableInput(this.getRef('inputContainer') as HTMLElement);
+    this.input.value = this.initialValue;
   }
 
   public setCaret(name: string = 'simple') {
-    const input = this.getRef('input');
+    const { input, editable } = this;
     this.removeCaret();
     const caret = Line.cf.create(name, this.getRef('inputContainer') as Element);
-    if (caret) {
-      input?.classList.add(css.customCaret);
+    if (!input) return;
+    if (caret && editable) {
+      input.hiddenCaret = true;
     } else {
-      input?.classList.remove(css.customCaret);
+      input.hiddenCaret = false;
       return;
     }
     this.caret = caret;
@@ -159,40 +159,55 @@ class Line extends TemplateEngine implements ILine {
     this.removeEventListeners();
   }
 
-  public moveCaretToEnd() {
-    const input = this.getRef('input') as HTMLTextAreaElement;
-    if (!input || document.activeElement !== input) return;
-    input.selectionStart = input.selectionEnd = input.value.length;
+  public moveCaretToEnd(isForce: boolean = false) {
+    const { input, editable } = this;
+    if (input && editable) (input as ContentEditableInput).moveCaretToEnd(isForce);
   }
 
   public clear() {
-    const input = this.getRef('input');
-    if (this.editable) {
-      (input as HTMLInputElement).value = '';
-    } else {
-      (input as HTMLElement).innerHTML = '';
-    }
+    this.value = '';
+  }
+
+  private setParams(params: ParamsType) {
+    const {
+      label = '', delimiter = '~', onChange = noop, onSubmit = noop, editable = true,
+      className = '', value,
+    } = params;
+    this.className = className;
+    this.label = label;
+    this.delimiter = delimiter;
+    this.onSubmit = onSubmit;
+    this.onChange = onChange;
+    this.editable = editable;
+    this.initialValue = value || '';
   }
 
   private addEventListeners() {
-    const { editable } = this;
-    if (editable) {
-      const input = this.getRef('input') as HTMLElement;
+    const { editable, input } = this;
+    if (editable && input) {
       input.addEventListener('keydown', this.keyDownHandler);
-      input.addEventListener('input', this.changeHandler);
-      input.addEventListener('cut', this.changeHandler);
-      input.addEventListener('paste', this.changeHandler);
+      input.addEventListener('change', this.changeHandler);
     }
   }
 
   private removeEventListeners() {
-    const { editable } = this;
-    if (editable) {
-      const input = this.getRef('input') as HTMLElement;
+    const { editable, input } = this;
+    if (editable && input) {
       input.removeEventListener('keydown', this.keyDownHandler);
-      input.removeEventListener('input', this.changeHandler);
-      input.removeEventListener('cut', this.changeHandler);
-      input.removeEventListener('paste', this.changeHandler);
+      input.removeEventListener('change', this.changeHandler);
+    }
+  }
+
+  private updateHeight = () => {
+    const root = this.getRef('root') as HTMLInputElement;
+    if (!root) return;
+    this.heightField = root.offsetHeight;
+  }
+
+  private setupEditing() {
+    if (this.editable && this.input) {
+      this.registerFrameHandler();
+      this.input.moveCaretToEnd(true);
     }
   }
 
@@ -206,18 +221,23 @@ class Line extends TemplateEngine implements ILine {
     } as { [code: number]: (e: KeyboardEvent) => void })[Number(getKeyCode(e))] || noop)(e);
   }
 
-  private submitHandler = (e: KeyboardEvent): void => {
-    const { onSubmit } = this;
+  private submitHandler = (e: Event) => {
+    const { onSubmit, input } = this;
     e.preventDefault();
-    this.valueField = (this.getRef('input') as HTMLInputElement).value;
-    return onSubmit(this.value);
+    if (input && onSubmit) {
+      onSubmit({
+        value: input.getSimpleValue(), formattedValue: input.value, lockString: input.lockString,
+      });
+    }
   }
 
   private changeHandler = () => {
-    const value = (this.getRef('input') as HTMLInputElement).value;
-    this.updateInputSize();
-    this.lockCaret();
-    this.onChange(value);
+    const { input } = this;
+    if (input) {
+      this.updateInputSize();
+      this.lockCaret();
+      this.onChange(input.getSimpleValue());
+    }
   }
 
   private updateInputSize = () => {
@@ -240,44 +260,31 @@ class Line extends TemplateEngine implements ILine {
     this.updateHeight();
   }
 
-  private updateHeight = () => {
-    const root = this.getRef('root') as HTMLInputElement;
-    if (!root) return;
-    this.heightField = root.offsetHeight;
-  }
-
   private updateCaretData = () => {
-    const { editable, caret } = this;
-    const input = this.getRef('input');
-    const { activeElement } = document;
+    const { editable, caret, input } = this;
     if (!editable || !input || !caret) return;
-    const { selectionStart, selectionEnd } = input as HTMLInputElement;
-    if (selectionStart === selectionEnd && activeElement === input && document.hasFocus()) {
-      this.showCaret();
+    const { caretPosition } = input;
+    if (document.hasFocus() && caretPosition >= 0) {
+      this.showCaret(caretPosition);
     } else {
       this.hideCaret();
     }
   }
 
-  private showCaret() {
-    const { caret } = this;
+  private showCaret(caretPosition: number) {
+    const { caret, input } = this;
     const { width, height } = this.characterSize;
     const inputContainer = this.getRef('inputContainer');
-    const input = this.getRef('input') as HTMLInputElement;
-    if (!caret || !inputContainer) return;
-    const { selectionStart, selectionEnd } = input as HTMLInputElement;
-    const skip = isUndefined(selectionStart) || isUndefined(selectionEnd)
-      || isNull(selectionStart) || isNull(selectionEnd);
-    if (skip) return;
+    if (!caret || !inputContainer || !input) return;
     const { offsetWidth } = inputContainer as HTMLElement;
-    const { value } = input;
+    const value = input.getSimpleValue();
     const rowLength = Math.floor(offsetWidth / width);
-    const row = Math.floor(selectionStart as number / rowLength);
+    const row = Math.floor(caretPosition / rowLength);
     caret.hidden = false;
-    const character = value[selectionStart as number] === ' '
-      ? NON_BREAKING_SPACE : value[selectionStart as number] || NON_BREAKING_SPACE;
+    const character = value[caretPosition] === ' '
+      ? NON_BREAKING_SPACE : value[caretPosition] || NON_BREAKING_SPACE;
     const top = Math.round(height * row);
-    const left = Math.round((selectionStart as number - row * rowLength) * width);
+    const left = Math.round((caretPosition - row * rowLength) * width);
     caret.setPosition(left, top);
     caret.setValue(character);
   }

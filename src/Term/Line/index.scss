@@ -35,16 +35,3 @@
   flex: 1;
   position: relative;
 }
-
-.input {
-  width: 100%;
-  resize: none;
-  word-break: break-all;
-
-  &.customCaret {
-    color: transparent;
-    text-shadow: 0 0 0 var(--main-text-color);
-  }
-}
-
-.caret {}
