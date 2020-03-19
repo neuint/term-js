@@ -1,4 +1,4 @@
-import { noop, last, get, isUndefined } from 'lodash-es';
+import { noop, last, get, isUndefined, isArray, isString } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import './fonts.scss';
@@ -13,7 +13,7 @@ import { getKeyCode } from '@Term/utils/event';
 import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { NON_BREAKING_SPACE } from '@Term/constants/strings';
 import { scrollbarSize } from '@Term/utils/viewport';
-import { ValueType } from '@Term/types';
+import { EditLineParamsType, ValueType } from '@Term/types';
 
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
@@ -58,7 +58,7 @@ class Term extends TemplateEngine implements ITerm {
 
   constructor(container: Element, params: {
     lines: ValueType[];
-    editLine?: ValueType;
+    editLine?: EditLineParamsType;
     header?: string;
     onSubmit?: (line: string, lines: string[]) => void;
     onChange?: (line: string) => void;
@@ -199,7 +199,7 @@ class Term extends TemplateEngine implements ITerm {
     if (root) root.removeEventListener('click', this.clickHandler);
   }
 
-  protected addEditLine(editLine: ValueType) {
+  protected addEditLine(editLineParams: EditLineParamsType) {
     const { vl, delimiter, label } = this;
     const generalItemsContainer = vl.getGeneralItemsContainer();
     if (!generalItemsContainer) return;
@@ -207,11 +207,13 @@ class Term extends TemplateEngine implements ITerm {
       label,
       delimiter,
       className: css.line,
-      value: editLine,
+      value: isArray(editLineParams) || isString(editLineParams)
+        ? editLineParams : editLineParams.value,
       editable: true,
       onSubmit: this.submitHandler,
       onChange: this.changeHandler,
       caret: this.caret,
+      secret: get(editLineParams as EditLineParamsType, 'secret') || false,
     });
     this.clearHistoryState();
     this.addKeyDownHandler();
@@ -231,15 +233,18 @@ class Term extends TemplateEngine implements ITerm {
     params: { value: string; formattedValue: ValueType; lockString: string },
   ) => {
     const { value, formattedValue, lockString } = params;
-    const { history, vl } = this;
+    const { history, vl, editLine } = this;
     const historyValue = value.substring(lockString.length);
-    if (historyValue && last(history) !== historyValue) this.historyField.push(historyValue);
+    if (historyValue && last(history) !== historyValue && !editLine?.secret) {
+      this.historyField.push(historyValue);
+    }
     this.lines.push(formattedValue);
     this.clearHistoryState();
     vl.length = this.lines.length;
     vl.scrollBottom();
     if (!this.editLine) return;
     this.editLine.clear();
+    this.editLine.secret = false;
   }
 
   private changeHandler = (value: string) => {

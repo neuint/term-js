@@ -14,4 +14,5 @@ export type ParamsType = {
   className?: string;
   append?: boolean;
   ref?: ILine;
+  secret?: boolean;
 };

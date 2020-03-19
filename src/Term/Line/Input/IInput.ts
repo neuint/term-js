@@ -9,6 +9,7 @@ export default interface IInput extends ITemplateEngine {
   selectedRange: { from: number; to: number };
   hiddenCaret: boolean;
   isFocused: boolean;
+  secret: boolean;
   getSimpleValue(): string;
   focus(): void;
   write(value: ValueType, delay?: number): Promise<boolean>;
