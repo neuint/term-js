@@ -6,6 +6,7 @@ import IInput from '@Term/Line/Input/IInput';
 export default interface ILine extends ITemplateEngine, IVirtualizedItem<ITemplateEngine> {
   input?: IInput;
   value: ValueType;
+  secret: boolean;
   stopEdit(): void;
   focus(): void;
   updateViewport(): void;

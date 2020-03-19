@@ -11,3 +11,5 @@ export type ValueFragmentType = string | FormattedValueFragmentType;
 export type FormattedValueType = ValueFragmentType[];
 
 export type ValueType = string | FormattedValueType;
+
+export type EditLineParamsType = ValueType | { value: ValueType; secret?: boolean };

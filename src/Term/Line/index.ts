@@ -1,4 +1,4 @@
-import { noop } from 'lodash-es';
+import { isArray, isString, noop, get } from 'lodash-es';
 
 import css from './index.scss';
 import lineTemplate from './template.html';
@@ -75,6 +75,17 @@ class Line extends TemplateEngine implements ILine {
     return this.inputField;
   }
 
+  private secretField: boolean = false;
+  public get secret(): boolean {
+    return this.secretField;
+  }
+
+  public set secret(secret: boolean) {
+    const { inputField } = this;
+    this.secretField = secret;
+    if (inputField) inputField.secret = secret;
+  }
+
   private initialValue: ValueType = '';
   private label: string = '';
   private caret?: ICaret;
@@ -118,7 +129,7 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public render() {
-    const { label, delimiter, editable, className } = this;
+    const { label, delimiter, editable, className, secret } = this;
     const root = this.getRef('root');
     if (this.inputField) {
       this.initialValue = this.inputField.value;
@@ -131,6 +142,7 @@ class Line extends TemplateEngine implements ILine {
       ? new ContentEditableInput(this.getRef('inputContainer') as HTMLElement)
       : new ViewableInput(this.getRef('inputContainer') as HTMLElement);
     this.inputField.value = this.initialValue;
+    this.inputField.secret = secret;
   }
 
   public setCaret(name: string = 'simple') {
@@ -175,7 +187,7 @@ class Line extends TemplateEngine implements ILine {
   private setParams(params: ParamsType) {
     const {
       label = '', delimiter = '~', onChange = noop, onSubmit = noop, editable = true,
-      className = '', value,
+      className = '', value, secret = false,
     } = params;
     this.className = className;
     this.label = label;
@@ -183,6 +195,7 @@ class Line extends TemplateEngine implements ILine {
     this.onSubmit = onSubmit;
     this.onChange = onChange;
     this.editable = editable;
+    this.secret = secret;
     this.initialValue = value || '';
   }
 
@@ -226,12 +239,19 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private submitHandler = (e: Event) => {
-    const { onSubmit, inputField } = this;
+    const { onSubmit, inputField, secret } = this;
+    const value = inputField?.value || '';
+    let formattedValue: ValueType = '';
+    if (isString(value)) {
+      formattedValue = secret ? '' : value;
+    } else if (isArray(value)) {
+      formattedValue = secret ? value.filter(item => get(item, 'lock')) : value;
+    }
     e.preventDefault();
     if (inputField && onSubmit) {
       onSubmit({
+        formattedValue,
         value: inputField.getSimpleValue(),
-        formattedValue: inputField.value,
         lockString: inputField.lockString,
       });
     }

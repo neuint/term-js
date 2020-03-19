@@ -1,3 +1,5 @@
+import css from './index.scss';
+
 import escapeHTML from 'escape-html';
 import { isString } from 'lodash-es';
 
@@ -11,7 +13,7 @@ import {
 } from '@Term/types';
 import { NON_BREAKING_SPACE } from '@Term/constants/strings';
 import { getStartIntersectionString } from '@Term/utils/string';
-import { DATA_INDEX_ATTRIBUTE_NAME } from '@Term/Line/Input/constants';
+import { DATA_INDEX_ATTRIBUTE_NAME, SECRET_CHARACTER } from '@Term/Line/Input/constants';
 
 abstract class BaseInput extends TemplateEngine implements IInput {
   public static getValueString(value: ValueType): string {
@@ -23,32 +25,40 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
 
   protected static getFragmentTemplate(
-    str: string, className: string, index: number,
+    str: string, params: { className?: string; index: number; secret?: boolean },
   ): string {
-    return `<span ${DATA_INDEX_ATTRIBUTE_NAME}="${index}" ref="fragment-${index}" class="${className}">${str}</span>`;
+    const { className = '', secret = false, index } = params;
+    const composedClassName = [secret ? css.secret : '', className].join(' ');
+    return `<span ${DATA_INDEX_ATTRIBUTE_NAME}="${index}" ref="fragment-${index}" class="${composedClassName}">${str}</span>`;
   }
 
-  protected static getNormalizedTemplateString(str: string): string {
-    return escapeHTML(str).replace(/\s/g, NON_BREAKING_SPACE);
+  protected static getNormalizedTemplateString(str: string, secret?: boolean): string {
+    const normalizedStr = escapeHTML(str).replace(/\s/g, NON_BREAKING_SPACE);
+    const strLength = normalizedStr.length;
+    return secret && strLength
+      ? (new Array(strLength)).fill(SECRET_CHARACTER).join('')
+      : normalizedStr;
   }
 
   protected static getValueFragmentTemplate(
-    valueFragment: ValueFragmentType, index: number,
+    valueFragment: ValueFragmentType, index: number, params: { secret?: boolean } = {},
   ): string {
+    const { secret } = params;
     if (isString(valueFragment)) {
       return BaseInput.getFragmentTemplate(
-        BaseInput.getNormalizedTemplateString(valueFragment), '', index,
+        BaseInput.getNormalizedTemplateString(valueFragment, secret), { index, secret },
       );
     }
-    const { str, className = '' } = valueFragment;
-    const normalizedString = BaseInput.getNormalizedTemplateString(str);
-    return BaseInput.getFragmentTemplate(normalizedString, className, index);
+    const { str, className = '', lock } = valueFragment;
+    const isSecret = !lock && secret;
+    const normalizedString = BaseInput.getNormalizedTemplateString(str, isSecret);
+    return BaseInput.getFragmentTemplate(normalizedString, { className, index, secret: isSecret });
   }
 
-  protected static getValueTemplate(value: ValueType): string {
-    if (isString(value)) return BaseInput.getNormalizedTemplateString(value);
+  protected static getValueTemplate(value: ValueType, params: { secret?: boolean } = {}): string {
+    if (isString(value)) return BaseInput.getNormalizedTemplateString(value, params.secret);
     return value.reduce((acc: string, item: ValueFragmentType, index: number): string => {
-      return `${acc}${BaseInput.getValueFragmentTemplate(item, index)}`;
+      return `${acc}${BaseInput.getValueFragmentTemplate(item, index, params)}`;
     }, '');
   }
 
@@ -129,6 +139,14 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
   public set hiddenCaret(isCaretHidden: boolean) {
     this.isCaretHidden = isCaretHidden;
+  }
+
+  protected secretField: boolean = false;
+  public get secret(): boolean {
+    return this.secretField;
+  }
+  public set secret(secret: boolean) {
+    this.secretField = secret;
   }
 
   public get isFocused(): boolean {

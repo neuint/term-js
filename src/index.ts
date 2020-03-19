@@ -15,13 +15,15 @@ const clickHandler = (e: Event) => {
 if (container) {
   const term = new Term(container, {
     label: 'guest',
-    editLine: [
-      { clickHandler, id: 'test', str: 'User name: ', lock: true, className: css.granted },
-    ],
+    editLine: {
+      secret: true,
+      value: [{ str: 'Password: ', lock: true, className: css.granted }],
+    },
     lines: (new Array(1).fill(null)).map((
       _, index,
     ): ValueType => ([
-      { str: 'Access denied please login!', className: css.denied },
+      { str: 'User name: ', className: css.granted },
+      'test',
     ])),
   });
   term.setHeader('Test');

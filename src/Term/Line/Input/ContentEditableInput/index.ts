@@ -13,8 +13,8 @@ import {
 import { CHANGE_EVENT_TYPE, TEXT_NODE_TYPE } from './constants';
 
 class ContentEditableInput extends BaseInput implements IInput {
-  private static getStyledValueTemplate(val: ValueType): string {
-    return BaseInput.getValueTemplate(val);
+  private static getStyledValueTemplate(val: ValueType, params: { secret?: boolean } = {}): string {
+    return BaseInput.getValueTemplate(val, params);
   }
 
   private static getLastTextNode(root: HTMLElement): Node | null {
@@ -79,6 +79,11 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   public get value(): ValueType {
     return this.valueField;
+  }
+
+  public set secret(secret: boolean) {
+    this.secretField = secret;
+    this.updateContent();
   }
 
   public get caretPosition(): number {
@@ -235,10 +240,13 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   private setString() {
+    const { secretField } = this;
     const input = this.getRef('input') as HTMLElement;
     const hidden = this.getRef('hidden') as HTMLElement;
     if (input && hidden) {
-      const str = ContentEditableInput.getStyledValueTemplate(this.valueField);
+      const str = ContentEditableInput.getStyledValueTemplate(this.valueField, {
+        secret: secretField,
+      });
       input.innerHTML = str;
       hidden.innerHTML = str;
     }
