@@ -44,15 +44,15 @@ class Line extends TemplateEngine implements ILine {
   private static itemHorizontalPadding: number = 16;
 
   public get value(): ValueType {
-    const { input } = this;
-    return input ? input.value : '';
+    const { inputField } = this;
+    return inputField ? inputField.value : '';
   }
 
   public set value(val: ValueType) {
-    const { input } = this;
-    if (input) {
-      input.value = val;
-      input.caretPosition = 0;
+    const { inputField } = this;
+    if (inputField) {
+      inputField.value = val;
+      inputField.caretPosition = 0;
     }
   }
 
@@ -70,6 +70,11 @@ class Line extends TemplateEngine implements ILine {
     return { width: offsetWidth, height: offsetHeight };
   }
 
+  private inputField?: IInput;
+  public get input(): IInput | undefined {
+    return this.inputField;
+  }
+
   private initialValue: ValueType = '';
   private label: string = '';
   private caret?: ICaret;
@@ -81,7 +86,6 @@ class Line extends TemplateEngine implements ILine {
   }) => void = noop;
   private onChange: (value: string) => void = noop;
   private lockTimeout?: ReturnType<typeof setTimeout>;
-  private input?: IInput;
 
   constructor(container: Element, params: ParamsType = {}) {
     super(lineTemplate, container);
@@ -104,40 +108,40 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public focus() {
-    const { input } = this;
-    if (!input) return;
-    const { isFocused } = input;
+    const { inputField } = this;
+    if (!inputField) return;
+    const { isFocused } = inputField;
     if (!isFocused) {
-      input.focus();
-      input.moveCaretToEnd();
+      inputField.focus();
+      inputField.moveCaretToEnd();
     }
   }
 
   public render() {
     const { label, delimiter, editable, className } = this;
     const root = this.getRef('root');
-    if (this.input) {
-      this.initialValue = this.input.value;
-      this.input.destroy();
+    if (this.inputField) {
+      this.initialValue = this.inputField.value;
+      this.inputField.destroy();
     }
     super.render({
       css, label, delimiter, editable, className, nbs: NON_BREAKING_SPACE,
     }, root ? { replace: this } : {});
-    this.input = editable
+    this.inputField = editable
       ? new ContentEditableInput(this.getRef('inputContainer') as HTMLElement)
       : new ViewableInput(this.getRef('inputContainer') as HTMLElement);
-    this.input.value = this.initialValue;
+    this.inputField.value = this.initialValue;
   }
 
   public setCaret(name: string = 'simple') {
-    const { input, editable } = this;
+    const { inputField, editable } = this;
     this.removeCaret();
     const caret = Line.cf.create(name, this.getRef('inputContainer') as Element);
-    if (!input) return;
+    if (!inputField) return;
     if (caret && editable) {
-      input.hiddenCaret = true;
+      inputField.hiddenCaret = true;
     } else {
-      input.hiddenCaret = false;
+      inputField.hiddenCaret = false;
       return;
     }
     this.caret = caret;
@@ -160,8 +164,8 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public moveCaretToEnd(isForce: boolean = false) {
-    const { input, editable } = this;
-    if (input && editable) (input as ContentEditableInput).moveCaretToEnd(isForce);
+    const { inputField, editable } = this;
+    if (inputField && editable) (inputField as ContentEditableInput).moveCaretToEnd(isForce);
   }
 
   public clear() {
@@ -183,18 +187,18 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private addEventListeners() {
-    const { editable, input } = this;
-    if (editable && input) {
-      input.addEventListener('keydown', this.keyDownHandler);
-      input.addEventListener('change', this.changeHandler);
+    const { editable, inputField } = this;
+    if (editable && inputField) {
+      inputField.addEventListener('keydown', this.keyDownHandler);
+      inputField.addEventListener('change', this.changeHandler);
     }
   }
 
   private removeEventListeners() {
-    const { editable, input } = this;
-    if (editable && input) {
-      input.removeEventListener('keydown', this.keyDownHandler);
-      input.removeEventListener('change', this.changeHandler);
+    const { editable, inputField } = this;
+    if (editable && inputField) {
+      inputField.removeEventListener('keydown', this.keyDownHandler);
+      inputField.removeEventListener('change', this.changeHandler);
     }
   }
 
@@ -205,9 +209,9 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private setupEditing() {
-    if (this.editable && this.input) {
+    if (this.editable && this.inputField) {
       this.registerFrameHandler();
-      this.input.moveCaretToEnd(true);
+      this.inputField.moveCaretToEnd(true);
     }
   }
 
@@ -222,21 +226,23 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private submitHandler = (e: Event) => {
-    const { onSubmit, input } = this;
+    const { onSubmit, inputField } = this;
     e.preventDefault();
-    if (input && onSubmit) {
+    if (inputField && onSubmit) {
       onSubmit({
-        value: input.getSimpleValue(), formattedValue: input.value, lockString: input.lockString,
+        value: inputField.getSimpleValue(),
+        formattedValue: inputField.value,
+        lockString: inputField.lockString,
       });
     }
   }
 
   private changeHandler = () => {
-    const { input } = this;
-    if (input) {
+    const { inputField } = this;
+    if (inputField) {
       this.updateInputSize();
       this.lockCaret();
-      this.onChange(input.getSimpleValue());
+      this.onChange(inputField.getSimpleValue());
     }
   }
 
@@ -261,9 +267,9 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private updateCaretData = () => {
-    const { editable, caret, input } = this;
-    if (!editable || !input || !caret) return;
-    const { caretPosition } = input;
+    const { editable, caret, inputField } = this;
+    if (!editable || !inputField || !caret) return;
+    const { caretPosition } = inputField;
     if (document.hasFocus() && caretPosition >= 0) {
       this.showCaret(caretPosition);
     } else {
@@ -272,12 +278,12 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private showCaret(caretPosition: number) {
-    const { caret, input } = this;
+    const { caret, inputField } = this;
     const { width, height } = this.characterSize;
     const inputContainer = this.getRef('inputContainer');
-    if (!caret || !inputContainer || !input) return;
+    if (!caret || !inputContainer || !inputField) return;
     const { offsetWidth } = inputContainer as HTMLElement;
-    const value = input.getSimpleValue();
+    const value = inputField.getSimpleValue();
     const rowLength = Math.floor(offsetWidth / width);
     const row = Math.floor(caretPosition / rowLength);
     caret.hidden = false;

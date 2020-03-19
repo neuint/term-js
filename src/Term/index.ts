@@ -253,21 +253,16 @@ class Term extends TemplateEngine implements ITerm {
     this.stopHistory = false;
   }
 
-  private getLastLineInput(): HTMLTextAreaElement | null {
-    if (!this.editLine) return null;
-    return this.editLine.getRef('input') as HTMLTextAreaElement;
-  }
-
   private addKeyDownHandler() {
-    const input = this.getLastLineInput();
-    if (!input) return;
-    input.addEventListener('keydown', this.lineKeydownHandler);
+    const { editLine } = this;
+    if (!editLine || !editLine.input) return;
+    editLine.input.addEventListener('keydown', this.lineKeydownHandler);
   }
 
   private removeKeyDownHandler() {
-    const input = this.getLastLineInput();
-    if (!input) return;
-    input.removeEventListener('keydown', this.lineKeydownHandler);
+    const { editLine } = this;
+    if (!editLine || !editLine.input) return;
+    editLine.input.removeEventListener('keydown', this.lineKeydownHandler);
   }
 
   private lineKeydownHandler = (e: KeyboardEvent) => {
