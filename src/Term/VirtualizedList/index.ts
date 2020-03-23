@@ -107,6 +107,10 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     this.updateHeight();
   }
 
+  public clearCache() {
+    this.itemsCache = {};
+  }
+
   private updateHeight() {
     const { length, heightGetter } = this;
     const virtualizedList = this.getRef('virtualizedList') as HTMLElement;

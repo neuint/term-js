@@ -1,7 +1,9 @@
 import ITermEventMap from './ITermEventMap';
+import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
 
 export default interface ITerm {
   history: string[];
+  keyboardShortcutsManager: IKeyboardShortcutsManager;
   write(data: string | string [], duration?: number): void;
   setCaret(caret: string): void;
   addEventListener<K extends keyof ITermEventMap>(
