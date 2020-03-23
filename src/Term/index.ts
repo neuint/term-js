@@ -19,6 +19,7 @@ import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
 import Line from './Line';
 import ILine from './Line/ILine';
+import KeyboardShortcutsManager from '@Term/KeyboardShortcutsManager';
 
 class Term extends TemplateEngine implements ITerm {
   private static scrollbarSize: number = 20;
@@ -47,14 +48,15 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private readonly ro: ResizeObserver;
-  private readonly lines: ValueType[] = [];
   private readonly vl: IVirtualizedList<ILine>;
   private heightCache: number[] = [];
+  private lines: ValueType[] = [];
   private size: { width: number; height: number } = { width: 0, height: 0 };
   private caret?: string;
   private editLine?: ILine;
   private delimiter: string = '~';
   private label: string = '';
+  public keyboardShortcutsManager = new KeyboardShortcutsManager();
 
   constructor(container: Element, params: {
     lines: ValueType[];
@@ -87,6 +89,8 @@ class Term extends TemplateEngine implements ITerm {
     this.lastLineFocus();
     this.frameHandler = this.characterUpdater;
     this.registerFrameHandler();
+    this.addKeyboardShortcutsManagerListeners();
+    this.keyboardShortcutsManager.activate();
   }
 
   public addEventListener<K extends keyof ITermEventMap>(
@@ -297,6 +301,18 @@ class Term extends TemplateEngine implements ITerm {
     editLine.value = newIndex >= 0 ? history[newIndex] : '';
     editLine.moveCaretToEnd();
     e.preventDefault();
+  }
+
+  private addKeyboardShortcutsManagerListeners() {
+    const { keyboardShortcutsManager } = this;
+    keyboardShortcutsManager.addListener('clear', this.clearHandler);
+  }
+
+  private clearHandler = () => {
+    const { vl } = this;
+    this.lines = [];
+    vl.length = 0;
+    vl.clearCache();
   }
 }
 
