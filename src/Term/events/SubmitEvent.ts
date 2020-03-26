@@ -1,8 +1,10 @@
 class SubmitEvent {
   public readonly value: string;
+  public readonly typedValue?: string;
 
-  constructor(value: string) {
+  constructor(value: string, typedValue?: string) {
     this.value = value;
+    this.typedValue = typedValue;
   }
 }
 

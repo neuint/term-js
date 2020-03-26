@@ -20,6 +20,15 @@ import ITermEventMap from './ITermEventMap';
 import Line from './Line';
 import ILine from './Line/ILine';
 import KeyboardShortcutsManager from '@Term/KeyboardShortcutsManager';
+import SubmitEvent from '@Term/events/SubmitEvent';
+import {
+  ACTION_EVENT_NAME,
+  CLEAR_ACTION_NAME,
+  INPUT_EVENT_LIST,
+  SUBMIT_EVENT_NAME,
+} from '@Term/constants/events';
+import ActionEvent from '@Term/events/ActionEvent';
+import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
 
 class Term extends TemplateEngine implements ITerm {
   private static scrollbarSize: number = 20;
@@ -56,7 +65,10 @@ class Term extends TemplateEngine implements ITerm {
   private editLine?: ILine;
   private delimiter: string = '~';
   private label: string = '';
-  public keyboardShortcutsManager = new KeyboardShortcutsManager();
+  private listeners: {
+    [event: string]: ({ handler: (e: any) => void, options?: EventListenerOptions })[];
+  } = {};
+  public keyboardShortcutsManager: IKeyboardShortcutsManager;
 
   constructor(container: Element, params: {
     lines: ValueType[];
@@ -78,6 +90,7 @@ class Term extends TemplateEngine implements ITerm {
     this.label = params.label || this.label;
     this.delimiter = params.delimiter || this.delimiter;
     this.render({ css, header: params.header });
+    this.keyboardShortcutsManager = new KeyboardShortcutsManager({ onAction: this.actionHandler });
     Term.scrollbarSize = scrollbarSize(this.getRef('root') as HTMLElement);
     this.vl = new VirtualizedList(
       this.getRef('linesContainer') as Element,
@@ -96,17 +109,25 @@ class Term extends TemplateEngine implements ITerm {
   public addEventListener<K extends keyof ITermEventMap>(
     type: K, handler: (e: ITermEventMap[K]) => void, options?: EventListenerOptions,
   ) {
-    throw new Error('No implementation');
+    const { listeners } = this;
+    if (!listeners[type]) listeners[type] = [];
+    listeners[type].push({ handler, options });
+    this.registerListener(type, handler, options);
   }
 
   public removeEventListener<K extends keyof ITermEventMap>(
     type: K, handler: (e: ITermEventMap[K]) => void, options?: EventListenerOptions,
   ) {
-    throw new Error('No implementation');
+    const list = this.listeners[type];
+    if (!list) return;
+    const index = list.findIndex(item => item.handler === handler);
+    if (index >= 0) list.splice(index, 1);
+    this.unregisterListener(type, handler, options);
   }
 
   public destroy() {
     this.removeKeyDownHandler();
+    this.unregisterAllListeners();
     this.editLine?.destroy();
     this.removeListeners();
     super.destroy();
@@ -237,7 +258,7 @@ class Term extends TemplateEngine implements ITerm {
     params: { value: string; formattedValue: ValueType; lockString: string },
   ) => {
     const { value, formattedValue, lockString } = params;
-    const { history, vl, editLine } = this;
+    const { history, vl, editLine, listeners } = this;
     const historyValue = value.substring(lockString.length);
     if (historyValue && last(history) !== historyValue && !editLine?.secret) {
       this.historyField.push(historyValue);
@@ -249,6 +270,10 @@ class Term extends TemplateEngine implements ITerm {
     if (!this.editLine) return;
     this.editLine.clear();
     this.editLine.secret = false;
+    if (listeners[SUBMIT_EVENT_NAME]) {
+      const event = new SubmitEvent(value, historyValue || undefined);
+      listeners[SUBMIT_EVENT_NAME].forEach(item => item.handler(event));
+    }
   }
 
   private changeHandler = (value: string) => {
@@ -305,7 +330,7 @@ class Term extends TemplateEngine implements ITerm {
 
   private addKeyboardShortcutsManagerListeners() {
     const { keyboardShortcutsManager } = this;
-    keyboardShortcutsManager.addListener('clear', this.clearHandler);
+    keyboardShortcutsManager.addListener(CLEAR_ACTION_NAME, this.clearHandler);
   }
 
   private clearHandler = () => {
@@ -313,6 +338,51 @@ class Term extends TemplateEngine implements ITerm {
     this.lines = [];
     vl.length = 0;
     vl.clearCache();
+  }
+
+  private actionHandler = (action: string, e: Event) => {
+    const { listeners } = this;
+    if (listeners[ACTION_EVENT_NAME]) {
+      const event = new ActionEvent({ action });
+      listeners[ACTION_EVENT_NAME].forEach(item => item.handler(event));
+    }
+  }
+
+  private registerListener<K extends keyof ITermEventMap>(
+    type: K, handler: (e: ITermEventMap[K]) => void, options?: EventListenerOptions,
+  ) {
+    const { editLine } = this;
+    if (editLine && INPUT_EVENT_LIST.includes(type)) {
+      editLine.input?.addEventListener(
+        type as keyof HTMLElementEventMap,
+        handler as (e: HTMLElementEventMap[keyof HTMLElementEventMap]) => void,
+        options,
+      );
+    }
+  }
+
+  private unregisterAllListeners() {
+    const { listeners } = this;
+    Object.keys(listeners).forEach((type: string) => {
+      if (INPUT_EVENT_LIST.includes(type)) {
+        listeners[type].forEach((item) => {
+          this.unregisterListener(type as keyof ITermEventMap, item.handler, item.options);
+        });
+      }
+    });
+  }
+
+  private unregisterListener<K extends keyof ITermEventMap>(
+    type: K, handler: (e: ITermEventMap[K]) => void, options?: EventListenerOptions,
+  ) {
+    const { editLine } = this;
+    if (editLine && INPUT_EVENT_LIST.includes(type)) {
+      editLine.input?.removeEventListener(
+        type as keyof HTMLElementEventMap,
+        handler as (e: HTMLElementEventMap[keyof HTMLElementEventMap]) => void,
+        options,
+      );
+    }
   }
 }
 

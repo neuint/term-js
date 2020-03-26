@@ -6,7 +6,6 @@ export default interface ITermEventMap {
   action: ActionEvent;
   focus: FocusEvent;
   blur: FocusEvent;
-  click: MouseEvent;
   keydown: KeyboardEvent;
   keypress: KeyboardEvent;
   keyup: KeyboardEvent;

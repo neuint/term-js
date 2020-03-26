@@ -8,10 +8,6 @@ if (module.hot) module.hot.accept();
 
 const container = document.querySelector('#root');
 
-const clickHandler = (e: Event) => {
-  console.log('e', e);
-};
-
 if (container) {
   const term = new Term(container, {
     label: 'guest',
@@ -28,4 +24,8 @@ if (container) {
   });
   term.setHeader('Test');
   (window as unknown as { term: ITerm }).term = term;
+
+  term.addEventListener('submit', (e: any) => {
+    console.log('e', e);
+  });
 }
