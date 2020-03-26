@@ -1,7 +1,7 @@
 import template from './template.html';
 import css from './index.scss';
 
-import { isString } from 'lodash-es';
+import { identity, isString } from 'lodash-es';
 
 import IInput from '@Term/Line/Input/IInput';
 import { FormattedValueType, ValueFragmentType, ValueType } from '@Term/types';
@@ -11,6 +11,7 @@ import {
   STRINGIFY_HTML_PATTERN,
 } from './patterns';
 import { CHANGE_EVENT_TYPE, TEXT_NODE_TYPE } from './constants';
+import { SECRET_CHARACTER } from '@Term/Line/Input/constants';
 
 class ContentEditableInput extends BaseInput implements IInput {
   private static getStyledValueTemplate(val: ValueType, params: { secret?: boolean } = {}): string {
@@ -199,7 +200,18 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   private getInputValue(): string {
     const root = this.getRef('input') as HTMLElement;
-    return ContentEditableInput.getHtmlStringifyValue(root.innerHTML);
+    const data = root.innerHTML;
+    const items = data.replace(/<\/span>[^<]*</g, '</span><').split('</span>').filter(identity);
+    return items.reduce((acc: string, item: string) => {
+      const index = (item.match(/data-index="[0-9]+"/)?.[0] || '').replace(/[^0-9]/g, '');
+      if (index) {
+        const prevValue = this.getValueItemString(Number(index));
+        const updatedValue = ContentEditableInput.getHtmlStringifyValue(item)
+          .replace(new RegExp(`${SECRET_CHARACTER}+`), prevValue);
+        return `${acc}${updatedValue}`;
+      }
+      return `${acc}${ContentEditableInput.getHtmlStringifyValue(item)}`;
+    }, '');
   }
 
   private updateValueField() {

@@ -303,7 +303,7 @@ class Line extends TemplateEngine implements ILine {
     const inputContainer = this.getRef('inputContainer');
     if (!caret || !inputContainer || !inputField) return;
     const { offsetWidth } = inputContainer as HTMLElement;
-    const value = inputField.getSimpleValue();
+    const value = inputField.getSimpleValue(false);
     const rowLength = Math.floor(offsetWidth / width);
     const row = Math.floor(caretPosition / rowLength);
     caret.hidden = false;

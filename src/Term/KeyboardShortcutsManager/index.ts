@@ -8,6 +8,7 @@ import {
 } from '@Term/KeyboardShortcutsManager/types';
 import { isArray, isNumber } from 'lodash-es';
 import { checkArraysEqual } from '@Term/utils/array';
+import { CLEAR_ACTION_NAME } from '@Term/constants/events';
 
 class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   private static checkShortcutsEqual(
@@ -47,7 +48,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   private emitter?: Emitter;
 
   private shortcutsMapField: { [action: string]: ActionShortcutType | ActionShortcutType[] } = {
-    clear: [
+    [CLEAR_ACTION_NAME]: [
       { code: K_CODE, meta: true },
       { code: K_CODE, ctrl: true },
     ],
@@ -57,6 +58,11 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   }
 
   private listeners: { [actions: string]: ((action: string, e: Event) => void)[] } = {};
+  private actionHandler?: (action: string, e: Event) => void;
+
+  constructor(params: { onAction?: (action: string, e: Event) => void } = {}) {
+    this.actionHandler = params.onAction;
+  }
 
   public addListener(action: string, callback: (action: string, e: Event) => void): void {
     const { listeners } = this;
@@ -128,7 +134,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   }
 
   private addListeners() {
-    const { emitter, shortcutsMapField, listeners } = this;
+    const { emitter, shortcutsMapField, listeners, actionHandler } = this;
     if (!emitter) return;
     Object.keys(shortcutsMapField).forEach((action) => {
       const info = shortcutsMapField[action];
@@ -138,6 +144,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
         emitter.addListener('keyDown', (e: Event) => {
           const callbackList = listeners[action];
           if (callbackList) callbackList.forEach(callback => callback(action, e));
+          if (actionHandler) actionHandler(action, e);
         }, item);
       });
     });

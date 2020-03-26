@@ -13,31 +13,39 @@ import {
 } from '@Term/types';
 import { NON_BREAKING_SPACE } from '@Term/constants/strings';
 import { getStartIntersectionString } from '@Term/utils/string';
-import { DATA_INDEX_ATTRIBUTE_NAME, SECRET_CHARACTER } from '@Term/Line/Input/constants';
+import {
+  DATA_INDEX_ATTRIBUTE_NAME, SECRET_CHARACTER,
+} from '@Term/Line/Input/constants';
 
 abstract class BaseInput extends TemplateEngine implements IInput {
-  public static getValueString(value: ValueType): string {
+  public static getValueString(value: ValueType, params: { secret?: boolean } = {}): string {
+    const { secret = false } = params;
     return isString(value)
-      ? value
+      ? secret ? BaseInput.convertSecret(value) : value
       : value.reduce((acc: string, item: ValueFragmentType): string => {
-        return `${acc}${isString(item) ? item : item.str}`;
+        const str = isString(item) ? item : item.str;
+        const val = secret && (isString(item) || !item.lock)
+          ? BaseInput.convertSecret(str) : str;
+        return `${acc}${val}`;
       }, '');
   }
 
   protected static getFragmentTemplate(
-    str: string, params: { className?: string; index: number; secret?: boolean },
+    str: string,
+    params: { className?: string; index: number; secret?: boolean },
   ): string {
     const { className = '', secret = false, index } = params;
     const composedClassName = [secret ? css.secret : '', className].join(' ');
-    return `<span ${DATA_INDEX_ATTRIBUTE_NAME}="${index}" ref="fragment-${index}" class="${composedClassName}">${str}</span>`;
+    const processedString = BaseInput.getNormalizedTemplateString(secret
+      ? BaseInput.convertSecret(str) : str);
+    return `<span
+      ${DATA_INDEX_ATTRIBUTE_NAME}="${index}"
+      ref="fragment-${index}"
+      class="${composedClassName}">${processedString}</span>`;
   }
 
-  protected static getNormalizedTemplateString(str: string, secret?: boolean): string {
-    const normalizedStr = escapeHTML(str).replace(/\s/g, NON_BREAKING_SPACE);
-    const strLength = normalizedStr.length;
-    return secret && strLength
-      ? (new Array(strLength)).fill(SECRET_CHARACTER).join('')
-      : normalizedStr;
+  protected static getNormalizedTemplateString(str: string): string {
+    return escapeHTML(str).replace(/\s/g, NON_BREAKING_SPACE);
   }
 
   protected static getValueFragmentTemplate(
@@ -45,18 +53,15 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   ): string {
     const { secret } = params;
     if (isString(valueFragment)) {
-      return BaseInput.getFragmentTemplate(
-        BaseInput.getNormalizedTemplateString(valueFragment, secret), { index, secret },
-      );
+      return BaseInput.getFragmentTemplate(valueFragment, { index, secret });
     }
     const { str, className = '', lock } = valueFragment;
     const isSecret = !lock && secret;
-    const normalizedString = BaseInput.getNormalizedTemplateString(str, isSecret);
-    return BaseInput.getFragmentTemplate(normalizedString, { className, index, secret: isSecret });
+    return BaseInput.getFragmentTemplate(str, { className, index, secret: isSecret });
   }
 
   protected static getValueTemplate(value: ValueType, params: { secret?: boolean } = {}): string {
-    if (isString(value)) return BaseInput.getNormalizedTemplateString(value, params.secret);
+    if (isString(value)) return BaseInput.getNormalizedTemplateString(value);
     return value.reduce((acc: string, item: ValueFragmentType, index: number): string => {
       return `${acc}${BaseInput.getValueFragmentTemplate(item, index, params)}`;
     }, '');
@@ -79,12 +84,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
       }
       return acc;
     }, [] as FormattedValueType);
-    const lastIndex = updatedValueField.length - 1;
-    if (isString(updatedValueField[lastIndex])) {
-      updatedValueField[lastIndex] += checkValue;
-    } else {
-      updatedValueField.push(checkValue);
-    }
+    checkValue.split('').forEach(char => updatedValueField.push(char));
     return updatedValueField.filter(item => isString(item) ? item : item.str);
   }
 
@@ -101,6 +101,10 @@ abstract class BaseInput extends TemplateEngine implements IInput {
       }
     });
     return lockStr;
+  }
+
+  private static convertSecret(str: string): string {
+    return (new Array(str.length)).fill(SECRET_CHARACTER).join('');
   }
 
   protected characterWidth: number = 16;
@@ -157,9 +161,11 @@ abstract class BaseInput extends TemplateEngine implements IInput {
       || activeElement?.parentNode === root;
   }
 
-  protected constructor(template: string, container?: Element, css?: { [key: string]: string }) {
+  protected constructor(
+    template: string, container?: Element, cssData?: { [key: string]: string },
+  ) {
     super(template, container);
-    this.render({ css });
+    this.render({ css: cssData });
     this.addHandlers();
   }
 
@@ -193,12 +199,21 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     }
   }
 
+  protected getValueItemString(index: number): string {
+    const { valueField } = this;
+    if (isString(valueField)) return index ? '' : valueField;
+    const item = valueField[index];
+    if (!item) return '';
+    return isString(item) ? item : item.str;
+  }
+
   protected abstract getRootElement(): Element | undefined;
 
   public abstract write(value: ValueType, delay?: number): Promise<boolean>;
 
-  public getSimpleValue(): string {
-    return BaseInput.getValueString(this.valueField);
+  public getSimpleValue(showSecret: boolean = true): string {
+    const { secretField } = this;
+    return BaseInput.getValueString(this.valueField, { secret: secretField && !showSecret });
   }
 
   // tslint:disable-next-line:no-empty

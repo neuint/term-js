@@ -10,7 +10,7 @@ export default interface IInput extends ITemplateEngine {
   hiddenCaret: boolean;
   isFocused: boolean;
   secret: boolean;
-  getSimpleValue(): string;
+  getSimpleValue(showSecret?: boolean): string;
   focus(): void;
   write(value: ValueType, delay?: number): Promise<boolean>;
   addEventListener<K extends keyof HTMLElementEventMap>(
