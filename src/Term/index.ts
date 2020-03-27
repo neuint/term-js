@@ -279,6 +279,7 @@ class Term extends TemplateEngine implements ITerm {
   private changeHandler = (value: string) => {
     const { historyIndex, history, vl } = this;
     if (history[historyIndex] !== value) this.stopHistory = true;
+    if (!value) this.stopHistory = false;
     vl.scrollBottom();
   }
 

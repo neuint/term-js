@@ -24,8 +24,4 @@ if (container) {
   });
   term.setHeader('Test');
   (window as unknown as { term: ITerm }).term = term;
-
-  term.addEventListener('submit', (e: any) => {
-    console.log('e', e);
-  });
 }
