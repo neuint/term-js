@@ -1,4 +1,4 @@
-class SubmitEvent {
+class ValueEvent {
   public readonly value: string;
   public readonly typedValue?: string;
 
@@ -8,4 +8,4 @@ class SubmitEvent {
   }
 }
 
-export default SubmitEvent;
+export default ValueEvent;

@@ -1,0 +1,15 @@
+@import 'mixins';
+
+.label {
+  display: flex;
+}
+
+.labelTextContainer {
+  max-width: 10rem;
+
+  @include truncated;
+}
+
+.labelText {
+  color: var(--line-lable-text-color);
+}

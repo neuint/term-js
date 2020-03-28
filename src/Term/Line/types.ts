@@ -1,5 +1,6 @@
 import { ValueType } from '@Term/types';
 import ILine from '@Term/Line/ILine';
+import ICaret from '@Term/BaseCaret/ICaret';
 
 export type ParamsType = {
   caret?: string;
@@ -10,6 +11,7 @@ export type ParamsType = {
     value: string; formattedValue: ValueType; lockString: string;
   }) => void;
   onChange?: (value: string) => void;
+  onUpdateCaretPosition?: (caretPosition: number, caret?: ICaret) => void;
   editable?: boolean;
   className?: string;
   append?: boolean;

@@ -1,13 +1,12 @@
 import Term from './Term';
 import ITerm from '@Term/ITerm';
-import { ValueType } from '@Term/types';
 
 import css from './index.scss';
+import { ValueType } from '@Term/types';
 
 if (module.hot) module.hot.accept();
 
 const container = document.querySelector('#root');
-
 if (container) {
   const term = new Term(container, {
     label: 'guest',

@@ -1,4 +1,4 @@
-import { noop, last, get, isUndefined, isArray, isString } from 'lodash-es';
+import { noop, last, get, isUndefined, isArray, isString, isObject } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import './fonts.scss';
@@ -20,15 +20,22 @@ import ITermEventMap from './ITermEventMap';
 import Line from './Line';
 import ILine from './Line/ILine';
 import KeyboardShortcutsManager from '@Term/KeyboardShortcutsManager';
-import SubmitEvent from '@Term/events/SubmitEvent';
+import ValueEvent from '@Term/events/ValueEvent';
 import {
   ACTION_EVENT_NAME,
   CLEAR_ACTION_NAME,
   INPUT_EVENT_LIST,
-  SUBMIT_EVENT_NAME,
+  SUBMIT_EVENT_NAME, UPDATE_CARET_POSITION_EVENT_NAME,
 } from '@Term/constants/events';
 import ActionEvent from '@Term/events/ActionEvent';
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
+import IPluginManager from '@Term/PluginManager/IPluginManager';
+import PluginManager from '@Term/PluginManager';
+import ITermInfo from '@Term/ITermInfo';
+import BaseInput from '@Term/Line/Input/BaseInput';
+import { CHANGE_EVENT_TYPE } from '@Term/Line/Input/ContentEditableInput/constants';
+import CaretEvent from '@Term/events/CaretEvent';
+import ICaret from '@Term/BaseCaret/ICaret';
 
 class Term extends TemplateEngine implements ITerm {
   private static scrollbarSize: number = 20;
@@ -65,10 +72,12 @@ class Term extends TemplateEngine implements ITerm {
   private editLine?: ILine;
   private delimiter: string = '~';
   private label: string = '';
+  private header?: string;
   private listeners: {
     [event: string]: ({ handler: (e: any) => void, options?: EventListenerOptions })[];
   } = {};
-  public keyboardShortcutsManager: IKeyboardShortcutsManager;
+  public readonly keyboardShortcutsManager: IKeyboardShortcutsManager;
+  public readonly pluginManager: IPluginManager;
 
   constructor(container: Element, params: {
     lines: ValueType[];
@@ -86,10 +95,11 @@ class Term extends TemplateEngine implements ITerm {
     this.size.height = (container as HTMLElement).offsetHeight;
     this.ro = new ResizeObserver(this.observeHandler);
     this.ro.observe(container);
+    this.header = params.header;
     this.caret = params.caret;
     this.label = params.label || this.label;
     this.delimiter = params.delimiter || this.delimiter;
-    this.render({ css, header: params.header });
+    this.render({ css, header: this.header });
     this.keyboardShortcutsManager = new KeyboardShortcutsManager({ onAction: this.actionHandler });
     Term.scrollbarSize = scrollbarSize(this.getRef('root') as HTMLElement);
     this.vl = new VirtualizedList(
@@ -104,20 +114,21 @@ class Term extends TemplateEngine implements ITerm {
     this.registerFrameHandler();
     this.addKeyboardShortcutsManagerListeners();
     this.keyboardShortcutsManager.activate();
+    this.pluginManager = new PluginManager(this.getTermInfo());
   }
 
-  public addEventListener<K extends keyof ITermEventMap>(
+  public addEventListener = <K extends keyof ITermEventMap>(
     type: K, handler: (e: ITermEventMap[K]) => void, options?: EventListenerOptions,
-  ) {
+  ) => {
     const { listeners } = this;
     if (!listeners[type]) listeners[type] = [];
     listeners[type].push({ handler, options });
     this.registerListener(type, handler, options);
   }
 
-  public removeEventListener<K extends keyof ITermEventMap>(
+  public removeEventListener = <K extends keyof ITermEventMap>(
     type: K, handler: (e: ITermEventMap[K]) => void, options?: EventListenerOptions,
-  ) {
+  ) => {
     const list = this.listeners[type];
     if (!list) return;
     const index = list.findIndex(item => item.handler === handler);
@@ -130,13 +141,25 @@ class Term extends TemplateEngine implements ITerm {
     this.unregisterAllListeners();
     this.editLine?.destroy();
     this.removeListeners();
+    this.pluginManager.destroy();
+    this.keyboardShortcutsManager.destroy();
     super.destroy();
   }
 
-  public setLabel(params: { label?: string; delimiter?: string }) {
+  public setLabel = (params: { label?: string; delimiter?: string } = {}) => {
+    const { editLine } = this;
     const { label, delimiter } = params;
-    if (!isUndefined(label)) this.label = label;
-    if (!isUndefined(delimiter)) this.delimiter = delimiter;
+    let isUpdated = false;
+    if (!isUndefined(label)) {
+      this.label = label;
+      isUpdated = true;
+    }
+    if (!isUndefined(delimiter)) {
+      this.delimiter = delimiter;
+      isUpdated = true;
+    }
+    if (editLine && editLine.label) editLine.label.params = params;
+    if (isUpdated) this.updateTermInfo();
   }
 
   public write(data: string | string[], duration?: number) {
@@ -147,6 +170,7 @@ class Term extends TemplateEngine implements ITerm {
     this.caret = caret;
     if (!this.editLine) return;
     this.editLine.setCaret(caret);
+    this.updateTermInfo();
   }
 
   public setHeader(text: string) {
@@ -158,6 +182,7 @@ class Term extends TemplateEngine implements ITerm {
     } else {
       header?.classList.add(css.hidden);
     }
+    this.updateTermInfo();
   }
 
   private characterUpdater = () => {
@@ -215,13 +240,17 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private addListeners() {
+    const { editLine } = this;
     const root = this.getRef('root') as HTMLElement;
     if (root) root.addEventListener('click', this.clickHandler);
+    if (editLine) editLine.input?.addEventListener(CHANGE_EVENT_TYPE, this.updateTermInfo);
   }
 
   private removeListeners() {
+    const { editLine } = this;
     const root = this.getRef('root') as HTMLElement;
     if (root) root.removeEventListener('click', this.clickHandler);
+    if (editLine) editLine.input?.removeEventListener(CHANGE_EVENT_TYPE, this.updateTermInfo);
   }
 
   protected addEditLine(editLineParams: EditLineParamsType) {
@@ -237,6 +266,7 @@ class Term extends TemplateEngine implements ITerm {
       editable: true,
       onSubmit: this.submitHandler,
       onChange: this.changeHandler,
+      onUpdateCaretPosition: this.updateCaretPositionHandler,
       caret: this.caret,
       secret: get(editLineParams as EditLineParamsType, 'secret') || false,
     });
@@ -270,8 +300,9 @@ class Term extends TemplateEngine implements ITerm {
     if (!this.editLine) return;
     this.editLine.clear();
     this.editLine.secret = false;
+    this.updateTermInfo();
     if (listeners[SUBMIT_EVENT_NAME]) {
-      const event = new SubmitEvent(value, historyValue || undefined);
+      const event = new ValueEvent(value, historyValue || undefined);
       listeners[SUBMIT_EVENT_NAME].forEach(item => item.handler(event));
     }
   }
@@ -281,6 +312,15 @@ class Term extends TemplateEngine implements ITerm {
     if (history[historyIndex] !== value) this.stopHistory = true;
     if (!value) this.stopHistory = false;
     vl.scrollBottom();
+  }
+
+  private updateCaretPositionHandler = (position: number, caret?: ICaret) => {
+    const { listeners } = this;
+    this.updateTermInfo();
+    if (listeners[UPDATE_CARET_POSITION_EVENT_NAME]) {
+      const caretEvent = new CaretEvent(position, caret);
+      listeners[UPDATE_CARET_POSITION_EVENT_NAME].forEach(item => item.handler(caretEvent));
+    }
   }
 
   private clearHistoryState() {
@@ -335,10 +375,8 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private clearHandler = () => {
-    const { vl } = this;
-    this.lines = [];
-    vl.length = 0;
-    vl.clearCache();
+    this.setLines([]);
+    this.updateTermInfo();
   }
 
   private actionHandler = (action: string, e: Event) => {
@@ -384,6 +422,59 @@ class Term extends TemplateEngine implements ITerm {
         options,
       );
     }
+  }
+
+  private setLines = (lines: ValueType[]) => {
+    const { vl } = this;
+    this.lines = lines;
+    vl.length = lines.length;
+    vl.clearCache();
+    this.updateTermInfo();
+  }
+
+  private getTermInfo(): ITermInfo {
+    const { editLine, header, lines, label, delimiter } = this;
+    return {
+      elements: {
+        root: this.getRef('content'),
+        edit: editLine?.getRef('content'),
+        title: this.getRef('header'),
+      },
+      title: header || '',
+      caretPosition: editLine?.input?.caretPosition || 0,
+      lines: lines.map((line: ValueType): string => BaseInput.getValueString(line)),
+      editLine: BaseInput.getValueString(editLine?.value || ''),
+      parameterizedLines: lines,
+      parameterizedEditLine: editLine?.value || '',
+      addEventListener: this.addEventListener,
+      removeEventListener: this.removeEventListener,
+      updateLines: this.setLines,
+      setLabel: this.setLabel,
+      labelParams: { label, delimiter },
+      updateEditLine: (params: EditLineParamsType) => {
+        if (!editLine) return;
+        if (isObject(params) && !isArray(params)) {
+          editLine.secret = Boolean(params.secret);
+          editLine.value = params.value;
+        } else {
+          editLine.value = params;
+        }
+        this.updateTermInfo();
+      },
+      setCaretPosition: (position: number) => {
+        if (position < 0) {
+          editLine?.moveCaretToEnd();
+          this.updateTermInfo();
+        } else if (editLine && editLine.input && position >= 0) {
+          editLine.input.caretPosition = position;
+          this.updateTermInfo();
+        }
+      },
+    };
+  }
+
+  private updateTermInfo = () => {
+    this.pluginManager.updateTermInfo(this.getTermInfo());
   }
 }
 
