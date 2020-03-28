@@ -17,20 +17,6 @@
   visibility: hidden;
 }
 
-.label {
-  display: flex;
-}
-
-.labelTextContainer {
-  max-width: 10rem;
-
-  @include truncated;
-}
-
-.labelText {
-  color: var(--line-lable-text-color);
-}
-
 .inputContainer {
   flex: 1;
   position: relative;

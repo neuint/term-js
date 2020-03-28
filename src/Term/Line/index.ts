@@ -17,6 +17,8 @@ import { NON_BREAKING_SPACE } from '../constants/strings';
 import IInput from '@Term/Line/Input/IInput';
 import { ParamsType } from '@Term/Line/types';
 import BaseInput from '@Term/Line/Input/BaseInput';
+import ILabel from '@Term/Line/Label/ILabel';
+import Label from '@Term/Line/Label';
 
 class Line extends TemplateEngine implements ILine {
   public static getHeight(
@@ -42,6 +44,8 @@ class Line extends TemplateEngine implements ILine {
   private static cf: ICaretFactory = CaretFactory.getInstance();
   private static itemVerticalPadding: number = 4;
   private static itemHorizontalPadding: number = 16;
+
+  public label?: ILabel;
 
   public get value(): ValueType {
     const { inputField } = this;
@@ -87,9 +91,7 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private initialValue: ValueType = '';
-  private label: string = '';
   private caret?: ICaret;
-  private delimiter: string = '';
   private className: string = '';
   private editable: boolean = false;
   private onSubmit: (params: {
@@ -102,7 +104,7 @@ class Line extends TemplateEngine implements ILine {
     super(lineTemplate, container);
     this.setParams(params);
     this.container = container;
-    this.render();
+    this.render({ label: params.label, delimiter: params.delimiter });
     this.setCaret(params.caret || 'simple');
     this.addEventListeners();
     this.updateHeight();
@@ -111,11 +113,13 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public stopEdit() {
+    const { label } = this;
+    const labelParams = label ? label.params : { label: '', delimiter: '' };
     this.removeCaret();
     this.removeEventListeners();
     this.editable = false;
     this.unregisterFrameHandler();
-    this.render();
+    this.render(labelParams);
   }
 
   public focus() {
@@ -128,19 +132,21 @@ class Line extends TemplateEngine implements ILine {
     }
   }
 
-  public render() {
-    const { label, delimiter, editable, className, secret } = this;
-    const root = this.getRef('root');
+  public render(params: { label?: string, delimiter?: string }) {
+    const { editable, className, secret } = this;
+    const reRender = Boolean(this.getRef('root'));
     if (this.inputField) {
       this.initialValue = this.inputField.value;
       this.inputField.destroy();
     }
+    if (this.label) this.label.destroy();
     super.render({
-      css, label, delimiter, editable, className, nbs: NON_BREAKING_SPACE,
-    }, root ? { replace: this } : {});
+      css, editable, className, nbs: NON_BREAKING_SPACE,
+    }, reRender ? { replace: this } : {});
     this.inputField = editable
       ? new ContentEditableInput(this.getRef('inputContainer') as HTMLElement)
       : new ViewableInput(this.getRef('inputContainer') as HTMLElement);
+    this.label = new Label(this.getRef('labelContainer') as Element, params);
     this.inputField.value = this.initialValue;
     this.inputField.secret = secret;
   }
@@ -186,12 +192,9 @@ class Line extends TemplateEngine implements ILine {
 
   private setParams(params: ParamsType) {
     const {
-      label = '', delimiter = '~', onChange = noop, onSubmit = noop, editable = true,
-      className = '', value, secret = false,
+      onChange = noop, onSubmit = noop, editable = true, className = '', value, secret = false,
     } = params;
     this.className = className;
-    this.label = label;
-    this.delimiter = delimiter;
     this.onSubmit = onSubmit;
     this.onChange = onChange;
     this.editable = editable;

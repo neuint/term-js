@@ -1,26 +1,7 @@
 <div ref="root" class="root {className}">
   <div ref="content" class="content">
     <div ref="helpContainer" class="labelText helpContainer">{nbs}</div>
-    <If condition="{label || delimiter}">
-      <div class="label">
-        <If condition="{label}">
-          <div class="labelTextContainer">
-            <span class="labelText">{label}</span>
-          </div>
-          <div>
-            <span class="labelText">{nbs}</span>
-          </div>
-        </If>
-        <If condition="{delimiter}">
-          <div class="labelTextContainer">
-            <span class="labelText">{delimiter}</span>
-          </div>
-          <div>
-            <span class="labelText">{nbs}</span>
-          </div>
-        </If>
-      </div>
-    </If>
+    <div ref="labelContainer"></div>
     <div ref="inputContainer" class="inputContainer"></div>
   </div>
 </div>

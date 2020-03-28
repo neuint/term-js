@@ -1,0 +1,21 @@
+<If condition="{label || delimiter}">
+  <div class="label">
+    <If condition="{label}">
+      <div class="labelTextContainer">
+        <span class="labelText" ref="label">{label}</span>
+      </div>
+      <div>
+        <span class="labelText">{nbs}</span>
+      </div>
+    </If>
+    <If condition="{delimiter}">
+      <div class="labelTextContainer">
+        <span class="labelText" ref="delimiter">{delimiter}</span>
+      </div>
+      <div>
+        <span class="labelText">{nbs}</span>
+      </div>
+    </If>
+  </div>
+</If>
+

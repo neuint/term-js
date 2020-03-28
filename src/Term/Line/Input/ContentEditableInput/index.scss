@@ -34,4 +34,6 @@
   visibility: hidden;
   user-select: none;
   pointer-events: none;
+
+  @include input-general;
 }
