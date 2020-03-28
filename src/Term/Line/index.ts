@@ -98,7 +98,9 @@ class Line extends TemplateEngine implements ILine {
     value: string; formattedValue: ValueType; lockString: string;
   }) => void = noop;
   private onChange: (value: string) => void = noop;
+  private onUpdateCaretPosition: (caretPosition: number, caret?: ICaret) => void = noop;
   private lockTimeout?: ReturnType<typeof setTimeout>;
+  private caretPosition?: number = -1;
 
   constructor(container: Element, params: ParamsType = {}) {
     super(lineTemplate, container);
@@ -192,11 +194,13 @@ class Line extends TemplateEngine implements ILine {
 
   private setParams(params: ParamsType) {
     const {
-      onChange = noop, onSubmit = noop, editable = true, className = '', value, secret = false,
+      onUpdateCaretPosition = noop, onChange = noop, onSubmit = noop, editable = true,
+      className = '', value, secret = false,
     } = params;
     this.className = className;
     this.onSubmit = onSubmit;
     this.onChange = onChange;
+    this.onUpdateCaretPosition = onUpdateCaretPosition;
     this.editable = editable;
     this.secret = secret;
     this.initialValue = value || '';
@@ -290,13 +294,25 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private updateCaretData = () => {
-    const { editable, caret, inputField } = this;
-    if (!editable || !inputField || !caret) return;
+    const {
+      editable, caret, inputField, onUpdateCaretPosition, caretPosition: caretPositionPrev,
+    } = this;
+    if (!editable || !inputField || !caret) {
+      if (caretPositionPrev !== -1) {
+        this.caretPosition = -1;
+        onUpdateCaretPosition(this.caretPosition, this.caret);
+      }
+      return;
+    }
     const { caretPosition } = inputField;
     if (document.hasFocus() && caretPosition >= 0) {
       this.showCaret(caretPosition);
     } else {
       this.hideCaret();
+    }
+    if (caretPositionPrev !== caretPosition) {
+      this.caretPosition = caretPosition;
+      onUpdateCaretPosition(this.caretPosition, this.caret);
     }
   }
 

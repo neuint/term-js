@@ -20,12 +20,12 @@ import ITermEventMap from './ITermEventMap';
 import Line from './Line';
 import ILine from './Line/ILine';
 import KeyboardShortcutsManager from '@Term/KeyboardShortcutsManager';
-import SubmitEvent from '@Term/events/SubmitEvent';
+import ValueEvent from '@Term/events/ValueEvent';
 import {
   ACTION_EVENT_NAME,
   CLEAR_ACTION_NAME,
   INPUT_EVENT_LIST,
-  SUBMIT_EVENT_NAME,
+  SUBMIT_EVENT_NAME, UPDATE_CARET_POSITION_EVENT_NAME,
 } from '@Term/constants/events';
 import ActionEvent from '@Term/events/ActionEvent';
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
@@ -33,6 +33,9 @@ import IPluginManager from '@Term/PluginManager/IPluginManager';
 import PluginManager from '@Term/PluginManager';
 import ITermInfo from '@Term/ITermInfo';
 import BaseInput from '@Term/Line/Input/BaseInput';
+import { CHANGE_EVENT_TYPE } from '@Term/Line/Input/ContentEditableInput/constants';
+import CaretEvent from '@Term/events/CaretEvent';
+import ICaret from '@Term/BaseCaret/ICaret';
 
 class Term extends TemplateEngine implements ITerm {
   private static scrollbarSize: number = 20;
@@ -237,13 +240,17 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private addListeners() {
+    const { editLine } = this;
     const root = this.getRef('root') as HTMLElement;
     if (root) root.addEventListener('click', this.clickHandler);
+    if (editLine) editLine.input?.addEventListener(CHANGE_EVENT_TYPE, this.updateTermInfo);
   }
 
   private removeListeners() {
+    const { editLine } = this;
     const root = this.getRef('root') as HTMLElement;
     if (root) root.removeEventListener('click', this.clickHandler);
+    if (editLine) editLine.input?.removeEventListener(CHANGE_EVENT_TYPE, this.updateTermInfo);
   }
 
   protected addEditLine(editLineParams: EditLineParamsType) {
@@ -259,6 +266,7 @@ class Term extends TemplateEngine implements ITerm {
       editable: true,
       onSubmit: this.submitHandler,
       onChange: this.changeHandler,
+      onUpdateCaretPosition: this.updateCaretPositionHandler,
       caret: this.caret,
       secret: get(editLineParams as EditLineParamsType, 'secret') || false,
     });
@@ -294,7 +302,7 @@ class Term extends TemplateEngine implements ITerm {
     this.editLine.secret = false;
     this.updateTermInfo();
     if (listeners[SUBMIT_EVENT_NAME]) {
-      const event = new SubmitEvent(value, historyValue || undefined);
+      const event = new ValueEvent(value, historyValue || undefined);
       listeners[SUBMIT_EVENT_NAME].forEach(item => item.handler(event));
     }
   }
@@ -304,6 +312,15 @@ class Term extends TemplateEngine implements ITerm {
     if (history[historyIndex] !== value) this.stopHistory = true;
     if (!value) this.stopHistory = false;
     vl.scrollBottom();
+  }
+
+  private updateCaretPositionHandler = (position: number, caret?: ICaret) => {
+    const { listeners } = this;
+    this.updateTermInfo();
+    if (listeners[UPDATE_CARET_POSITION_EVENT_NAME]) {
+      const caretEvent = new CaretEvent(position, caret);
+      listeners[UPDATE_CARET_POSITION_EVENT_NAME].forEach(item => item.handler(caretEvent));
+    }
   }
 
   private clearHistoryState() {
@@ -456,7 +473,7 @@ class Term extends TemplateEngine implements ITerm {
     };
   }
 
-  private updateTermInfo() {
+  private updateTermInfo = () => {
     this.pluginManager.updateTermInfo(this.getTermInfo());
   }
 }
