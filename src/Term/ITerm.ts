@@ -3,7 +3,6 @@ import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardS
 import IPluginManager from '@Term/PluginManager/IPluginManager';
 
 export default interface ITerm {
-  history: string[];
   keyboardShortcutsManager: IKeyboardShortcutsManager;
   pluginManager: IPluginManager;
   write(data: string | string [], duration?: number): void;

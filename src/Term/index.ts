@@ -11,9 +11,14 @@ import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import TemplateEngine from '@Term/TemplateEngine';
 import { getKeyCode } from '@Term/utils/event';
 import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
-import { NON_BREAKING_SPACE } from '@Term/constants/strings';
-import { scrollbarSize } from '@Term/utils/viewport';
-import { EditLineParamsType, ValueType } from '@Term/types';
+import { compareItemSize, getItemSize, getScrollbarSize } from '@Term/utils/viewport';
+import {
+  EditLineParamsType,
+  SizeType,
+  TermConstructorParamsType,
+  TermParamsType,
+  ValueType,
+} from '@Term/types';
 
 import ITerm from './ITerm';
 import ITermEventMap from './ITermEventMap';
@@ -25,7 +30,8 @@ import {
   ACTION_EVENT_NAME,
   CLEAR_ACTION_NAME,
   INPUT_EVENT_LIST,
-  SUBMIT_EVENT_NAME, UPDATE_CARET_POSITION_EVENT_NAME,
+  SUBMIT_EVENT_NAME,
+  UPDATE_CARET_POSITION_EVENT_NAME,
 } from '@Term/constants/events';
 import ActionEvent from '@Term/events/ActionEvent';
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
@@ -38,82 +44,36 @@ import CaretEvent from '@Term/events/CaretEvent';
 import ICaret from '@Term/BaseCaret/ICaret';
 
 class Term extends TemplateEngine implements ITerm {
-  private static scrollbarSize: number = 20;
-
-  private historyField: string[] = [];
-  private historyIndex: number = -1;
-  private stopHistory: boolean = false;
-  public get history(): string[] {
-    return this.historyField;
-  }
-
-  private itemSizeField?: { width: number; height: number };
-  private itemSizeContainer?: HTMLElement;
-  private get itemSize(): { width: number; height: number } {
-    const { itemSizeField } = this;
-    if (itemSizeField) return itemSizeField;
-    const root = this.getRef('root');
-    if (!root) return { width: 1, height: 1 };
-    const textContainer = document.createElement('span');
-    textContainer.innerHTML = NON_BREAKING_SPACE;
-    textContainer.className = css.checkCharacterContainer;
-    root.appendChild(textContainer);
-    this.itemSizeField = { width: textContainer.offsetWidth, height: textContainer.offsetHeight };
-    this.itemSizeContainer = textContainer;
-    return this.itemSizeField;
-  }
-
   private readonly ro: ResizeObserver;
   private readonly vl: IVirtualizedList<ILine>;
-  private heightCache: number[] = [];
-  private lines: ValueType[] = [];
-  private size: { width: number; height: number } = { width: 0, height: 0 };
-  private caret?: string;
-  private editLine?: ILine;
-  private delimiter: string = '~';
-  private label: string = '';
-  private header?: string;
-  private listeners: {
-    [event: string]: ({ handler: (e: any) => void, options?: EventListenerOptions })[];
-  } = {};
   public readonly keyboardShortcutsManager: IKeyboardShortcutsManager;
   public readonly pluginManager: IPluginManager;
 
-  constructor(container: Element, params: {
-    lines: ValueType[];
-    editLine?: EditLineParamsType;
-    header?: string;
-    onSubmit?: (line: string, lines: string[]) => void;
-    onChange?: (line: string) => void;
-    caret?: string;
-    label?: string;
-    delimiter?: string;
-  } = { lines: [], editLine: '' }) {
+  private history: { list: string[]; index: number; stopHistory: boolean } = {
+    list: [], index: -1, stopHistory: false,
+  };
+  private params: TermParamsType = {
+    label: '~', delimiter: '', header: '', caret: '', scrollbarSize: 20,
+    size: { width: 1, height: 1 },
+  };
+  private itemSize: SizeType = { width: 1, height: 1 };
+  private heightCache: number[] = [];
+  private lines: ValueType[] = [];
+  private editLine?: ILine;
+  private listeners: {
+    [event: string]: ({ handler: (e: any) => void, options?: EventListenerOptions })[];
+  } = {};
+
+  constructor(container: Element, params: TermConstructorParamsType = { lines: [], editLine: '' }) {
     super(template, container);
-    this.lines = params.lines;
-    this.size.width = (container as HTMLElement).offsetWidth;
-    this.size.height = (container as HTMLElement).offsetHeight;
+    this.init(container, params);
     this.ro = new ResizeObserver(this.observeHandler);
-    this.ro.observe(container);
-    this.header = params.header;
-    this.caret = params.caret;
-    this.label = params.label || this.label;
-    this.delimiter = params.delimiter || this.delimiter;
-    this.render({ css, header: this.header });
     this.keyboardShortcutsManager = new KeyboardShortcutsManager({ onAction: this.actionHandler });
-    Term.scrollbarSize = scrollbarSize(this.getRef('root') as HTMLElement);
     this.vl = new VirtualizedList(
       this.getRef('linesContainer') as Element,
       { length: this.lines.length, itemGetter: this.itemGetter, heightGetter: this.heightGetter },
     );
-    this.addEditLine(params.editLine || '');
-    this.addListeners();
-    this.vl.scrollBottom();
-    this.lastLineFocus();
-    this.frameHandler = this.characterUpdater;
-    this.registerFrameHandler();
-    this.addKeyboardShortcutsManagerListeners();
-    this.keyboardShortcutsManager.activate();
+    this.preStart(container, params);
     this.pluginManager = new PluginManager(this.getTermInfo());
   }
 
@@ -143,19 +103,20 @@ class Term extends TemplateEngine implements ITerm {
     this.removeListeners();
     this.pluginManager.destroy();
     this.keyboardShortcutsManager.destroy();
+    getItemSize(this.getRef('root') as HTMLElement);
     super.destroy();
   }
 
   public setLabel = (params: { label?: string; delimiter?: string } = {}) => {
-    const { editLine } = this;
+    const { editLine, params: currentParams } = this;
     const { label, delimiter } = params;
     let isUpdated = false;
     if (!isUndefined(label)) {
-      this.label = label;
+      currentParams.label = label;
       isUpdated = true;
     }
     if (!isUndefined(delimiter)) {
-      this.delimiter = delimiter;
+      currentParams.delimiter = delimiter;
       isUpdated = true;
     }
     if (editLine && editLine.label) editLine.label.params = params;
@@ -167,7 +128,7 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   public setCaret(caret: string) {
-    this.caret = caret;
+    this.params.caret = caret;
     if (!this.editLine) return;
     this.editLine.setCaret(caret);
     this.updateTermInfo();
@@ -182,26 +143,54 @@ class Term extends TemplateEngine implements ITerm {
     } else {
       header?.classList.add(css.hidden);
     }
+    this.params.header = '';
     this.updateTermInfo();
   }
 
+  private init(container: Element, params: TermConstructorParamsType) {
+    this.setParams(container, params);
+    this.render({ css, header: this.params.header });
+    this.itemSize = getItemSize(this.getRef('root') as HTMLElement, true);
+    this.addListeners();
+  }
+
+  private preStart(container: Element, params: TermConstructorParamsType) {
+    this.addEditLine(params.editLine || '');
+    this.ro.observe(container);
+    this.vl.scrollBottom();
+    this.lastLineFocus();
+    this.frameHandler = this.characterUpdater;
+    this.registerFrameHandler();
+    this.addKeyboardShortcutsManagerListeners();
+    this.keyboardShortcutsManager.activate();
+  }
+
+  private setParams(container: Element, params: TermConstructorParamsType) {
+    const { params: currentParams } = this;
+    this.lines = params.lines;
+    currentParams.size.width = (container as HTMLElement).offsetWidth;
+    currentParams.size.height = (container as HTMLElement).offsetHeight;
+    currentParams.header = params.header || currentParams.header;
+    currentParams.caret = params.caret || currentParams.caret;
+    currentParams.label = params.label || currentParams.label;
+    currentParams.delimiter = params.delimiter || currentParams.delimiter;
+    currentParams.scrollbarSize = getScrollbarSize(container as HTMLElement);
+  }
+
   private characterUpdater = () => {
-    const { width, height } = this.itemSize;
-    const { itemSizeContainer, vl } = this;
-    if (itemSizeContainer) {
-      const { offsetWidth, offsetHeight } = itemSizeContainer;
-      this.itemSizeField = { width: offsetWidth, height: offsetHeight };
-      if (offsetWidth !== width || offsetHeight !== height) {
-        this.heightCache = [];
-        vl.updateViewport();
-      }
+    const { vl, itemSize } = this;
+    const newItemSize = getItemSize(this.getRef('root') as HTMLElement, true);
+    if (!compareItemSize(itemSize, newItemSize)) {
+      this.heightCache = [];
+      this.itemSize = newItemSize;
+      vl.updateViewport();
     }
   }
 
   private itemGetter = (
     index: number, params?: { container?: HTMLElement, ref?: ILine, append?: boolean },
   ): ILine | null => {
-    const { lines, vl, delimiter, label } = this;
+    const { lines, vl, params: { delimiter, label } } = this;
     const { container, ref, append } = params || {};
     const virtualItemsContainer = container || (vl
       ? vl.getVirtualItemsContainer() as HTMLElement : undefined);
@@ -211,21 +200,23 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private heightGetter = (index: number): number => {
-    const { heightCache, itemSize, size, lines, delimiter, label } = this;
+    const {
+      heightCache, itemSize, lines, params: { delimiter, label, size, scrollbarSize },
+    } = this;
     if (isUndefined(heightCache[index])) {
       heightCache[index] = Line.getHeight({
         itemSize,
         delimiter,
         label,
         value: lines[index],
-        width: size.width - Term.scrollbarSize,
+        width: size.width - scrollbarSize,
       });
     }
     return heightCache[index];
   }
 
   private observeHandler = (entries: ResizeObserverEntry[]) => {
-    const { size, vl } = this;
+    const { params: { size }, vl } = this;
     const { width, height } = get(entries, '[0].contentRect');
     if (size.width !== width) {
       size.width = width;
@@ -254,20 +245,20 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   protected addEditLine(editLineParams: EditLineParamsType) {
-    const { vl, delimiter, label } = this;
+    const { vl, params: { delimiter, label, caret } } = this;
     const generalItemsContainer = vl.getGeneralItemsContainer();
     if (!generalItemsContainer) return;
     this.editLine = new Line(generalItemsContainer, {
       label,
       delimiter,
-      className: css.line,
+      caret,
+      className: [css.line, css.editLine].join(' '),
       value: isArray(editLineParams) || isString(editLineParams)
         ? editLineParams : editLineParams.value,
       editable: true,
       onSubmit: this.submitHandler,
       onChange: this.changeHandler,
       onUpdateCaretPosition: this.updateCaretPositionHandler,
-      caret: this.caret,
       secret: get(editLineParams as EditLineParamsType, 'secret') || false,
     });
     this.clearHistoryState();
@@ -288,10 +279,10 @@ class Term extends TemplateEngine implements ITerm {
     params: { value: string; formattedValue: ValueType; lockString: string },
   ) => {
     const { value, formattedValue, lockString } = params;
-    const { history, vl, editLine, listeners } = this;
+    const { vl, editLine, listeners, history: { list } } = this;
     const historyValue = value.substring(lockString.length);
-    if (historyValue && last(history) !== historyValue && !editLine?.secret) {
-      this.historyField.push(historyValue);
+    if (historyValue && last(list) !== historyValue && !editLine?.secret) {
+      list.push(historyValue);
     }
     this.lines.push(formattedValue);
     this.clearHistoryState();
@@ -308,9 +299,9 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private changeHandler = (value: string) => {
-    const { historyIndex, history, vl } = this;
-    if (history[historyIndex] !== value) this.stopHistory = true;
-    if (!value) this.stopHistory = false;
+    const { history: { list, index }, vl } = this;
+    if (list[index] !== value) this.history.stopHistory = true;
+    if (!value) this.history.stopHistory = false;
     vl.scrollBottom();
   }
 
@@ -324,8 +315,7 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private clearHistoryState() {
-    this.historyIndex = -1;
-    this.stopHistory = false;
+    this.history = { list: [], index: -1, stopHistory: false };
   }
 
   private addKeyDownHandler() {
@@ -348,23 +338,21 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private prevHistory = (e: KeyboardEvent) => {
-    const { historyIndex, history, stopHistory, editLine } = this;
-    if (!history.length || !editLine || stopHistory) return;
-    const newIndex = historyIndex < 0 ? history.length - 1 : Math.max(0, historyIndex - 1);
-    if (historyIndex === newIndex) return;
-    this.historyIndex = newIndex;
-    editLine.value = history[newIndex];
-    editLine.moveCaretToEnd();
-    e.preventDefault();
+    const { index, list } = this.history;
+    this.applyHistory(e, index < 0 ? list.length - 1 : Math.max(0, index - 1));
   }
 
   private nextHistory = (e: KeyboardEvent) => {
-    const { historyIndex, history, stopHistory, editLine } = this;
-    if (!history.length || !editLine || stopHistory || historyIndex < 0) return;
-    const newIndex = historyIndex === history.length - 1 ? -1 : historyIndex + 1;
-    if (historyIndex === newIndex) return;
-    this.historyIndex = newIndex;
-    editLine.value = newIndex >= 0 ? history[newIndex] : '';
+    const { index, list } = this.history;
+    this.applyHistory(e, index === list.length - 1 ? -1 : index + 1);
+  }
+
+  private applyHistory(e: KeyboardEvent, newIndex: number) {
+    const { history: { index, list, stopHistory }, editLine } = this;
+    if (!list.length || !editLine || stopHistory) return;
+    if (index === newIndex) return;
+    this.history.index = newIndex;
+    editLine.value = list[newIndex];
     editLine.moveCaretToEnd();
     e.preventDefault();
   }
@@ -433,14 +421,14 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private getTermInfo(): ITermInfo {
-    const { editLine, header, lines, label, delimiter } = this;
+    const { editLine, lines, params: { label, delimiter, header } } = this;
     return {
       elements: {
         root: this.getRef('content'),
         edit: editLine?.getRef('content'),
         title: this.getRef('header'),
       },
-      title: header || '',
+      title: header,
       caretPosition: editLine?.input?.caretPosition || 0,
       lines: lines.map((line: ValueType): string => BaseInput.getValueString(line)),
       editLine: BaseInput.getValueString(editLine?.value || ''),

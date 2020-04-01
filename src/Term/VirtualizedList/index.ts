@@ -31,6 +31,12 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
   private viewportItems: number[] = [];
   private renderedItems: number[] = [];
   private offset: number = 0;
+  private restoreParams: {
+    index: number;
+    bottomOffset: number;
+    width: number;
+    height: number;
+  } = { index: -1, bottomOffset: -1, width: -1, height: -1 };
 
   private static checkViewportItem(
     params: {
@@ -38,8 +44,10 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     },
   ): boolean {
     const { viewportStart, viewportEnd, itemOffsetStart, itemOffsetEnd } = params;
-    return (viewportStart <= itemOffsetStart && viewportEnd > itemOffsetEnd)
-      || (viewportEnd <= itemOffsetStart && viewportEnd > itemOffsetEnd);
+
+    return (viewportStart <= itemOffsetStart && viewportEnd >= itemOffsetEnd)
+      || (viewportStart > itemOffsetStart && viewportStart < itemOffsetEnd)
+      || (viewportEnd > itemOffsetStart && viewportEnd < itemOffsetEnd);
   }
 
   constructor(
@@ -126,12 +134,15 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     const { length, heightGetter, topOffset, bottomOffset } = this;
     const root = this.getRef('root') as HTMLElement;
     if (!root) return;
+    this.restoreScrollTop();
     const viewportStart = Math.max(root.scrollTop - topOffset, 0);
     const viewportEnd = viewportStart + root.offsetHeight + bottomOffset;
     let itemOffsetStart = 0;
     let itemOffsetEnd = 0;
     let isFound = false;
     let offset;
+    let lastItemOffset = 0;
+    let lastItemHeight = 0;
     const items = [];
     for (let i = 0; i < length; i += 1) {
       const itemHeight = heightGetter(i);
@@ -143,12 +154,15 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       isFound = isViewportItem || isFound;
       if (isFound && !isViewportItem) break;
       if (isViewportItem) {
+        lastItemOffset += lastItemHeight;
+        lastItemHeight = itemHeight;
         items.push(i);
         offset = isUndefined(offset) ? itemOffsetStart : offset;
       }
     }
     this.viewportItems = items;
     this.offset = offset || 0;
+    this.updateRestoreParams(lastItemOffset);
     this.renderItems();
   }
 
@@ -184,22 +198,24 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     if (isUndefined(beforeIndex)) {
       if (itemsCache[index]) {
         itemsCache[index].show();
-        return renderedItems.push(index);
+        return renderedItems.includes(index) ? null : renderedItems.push(index);
       }
       const item = itemGetter(index, { container });
       if (item) itemsCache[index] = item;
-      renderedItems.push(index);
+      if (!renderedItems.includes(index)) renderedItems.push(index);
     } else {
       const beforeCacheItem = itemsCache[beforeIndex];
       const renderCacheItem = itemsCache[index];
       if (!beforeCacheItem) return;
       if (renderCacheItem) {
         renderCacheItem.show(false, beforeCacheItem);
-        return renderedItems.splice(beforeRenderArrayIndex, 0, index);
+        return renderedItems.includes(index)
+          ? null
+          : renderedItems.splice(beforeRenderArrayIndex, 0, index);
       }
       const item = itemGetter(index, { container, append: false, ref: beforeCacheItem });
       if (item) itemsCache[index] = item;
-      renderedItems.splice(beforeRenderArrayIndex, 0, index);
+      if (!renderedItems.includes(index)) renderedItems.splice(beforeRenderArrayIndex, 0, index);
     }
   }
 
@@ -239,9 +255,32 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
   }
 
   private removeItem(index: number) {
-    const { itemsCache, renderedItems } = this;
-    const position = renderedItems.indexOf(index);
+    const { itemsCache } = this;
     if (itemsCache[index]) itemsCache[index].hide();
+  }
+
+  private restoreScrollTop() {
+    const { index, height, width, bottomOffset } = this.restoreParams;
+    if (index >= 0 && height >= 0 && width >= 0 && bottomOffset >= 0) this.updateScrollTop();
+  }
+
+  private updateScrollTop() {
+    const { width } = this.restoreParams;
+    const root = this.getRef('root') as HTMLElement;
+    if (!root || width === root.offsetWidth) return;
+  }
+
+  private updateRestoreParams(lastItemOffset: number) {
+    const { viewportItems } = this;
+    const root = this.getRef('root') as HTMLElement;
+    if (!root) return;
+    const { offsetHeight, offsetWidth, scrollTop } = root;
+    this.restoreParams = {
+      index: viewportItems.length ? last(viewportItems) as number : -1,
+      width: offsetWidth,
+      height: offsetHeight,
+      bottomOffset: scrollTop + offsetHeight - lastItemOffset,
+    };
   }
 }
 
