@@ -146,6 +146,8 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     const items = [];
     for (let i = 0; i < length; i += 1) {
       const itemHeight = heightGetter(i);
+      lastItemOffset += lastItemHeight;
+      lastItemHeight = itemHeight;
       itemOffsetStart = itemOffsetEnd;
       itemOffsetEnd = itemOffsetStart + itemHeight;
       const isViewportItem = VirtualizedList.checkViewportItem({
@@ -154,15 +156,13 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       isFound = isViewportItem || isFound;
       if (isFound && !isViewportItem) break;
       if (isViewportItem) {
-        lastItemOffset += lastItemHeight;
-        lastItemHeight = itemHeight;
         items.push(i);
         offset = isUndefined(offset) ? itemOffsetStart : offset;
       }
     }
     this.viewportItems = items;
     this.offset = offset || 0;
-    this.updateRestoreParams(lastItemOffset);
+    this.updateRestoreParams(lastItemOffset, lastItemHeight);
     this.renderItems();
   }
 
@@ -265,12 +265,25 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
   }
 
   private updateScrollTop() {
-    const { width } = this.restoreParams;
+    const { length, heightGetter } = this;
+    const { width, index, bottomOffset } = this.restoreParams;
     const root = this.getRef('root') as HTMLElement;
     if (!root || width === root.offsetWidth) return;
+    const { offsetHeight } = root;
+    let itemOffset = 0;
+    let height = 0;
+    for (let i = 0; i < length; i += 1) {
+      if (i === index) {
+        height = heightGetter(i);
+        break;
+      } else {
+        itemOffset += heightGetter(i);
+      }
+    }
+    root.scrollTop = Math.max(0, itemOffset + height + bottomOffset - offsetHeight);
   }
 
-  private updateRestoreParams(lastItemOffset: number) {
+  private updateRestoreParams(lastItemOffset: number, lastItemHeight: number) {
     const { viewportItems } = this;
     const root = this.getRef('root') as HTMLElement;
     if (!root) return;
@@ -279,7 +292,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       index: viewportItems.length ? last(viewportItems) as number : -1,
       width: offsetWidth,
       height: offsetHeight,
-      bottomOffset: scrollTop + offsetHeight - lastItemOffset,
+      bottomOffset: scrollTop + offsetHeight - lastItemOffset - lastItemHeight,
     };
   }
 }
