@@ -66,13 +66,14 @@ class Term extends TemplateEngine implements ITerm {
 
   constructor(container: Element, params: TermConstructorParamsType = { lines: [], editLine: '' }) {
     super(template, container);
+    const { virtualizedTopOffset, virtualizedBottomOffset } = params;
     this.init(container, params);
     this.ro = new ResizeObserver(this.observeHandler);
     this.keyboardShortcutsManager = new KeyboardShortcutsManager({ onAction: this.actionHandler });
-    this.vl = new VirtualizedList(
-      this.getRef('linesContainer') as Element,
-      { length: this.lines.length, itemGetter: this.itemGetter, heightGetter: this.heightGetter },
-    );
+    this.vl = new VirtualizedList(this.getRef('linesContainer') as Element, {
+      length: this.lines.length, itemGetter: this.itemGetter, heightGetter: this.heightGetter,
+      topOffset: virtualizedTopOffset || 0, bottomOffset: virtualizedBottomOffset || 0,
+    });
     this.preStart(container, params);
     this.pluginManager = new PluginManager(this.getTermInfo());
   }

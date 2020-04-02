@@ -7,6 +7,8 @@ import { ValueType } from '@Term/types';
 const container = document.querySelector('#root');
 if (container) {
   const term = new Term(container, {
+    virtualizedTopOffset: 400,
+    virtualizedBottomOffset: 400,
     label: 'guest',
     editLine: {
       secret: true,

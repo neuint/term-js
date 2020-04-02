@@ -38,6 +38,16 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     height: number;
   } = { index: -1, bottomOffset: -1, width: -1, height: -1 };
 
+  private static checkFullViewportItem(
+    params: {
+      viewportStart: number; viewportEnd: number; itemOffsetStart: number; itemOffsetEnd: number;
+    },
+  ): boolean {
+    const { viewportStart, viewportEnd, itemOffsetStart, itemOffsetEnd } = params;
+
+    return viewportStart <= itemOffsetStart && viewportEnd >= itemOffsetEnd;
+  }
+
   private static checkViewportItem(
     params: {
       viewportStart: number; viewportEnd: number; itemOffsetStart: number; itemOffsetEnd: number;
@@ -136,24 +146,36 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     if (!root) return;
     this.restoreScrollTop();
     const viewportStart = Math.max(root.scrollTop - topOffset, 0);
-    const viewportEnd = viewportStart + root.offsetHeight + bottomOffset;
+    const visibleViewportEnd = viewportStart + root.offsetHeight + topOffset;
+    const viewportEnd = visibleViewportEnd + bottomOffset;
     let itemOffsetStart = 0;
     let itemOffsetEnd = 0;
     let isFound = false;
+    let isVisibleFound = false;
     let offset;
     let lastItemOffset = 0;
     let lastItemHeight = 0;
+    let lastItemIndex = -1;
+    let isVisibleLastNotFound = true;
     const items = [];
     for (let i = 0; i < length; i += 1) {
       const itemHeight = heightGetter(i);
-      lastItemOffset += lastItemHeight;
-      lastItemHeight = itemHeight;
       itemOffsetStart = itemOffsetEnd;
       itemOffsetEnd = itemOffsetStart + itemHeight;
       const isViewportItem = VirtualizedList.checkViewportItem({
         viewportStart, viewportEnd, itemOffsetStart, itemOffsetEnd,
       });
+      const isVisibleViewportItem = isVisibleLastNotFound ? VirtualizedList.checkFullViewportItem({
+        viewportStart, itemOffsetStart, itemOffsetEnd, viewportEnd: visibleViewportEnd,
+      }) : isVisibleLastNotFound;
       isFound = isViewportItem || isFound;
+      isVisibleFound = isVisibleViewportItem || isVisibleFound;
+      if (isVisibleFound && !isVisibleViewportItem) isVisibleLastNotFound = false;
+      if (isVisibleLastNotFound) {
+        lastItemOffset += lastItemHeight;
+        lastItemHeight = itemHeight;
+        lastItemIndex = i;
+      }
       if (isFound && !isViewportItem) break;
       if (isViewportItem) {
         items.push(i);
@@ -162,7 +184,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     }
     this.viewportItems = items;
     this.offset = offset || 0;
-    this.updateRestoreParams(lastItemOffset, lastItemHeight);
+    this.updateRestoreParams(lastItemIndex, lastItemOffset, lastItemHeight);
     this.renderItems();
   }
 
@@ -260,8 +282,8 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
   }
 
   private restoreScrollTop() {
-    const { index, height, width, bottomOffset } = this.restoreParams;
-    if (index >= 0 && height >= 0 && width >= 0 && bottomOffset >= 0) this.updateScrollTop();
+    const { index, height, width } = this.restoreParams;
+    if (index >= 0 && height >= 0 && width >= 0) this.updateScrollTop();
   }
 
   private updateScrollTop() {
@@ -283,13 +305,14 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     root.scrollTop = Math.max(0, itemOffset + height + bottomOffset - offsetHeight);
   }
 
-  private updateRestoreParams(lastItemOffset: number, lastItemHeight: number) {
-    const { viewportItems } = this;
+  private updateRestoreParams(
+    lastItemIndex: number, lastItemOffset: number, lastItemHeight: number,
+  ) {
     const root = this.getRef('root') as HTMLElement;
     if (!root) return;
     const { offsetHeight, offsetWidth, scrollTop } = root;
     this.restoreParams = {
-      index: viewportItems.length ? last(viewportItems) as number : -1,
+      index: lastItemIndex,
       width: offsetWidth,
       height: offsetHeight,
       bottomOffset: scrollTop + offsetHeight - lastItemOffset - lastItemHeight,

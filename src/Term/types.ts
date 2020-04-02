@@ -25,6 +25,8 @@ export type TermConstructorParamsType = {
   caret?: string;
   label?: string;
   delimiter?: string;
+  virtualizedTopOffset?: number;
+  virtualizedBottomOffset?: number;
 };
 
 export type TermParamsType = {
