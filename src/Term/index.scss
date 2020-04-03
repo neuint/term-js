@@ -40,15 +40,6 @@
   }
 }
 
-.checkCharacterContainer {
-  position: absolute;
-  left: 0;
-  top: 0;
-  visibility: hidden;
-  pointer-events: none;
-  user-select: none;
-}
-
 .header {
   height: 2.5rem;
   background-color: var(--header-bg-color);
@@ -83,4 +74,8 @@
 
 .line {
   @include margin-horizontal(0.5rem);
+}
+
+.editLine {
+  margin-bottom: 5rem;
 }

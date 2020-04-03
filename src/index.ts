@@ -4,21 +4,22 @@ import ITerm from '@Term/ITerm';
 import css from './index.scss';
 import { ValueType } from '@Term/types';
 
-if (module.hot) module.hot.accept();
-
 const container = document.querySelector('#root');
 if (container) {
   const term = new Term(container, {
+    virtualizedTopOffset: 400,
+    virtualizedBottomOffset: 400,
     label: 'guest',
     editLine: {
       secret: true,
       value: [{ str: 'Password: ', lock: true, className: css.granted }],
     },
-    lines: (new Array(1).fill(null)).map((
+    lines: (new Array(100).fill(null)).map((
       _, index,
     ): ValueType => ([
       { str: 'User name: ', className: css.granted },
-      'test',
+      `test ${index} `,
+      (new Array(40).fill(null)).map((): string => 's').join(''),
     ])),
   });
   term.setHeader('Test');

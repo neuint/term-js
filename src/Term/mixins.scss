@@ -7,7 +7,6 @@
   will-change: transform;
   transform: translateZ(0);
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
 }
 
 @mixin overflow-y($value) {
