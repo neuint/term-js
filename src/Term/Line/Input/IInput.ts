@@ -6,13 +6,13 @@ export default interface IInput extends ITemplateEngine {
   value: ValueType;
   lockString: string;
   caretPosition: number;
+  disabled: boolean;
   selectedRange: { from: number; to: number };
   hiddenCaret: boolean;
   isFocused: boolean;
   secret: boolean;
   getSimpleValue(showSecret?: boolean): string;
   focus(): void;
-  write(value: ValueType, delay?: number): Promise<boolean>;
   addEventListener<K extends keyof HTMLElementEventMap>(
     type: K,
     listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,

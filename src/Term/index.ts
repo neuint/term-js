@@ -1,4 +1,4 @@
-import { noop, last, get, isUndefined, isArray, isString, isObject } from 'lodash-es';
+import { noop, last, get, isUndefined, isArray, isString, isObject, values } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import './fonts.scss';
@@ -13,7 +13,7 @@ import { getKeyCode } from '@Term/utils/event';
 import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { compareItemSize, getItemSize, getScrollbarSize } from '@Term/utils/viewport';
 import {
-  EditLineParamsType,
+  EditLineParamsType, FormattedValueFragmentType,
   SizeType,
   TermConstructorParamsType,
   TermParamsType,
@@ -56,6 +56,8 @@ class Term extends TemplateEngine implements ITerm {
     label: '~', delimiter: '', header: '', caret: '', scrollbarSize: 20,
     size: { width: 1, height: 1 },
   };
+  private isEditing: boolean = false;
+  private writingInterval?: ReturnType<typeof setInterval>;
   private itemSize: SizeType = { width: 1, height: 1 };
   private heightCache: number[] = [];
   private lines: ValueType[] = [];
@@ -98,6 +100,7 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   public destroy() {
+    clearInterval(this.writingInterval as unknown as number);
     this.removeKeyDownHandler();
     this.unregisterAllListeners();
     this.editLine?.destroy();
@@ -124,8 +127,37 @@ class Term extends TemplateEngine implements ITerm {
     if (isUpdated) this.updateTermInfo();
   }
 
-  public write(data: string | string[], duration?: number) {
-    throw new Error('No implementation');
+  public write(
+    data: string | FormattedValueFragmentType, duration?: number,
+  ): Promise<boolean> | boolean {
+    const { editLine, isEditing } = this;
+    if (!editLine || isEditing) return duration ? Promise.resolve(false) : false;
+    this.isEditing = true;
+    editLine.disabled = true;
+    if (duration && duration >= 0) {
+      const { value: original } = editLine;
+      const str = isString(data) ? data : data.str;
+      const millisecondCharactersCount = str.length / duration;
+      let milliseconds = 0;
+      const updatingValue = isString(data) ? { str: data } : { ...data, str: '' };
+      return new Promise((res: (result: boolean) => void) => {
+        this.writingInterval = setInterval(() => {
+          milliseconds += 1;
+          const substr = str.substr(0, Math.floor(millisecondCharactersCount * milliseconds));
+          if (substr === str) {
+            clearInterval(this.writingInterval as unknown as number);
+            this.updateEditLine(data, true, original);
+            return res(true);
+          }
+          if (updatingValue.str !== substr) {
+            updatingValue.str = substr;
+            this.updateEditLine(updatingValue, false, original);
+          }
+        }, 1);
+      });
+    }
+    this.updateEditLine(data, true);
+    return true;
   }
 
   public setCaret(caret: string) {
@@ -146,6 +178,19 @@ class Term extends TemplateEngine implements ITerm {
     }
     this.params.header = '';
     this.updateTermInfo();
+  }
+
+  private updateEditLine(
+    data: string | FormattedValueFragmentType, stopEdit?: boolean, original?: ValueType,
+  ) {
+    const { editLine } = this;
+    if (editLine) {
+      const value = isUndefined(original) ? editLine.value : original;
+      editLine.value = isArray(value) ? [...value, data] : [value, data];
+      editLine.moveCaretToEnd();
+      if (stopEdit) editLine.disabled = false;
+    }
+    if (stopEdit) this.isEditing = false;
   }
 
   private init(container: Element, params: TermConstructorParamsType) {

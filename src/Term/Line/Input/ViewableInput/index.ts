@@ -16,10 +16,6 @@ class ViewableInput extends BaseInput implements IInput {
     super(template, container, css);
   }
 
-  public write(value: ValueType, delay?: number): Promise<boolean> {
-    throw new Error('Needs implementation');
-  }
-
   public render() {
     super.render({ css, value: BaseInput.getValueTemplate(this.valueField) });
   }

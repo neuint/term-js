@@ -1,11 +1,12 @@
 import ITermEventMap from './ITermEventMap';
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
 import IPluginManager from '@Term/PluginManager/IPluginManager';
+import { FormattedValueFragmentType } from '@Term/types';
 
 export default interface ITerm {
   keyboardShortcutsManager: IKeyboardShortcutsManager;
   pluginManager: IPluginManager;
-  write(data: string | string [], duration?: number): void;
+  write(data: string | FormattedValueFragmentType, duration?: number): Promise<boolean> | boolean;
   setCaret(caret: string): void;
   addEventListener<K extends keyof ITermEventMap>(
     type: K,
