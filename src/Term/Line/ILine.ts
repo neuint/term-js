@@ -10,6 +10,7 @@ export default interface ILine extends ITemplateEngine, IVirtualizedItem<ITempla
   value: ValueType;
   secret: boolean;
   disabled: boolean;
+  visible: boolean;
   stopEdit(): void;
   focus(): void;
   updateViewport(): void;
