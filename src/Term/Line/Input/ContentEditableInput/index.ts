@@ -127,15 +127,19 @@ class ContentEditableInput extends BaseInput implements IInput {
     selection.addRange(range);
   }
 
+  private isDisabled: boolean = false;
+  public get disabled(): boolean {
+    return this.isDisabled;
+  }
+  public set disabled(value: boolean) {
+    this.isDisabled = value;
+  }
+
   constructor(container?: Element) {
     super(template, container, css);
     this.addEventListener('input', this.changeHandler);
     this.addEventListener('cut', this.changeHandler);
     this.addEventListener('paste', this.changeHandler);
-  }
-
-  public write(value: ValueType, delay?: number): Promise<boolean> {
-    throw new Error('Needs implementation');
   }
 
   public  moveCaretToEnd(isForce: boolean = false) {
@@ -216,10 +220,16 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   private updateValueField() {
     if (this.preventLockUpdate()) return;
-    const { caretPosition } = this;
-    this.valueField = BaseInput.getUpdatedValueField(this.getInputValue(), this.valueField);
+    const { caretPosition, isDisabled } = this;
+    let updatedCaretPosition = caretPosition;
+    if (isDisabled) {
+      updatedCaretPosition = Math.min(caretPosition,
+        BaseInput.getValueString(this.valueField).length);
+    } else {
+      this.valueField = BaseInput.getUpdatedValueField(this.getInputValue(), this.valueField);
+    }
     this.updateContent();
-    this.caretPosition = caretPosition;
+    this.caretPosition = updatedCaretPosition;
   }
 
   private preventLockUpdate(): boolean {

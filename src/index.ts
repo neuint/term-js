@@ -10,10 +10,7 @@ if (container) {
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
     label: 'guest',
-    editLine: {
-      secret: true,
-      value: [{ str: 'Password: ', lock: true, className: css.granted }],
-    },
+    editLine: '',
     lines: (new Array(100).fill(null)).map((
       _, index,
     ): ValueType => ([

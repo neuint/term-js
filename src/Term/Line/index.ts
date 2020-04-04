@@ -56,8 +56,17 @@ class Line extends TemplateEngine implements ILine {
     const { inputField } = this;
     if (inputField) {
       inputField.value = val;
-      inputField.caretPosition = 0;
+      inputField.moveCaretToEnd();
     }
+  }
+
+  public get disabled(): boolean {
+    const { input, editable } = this;
+    return editable && input ? input.disabled : true;
+  }
+  public set disabled(value: boolean) {
+    const { input, editable } = this;
+    if (input && editable) input.disabled = value;
   }
 
   public get hidden(): boolean {

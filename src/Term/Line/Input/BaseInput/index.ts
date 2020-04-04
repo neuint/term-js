@@ -124,6 +124,10 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     return { from: 0, to: 0 };
   }
 
+  public get disabled(): boolean {
+    return true;
+  }
+
   protected valueField: ValueType = '';
   public get value(): ValueType {
     return this.valueField;
@@ -208,8 +212,6 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
 
   protected abstract getRootElement(): Element | undefined;
-
-  public abstract write(value: ValueType, delay?: number): Promise<boolean>;
 
   public getSimpleValue(showSecret: boolean = true): string {
     const { secretField } = this;
