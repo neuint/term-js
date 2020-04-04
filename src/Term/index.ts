@@ -151,6 +151,7 @@ class Term extends TemplateEngine implements ITerm {
   private init(container: Element, params: TermConstructorParamsType) {
     this.setParams(container, params);
     this.render({ css, header: this.params.header });
+    this.params.scrollbarSize = getScrollbarSize(this.getRef('root') as HTMLElement);
     this.itemSize = getItemSize(this.getRef('root') as HTMLElement, true);
     this.addListeners();
   }
@@ -175,7 +176,6 @@ class Term extends TemplateEngine implements ITerm {
     currentParams.caret = params.caret || currentParams.caret;
     currentParams.label = params.label || currentParams.label;
     currentParams.delimiter = params.delimiter || currentParams.delimiter;
-    currentParams.scrollbarSize = getScrollbarSize(container as HTMLElement);
   }
 
   private characterUpdater = () => {
