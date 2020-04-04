@@ -58,6 +58,7 @@ class Term extends TemplateEngine implements ITerm {
   };
   private isEditing: boolean = false;
   private writingInterval?: ReturnType<typeof setInterval>;
+  private submitTimeout?: ReturnType<typeof setTimeout>;
   private itemSize: SizeType = { width: 1, height: 1 };
   private heightCache: number[] = [];
   private lines: ValueType[] = [];
@@ -101,6 +102,7 @@ class Term extends TemplateEngine implements ITerm {
 
   public destroy() {
     clearInterval(this.writingInterval as unknown as number);
+    clearTimeout(this.submitTimeout as unknown as number);
     this.removeKeyDownHandler();
     this.unregisterAllListeners();
     this.editLine?.destroy();
@@ -224,7 +226,7 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private characterUpdater = () => {
-    const { vl, itemSize } = this;
+    const { vl, itemSize, editLine } = this;
     const newItemSize = getItemSize(this.getRef('root') as HTMLElement, true);
     if (!compareItemSize(itemSize, newItemSize)) {
       this.heightCache = [];
@@ -327,21 +329,24 @@ class Term extends TemplateEngine implements ITerm {
     const { value, formattedValue, lockString } = params;
     const { vl, editLine, listeners, history: { list } } = this;
     const historyValue = value.substring(lockString.length);
-    if (historyValue && last(list) !== historyValue && !editLine?.secret) {
-      list.push(historyValue);
-    }
+    if (historyValue && last(list) !== historyValue && !editLine?.secret) list.push(historyValue);
+    if (!editLine) return;
+    editLine.visible = false;
     this.lines.push(formattedValue);
     this.clearHistoryState();
     vl.length = this.lines.length;
     vl.scrollBottom();
-    if (!this.editLine) return;
-    this.editLine.clear();
-    this.editLine.secret = false;
+    editLine.clear();
+    editLine.secret = false;
     this.updateTermInfo();
-    if (listeners[SUBMIT_EVENT_NAME]) {
-      const event = new ValueEvent(value, historyValue || undefined);
-      listeners[SUBMIT_EVENT_NAME].forEach(item => item.handler(event));
-    }
+    this.submitTimeout = setTimeout(() => {
+      editLine.visible = true;
+      editLine.focus();
+      if (listeners[SUBMIT_EVENT_NAME]) {
+        const event = new ValueEvent(value, historyValue || undefined);
+        listeners[SUBMIT_EVENT_NAME].forEach(item => item.handler(event));
+      }
+    }, 10);
   }
 
   private changeHandler = (value: string) => {

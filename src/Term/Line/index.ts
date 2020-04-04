@@ -69,6 +69,21 @@ class Line extends TemplateEngine implements ILine {
     if (input && editable) input.disabled = value;
   }
 
+  private isVisible: boolean = true;
+  public get visible(): boolean {
+    return this.isVisible;
+  }
+  public set visible(value: boolean) {
+    const root = this.getRef('root');
+    if (this.isVisible === value || !root) return;
+    this.isVisible = value;
+    if (value) {
+      root.classList.add(css.visible);
+    } else {
+      root.classList.remove(css.visible);
+    }
+  }
+
   public get hidden(): boolean {
     return this.isHidden;
   }
