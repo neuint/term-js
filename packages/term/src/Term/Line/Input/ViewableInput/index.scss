@@ -1,0 +1,5 @@
+@import '../../../../../src/Term/mixins';
+
+.root {
+  @include input-general;
+}

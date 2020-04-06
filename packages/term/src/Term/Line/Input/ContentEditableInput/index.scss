@@ -1,0 +1,39 @@
+@import '../../../../../src/Term/mixins';
+
+@mixin hidden-caret {
+  color: transparent;
+  text-shadow: 0 0 0 var(--main-text-color);
+}
+
+.root {
+  position: relative;
+}
+
+.input {
+  @include input-general;
+
+  > span {
+    @include input-general;
+  }
+
+  &.hiddenCaret {
+    @include hidden-caret;
+
+    > * {
+      @include hidden-caret;
+    }
+  }
+}
+
+.hidden {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  visibility: hidden;
+  user-select: none;
+  pointer-events: none;
+
+  @include input-general;
+}
