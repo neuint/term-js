@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "@Term/*": ["term/src/Term/*"]
+    }
+  },
+  "exclude": ["node_modules", "webpack.*.js"]
+}

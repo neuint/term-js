@@ -6,7 +6,7 @@ module.exports = {
     extensions: ['.ts', '.js', '.json'],
     modules: ['node_modules'],
     alias: {
-      '@Term': path.resolve(__dirname, 'packages/term/src/Term'),
+      '@Term': path.resolve(__dirname, 'src/Term'),
     },
   },
 };
