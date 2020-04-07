@@ -6,8 +6,7 @@ module.exports = {
     extensions: ['.ts', '.js', '.json'],
     modules: ['node_modules'],
     alias: {
-      '@Term': path.resolve(__dirname, 'packages/term/src/Term'),
-      '@Autocomplete': path.resolve(__dirname, 'packages/autocomplete-plugin/src/Autocomplete'),
+      '@Autocomplete': path.resolve(__dirname, 'src/Autocomplete'),
     },
   },
 };

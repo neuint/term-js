@@ -1,0 +1,69 @@
+{
+  "name": "@term-js/autocomplete-plugin",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack-dev-server --config webpack.config.js",
+    "build": "NODE_ENV=production webpack --config webpack.config.js",
+    "test": "jest",
+    "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nc-kage/termjs.git"
+  },
+  "author": "Pavlo Gusar",
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest",
+      "^.+\\.html?$": "html-loader-jest",
+      "^.+\\.(css|scss)?$": "<rootDir>/tests/__mocks__/styleMock.js"
+    },
+    "moduleNameMapper": {
+      "^@Autocomplete/(.*)$": "<rootDir>/src/Autocomplete/$1",
+      "^lodash-es$": "lodash"
+    }
+  },
+  "dependencies": {
+    "@types/escape-html": "0.0.20",
+    "@types/lodash-es": "^4.17.3",
+    "lodash-es": "^4.17.15"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/preset-typescript": "^7.9.0",
+    "@types/jest": "^25.2.1",
+    "@types/webpack-env": "^1.15.1",
+    "autoprefixer": "^9.7.5",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "^8.1.0",
+    "cross-env": "^7.0.2",
+    "css-loader": "^3.4.2",
+    "file-loader": "^6.0.0",
+    "html-loader": "^1.1.0",
+    "html-loader-jest": "^0.2.1",
+    "html-webpack-plugin": "^4.0.4",
+    "jest": "^25.2.7",
+    "md5": "^2.2.1",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass": "^4.13.1",
+    "postcss-loader": "^3.0.0",
+    "resize-observer-polyfill": "^1.5.1",
+    "sass-loader": "^8.0.2",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^1.1.3",
+    "terser-webpack-plugin": "^2.3.5",
+    "ts-jest": "^25.3.1",
+    "tslint": "^6.1.1",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  }
+}

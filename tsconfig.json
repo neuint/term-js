@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
-      "@Term/*": ["term/src/Term/*"]
+      "@Term/*": ["term/src/Term/*"],
+      "@Autocomplete/*": ["autocomplete-plugin/src/Autocomplete/*"]
     }
   },
   "exclude": ["node_modules", "webpack.*.js"]

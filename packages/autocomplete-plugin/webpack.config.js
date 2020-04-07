@@ -11,7 +11,7 @@ const isProduction = typeof process.env.NODE_ENV !== undefined
 module.exports = {
   mode: isProduction ? 'production' : 'development',
   target: 'web',
-  entry: path.resolve(__dirname, isProduction ? './src/Term/index.ts' : './src/index.ts'),
+  entry: path.resolve(__dirname, isProduction ? './src/index.ts' : './src/index.ts'),
   devtool: isProduction ? false : 'inline-source-map',
   context: __dirname,
 
@@ -49,7 +49,7 @@ module.exports = {
                     return localName;
                   }
                   return isProduction
-                    ? `${localName}-️${md5(context.resourcePath.split(/[\\/]Term[\\/]/)[1])}`
+                    ? `${localName}-️${md5(context.resourcePath.split(/[\\/]Autocomplete[\\/]/)[1])}`
                     : `${localName}➖️${context.resourcePath.split(/[\\/]src[\\/]/)[1].replace(/\/[^/]+.scss/, '').replace(/\//g, '➡️')}`;
                 },
               },
@@ -60,7 +60,7 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               sassOptions: {
-                includePaths: ['./src/Term', './'],
+                includePaths: ['./src/Autocomplete', './'],
               },
             },
           },
@@ -81,11 +81,14 @@ module.exports = {
   resolve,
   externals: {},
   plugins: [
-    new MiniCssExtractPlugin({ filename: 'term-js.css' }),
-    ...(isProduction ? [] : [
-      new HtmlWebpackPlugin({
-        template: path.join(__dirname, './src/index.html'),
-      }),
-    ]),
+    new MiniCssExtractPlugin({ filename: 'term-js-autocomplete-plugin.css' }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, './src/index.html'),
+    }),
+    // ...(isProduction ? [] : [
+    //   new HtmlWebpackPlugin({
+    //     template: path.join(__dirname, './src/index.html'),
+    //   }),
+    // ]),
   ],
 };
