@@ -10,6 +10,6 @@ export default interface KeyboardShortcutsManager {
   addShortcut(action: string, shortcut: ActionShortcutType): void;
   removeShortcut(action: string, shortcut?: ActionShortcutType): void;
   destroy(): void;
-  addListener(action: string, callback: (action: string, e: Event) => void): void;
-  removeListener(callback: (action: string, e: Event) => void): void;
+  addListener(action: string, callback: (action: string, e: Event) => void | boolean): void;
+  removeListener(callback: (action: string, e: Event) => void | boolean): void;
 }

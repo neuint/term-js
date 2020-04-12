@@ -1,0 +1,8 @@
+@import 'colors';
+
+:root {
+  --autocomplete-plugin-bg-color: #{lighten($bunker, 10)};
+  --autocomplete-plugin-border-color: #{darken($bunker, 10)};
+  --autocomplete-plugin-active-bg-color: #{lighten($bunker, 15)};
+  --autocomplete-plugin-text-clotr: $alabaster;
+}

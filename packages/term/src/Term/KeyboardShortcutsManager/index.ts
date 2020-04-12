@@ -1,14 +1,12 @@
 import { Emitter, EMITTER_TOP_LAYER_TYPE } from 'key-layers-js';
 
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
-import { K_CODE } from '@Term/KeyboardShortcutsManager/constants';
 import {
   ActionShortcutType,
   NormalizedActionShortcutType,
 } from '@Term/KeyboardShortcutsManager/types';
 import { isArray, isNumber } from 'lodash-es';
 import { checkArraysEqual } from '@Term/utils/array';
-import { CLEAR_ACTION_NAME } from '@Term/constants/events';
 
 class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   private static checkShortcutsEqual(
@@ -47,30 +45,29 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
 
   private emitter?: Emitter;
 
-  private shortcutsMapField: { [action: string]: ActionShortcutType | ActionShortcutType[] } = {
-    [CLEAR_ACTION_NAME]: [
-      { code: K_CODE, meta: true },
-      { code: K_CODE, ctrl: true },
-    ],
-  };
+  private shortcutsMapField: { [action: string]: ActionShortcutType | ActionShortcutType[] } = {};
   public get shortcutsMap(): { [action: string]: ActionShortcutType | ActionShortcutType[] } {
     return this.shortcutsMapField;
   }
 
-  private listeners: { [actions: string]: ((action: string, e: Event) => void)[] } = {};
+  private listeners: {
+    [actions: string]: ((action: string, e: Event) => void | boolean)[];
+  } = {};
   private actionHandler?: (action: string, e: Event) => void;
 
   constructor(params: { onAction?: (action: string, e: Event) => void } = {}) {
     this.actionHandler = params.onAction;
   }
 
-  public addListener(action: string, callback: (action: string, e: Event) => void): void {
+  public addListener(
+    action: string, callback: (action: string, e: Event) => void | boolean,
+  ): void {
     const { listeners } = this;
     if (!listeners[action]) listeners[action] = [];
     listeners[action].push(callback);
   }
 
-  public removeListener(callback: (action: string, e: Event) => void): void {
+  public removeListener(callback: (action: string, e: Event) => void | boolean): void {
     const { listeners } = this;
     Object.keys(listeners).some((action: string) => {
       const index = listeners[action].indexOf(callback);
@@ -85,7 +82,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   public addShortcut(action: string, shortcut: ActionShortcutType) {
     const { shortcutsMapField } = this;
     const shortcutIndex = this.getShortcutIndex(action, shortcut);
-    if (shortcutIndex || shortcutIndex >= 0) return;
+    if (shortcutIndex >= 0) return;
     if (!shortcutsMapField[action]) shortcutsMapField[action] = [];
     if (!isArray(shortcutsMapField[action])) {
       shortcutsMapField[action] = [shortcutsMapField[action] as ActionShortcutType];
@@ -117,6 +114,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   public deactivate() {
     const { emitter } = this;
     if (emitter) emitter.destroy();
+    delete this.emitter;
   }
 
   public destroy() {
@@ -143,7 +141,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
       list.map(KeyboardShortcutsManager.getNormalizedShortcut).forEach((item) => {
         emitter.addListener('keyDown', (e: Event) => {
           const callbackList = listeners[action];
-          if (callbackList) callbackList.forEach(callback => callback(action, e));
+          if (callbackList) callbackList.some(callback => callback(action, e));
           if (actionHandler) actionHandler(action, e);
         }, item);
       });

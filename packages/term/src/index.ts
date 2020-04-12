@@ -1,24 +1,10 @@
-import Term from '@Term/index';
-import ITerm from '@Term/ITerm';
-
-import css from './index.scss';
-import { ValueType } from '@Term/types';
-
-const container = document.querySelector('#root');
-if (container) {
-  const term = new Term(container, {
-    virtualizedTopOffset: 400,
-    virtualizedBottomOffset: 400,
-    label: 'guest',
-    editLine: '',
-    lines: (new Array(100).fill(null)).map((
-      _, index,
-    ): ValueType => ([
-      { str: 'User name: ', className: css.granted },
-      `test ${index} `,
-      (new Array(40).fill(null)).map((): string => 's').join(''),
-    ])),
-  });
-  term.setHeader('Test');
-  (window as unknown as { term: ITerm }).term = term;
-}
+export { default as Term } from './Term';
+export { default as ITerm } from './Term/ITerm';
+export { default as ITermInfo } from './Term/ITermInfo';
+export { default as KeyboardShortcutsManager } from './Term/KeyboardShortcutsManager';
+export { default as IKeyboardShortcutsManager } from './Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
+export { TermConstructorParamsType, ValueType } from './Term/types';
+export { default as Plugin } from './Term/PluginManager/Plugin';
+export { default as IPlugin } from './Term/PluginManager/Plugin/IPlugin';
+export { default as TemplateEngine } from './Term/TemplateEngine';
+export { default as ITemplateEngine } from './Term/TemplateEngine/ITemplateEngine';

@@ -9,7 +9,7 @@
     "build": "NODE_ENV=production webpack --config webpack.config.js",
     "test": "jest",
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint -p tslint.json"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     }
   },
   "dependencies": {
+    "@term-js/term": "file:../term",
     "@types/escape-html": "0.0.20",
     "@types/lodash-es": "^4.17.3",
     "lodash-es": "^4.17.15"

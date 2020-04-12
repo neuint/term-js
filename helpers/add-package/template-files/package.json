@@ -1,17 +1,15 @@
 {
-  "name": "@term-js/term",
+  "name": "@term-js/{{name}}",
   "version": "0.1.0",
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "jsnext:main": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server --config webpack.config.js",
-    "build": "rollup -c",
+    "build": "NODE_ENV=production webpack --config webpack.config.js",
     "test": "jest",
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint -p tslint.json"
   },
   "repository": {
     "type": "git",
@@ -25,15 +23,13 @@
       "^.+\\.(css|scss)?$": "<rootDir>/tests/__mocks__/styleMock.js"
     },
     "moduleNameMapper": {
-      "^@Term/(.*)$": "<rootDir>/src/Term/$1",
+      "^@{{alias}}/(.*)$": "<rootDir>/src/{{alias}}/$1",
       "^lodash-es$": "lodash"
     }
   },
   "dependencies": {
-    "@types/escape-html": "0.0.20",
+    "@term-js/term": "file:../term",
     "@types/lodash-es": "^4.17.3",
-    "escape-html": "^1.0.3",
-    "key-layers-js": "^1.0.0",
     "lodash-es": "^4.17.15"
   },
   "devDependencies": {
@@ -58,16 +54,6 @@
     "node-sass": "^4.13.1",
     "postcss-loader": "^3.0.0",
     "resize-observer-polyfill": "^1.5.1",
-    "rollup": "^2.3.4",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-copy": "^3.3.0",
-    "rollup-plugin-html": "^0.2.1",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-peer-deps-external": "^2.2.2",
-    "rollup-plugin-postcss": "^2.5.0",
-    "rollup-plugin-typescript2": "^0.27.0",
-    "rollup-plugin-url": "^3.0.1",
     "sass-loader": "^8.0.2",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.1.3",

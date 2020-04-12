@@ -6,3 +6,25 @@ body,
   padding: 0;
   margin: 0;
 }
+
+.test {
+  color: rgb(0, 144, 0);
+  font-weight: 600;
+}
+
+.granted {
+  color: rgb(0, 144, 0);
+  cursor: pointer;
+}
+
+.denied {
+  color: rgb(144, 18, 0);
+  font-weight: 600;
+}
+
+.unknown {
+  &.command {
+    color: rgb(136, 137, 133);
+    font-weight: 600;
+  }
+}

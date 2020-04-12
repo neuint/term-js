@@ -1,4 +1,4 @@
-import { noop, last, get, isUndefined, isArray, isString, isObject, values } from 'lodash-es';
+import { noop, last, get, isUndefined, isArray, isString, isObject } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import './fonts.scss';
@@ -10,7 +10,7 @@ import VirtualizedList from '@Term/VirtualizedList';
 import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import TemplateEngine from '@Term/TemplateEngine';
 import { getKeyCode } from '@Term/utils/event';
-import { DOWN_CODE, UP_CODE } from '@Term/constants/keyCodes';
+import { DOWN_CODE, K_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { compareItemSize, getItemSize, getScrollbarSize } from '@Term/utils/viewport';
 import {
   EditLineParamsType, FormattedValueFragmentType,
@@ -79,7 +79,7 @@ class Term extends TemplateEngine implements ITerm {
       topOffset: virtualizedTopOffset || 0, bottomOffset: virtualizedBottomOffset || 0,
     });
     this.preStart(container, params);
-    this.pluginManager = new PluginManager(this.getTermInfo());
+    this.pluginManager = new PluginManager(this.getTermInfo(), this.keyboardShortcutsManager);
   }
 
   public addEventListener = <K extends keyof ITermEventMap>(
@@ -411,6 +411,8 @@ class Term extends TemplateEngine implements ITerm {
 
   private addKeyboardShortcutsManagerListeners() {
     const { keyboardShortcutsManager } = this;
+    keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, meta: true });
+    keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, ctrl: true });
     keyboardShortcutsManager.addListener(CLEAR_ACTION_NAME, this.clearHandler);
   }
 

@@ -64,7 +64,7 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               sassOptions: {
-                includePaths: ['./src/Autocomplete', './'],
+                includePaths: ['./src/{{alias}}', './'],
               },
             },
           },
@@ -85,14 +85,9 @@ module.exports = {
   resolve,
   externals: {},
   plugins: [
-    new MiniCssExtractPlugin({ filename: 'term-js-autocomplete-plugin.css' }),
+    new MiniCssExtractPlugin({ filename: 'term-js-{{name}}.css' }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, './src/index.html'),
     }),
-    // ...(isProduction ? [] : [
-    //   new HtmlWebpackPlugin({
-    //     template: path.join(__dirname, './src/index.html'),
-    //   }),
-    // ]),
   ],
 };

@@ -11,7 +11,7 @@ const isProduction = typeof process.env.NODE_ENV !== undefined
 module.exports = {
   mode: isProduction ? 'production' : 'development',
   target: 'web',
-  entry: path.resolve(__dirname, isProduction ? './src/Term/index.ts' : './src/index.ts'),
+  entry: path.resolve(__dirname, isProduction ? './src/Term/index.ts' : './src/start.ts'),
   devtool: isProduction ? false : 'inline-source-map',
   context: __dirname,
 

@@ -1,13 +1,16 @@
 import IPluginManager from '@Term/PluginManager/IPluginManager';
 import IPlugin from '@Term/PluginManager/Plugin/IPlugin';
 import ITermInfo from '@Term/ITermInfo';
+import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
 
 class PluginManager implements IPluginManager {
   private pluginList: { name: string; inst: IPlugin }[] = [];
   private termInfo: ITermInfo;
+  private readonly keyboardShortcutsManager: IKeyboardShortcutsManager;
 
-  constructor(termInfo: ITermInfo) {
+  constructor(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager) {
     this.termInfo = termInfo;
+    this.keyboardShortcutsManager = keyboardShortcutsManager;
   }
 
   public updateTermInfo(termInfo: ITermInfo) {
@@ -21,7 +24,7 @@ class PluginManager implements IPluginManager {
     const { pluginList, termInfo } = this;
     if (this.getPluginIndex(name) >= 0) return;
     pluginList.push({ name, inst: plugin });
-    plugin.setTermInfo(termInfo);
+    plugin.setTermInfo(termInfo, this.keyboardShortcutsManager);
   }
 
   public unregister(name: string) {
