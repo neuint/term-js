@@ -12,6 +12,6 @@ if (container) {
     editLine: '',
     lines: [],
   });
-  term.setHeader('{{title}}');
+  term.setHeader('{{name}}');
   (window as unknown as { term: ITerm }).term = term;
 }

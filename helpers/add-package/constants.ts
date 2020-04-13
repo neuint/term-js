@@ -1,6 +1,7 @@
 import * as path from 'path';
 
 export const PACKAGES_PATH = path.join(__dirname, '../../packages');
+export const TEMPLATE_FILES_PATH = path.join(__dirname, 'template-files');
 export const WEBPACK_RESOLVE_PATH = path.join(__dirname, '../../webpack.resolve.js');
 
 export const EXISTS_ERROR = 'exists';
