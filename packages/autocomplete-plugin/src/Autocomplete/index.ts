@@ -25,9 +25,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
     this.commandList = commandList;
   }
 
-  public setTermInfo(
-    termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager,
-  ): void {
+  public setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager) {
     super.setTermInfo(termInfo, keyboardShortcutsManager);
     keyboardShortcutsManager.addShortcut(AUTOCOMPLETE_DOWN_ACTION, { code: TAB_KEY_CODE });
     keyboardShortcutsManager.addShortcut(AUTOCOMPLETE_DOWN_ACTION, { code: DOWN_KEY_CODE });

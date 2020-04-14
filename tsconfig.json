@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
+      "@ContextMenu/*": ["context-menu-plugin/src/ContextMenu/*"],
       "@Term/*": ["term/src/Term/*"],
       "@Autocomplete/*": ["autocomplete-plugin/src/Autocomplete/*"]
     }

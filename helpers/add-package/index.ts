@@ -3,6 +3,7 @@ import * as path from 'path';
 import { getInput } from './terminal';
 import {
   PACKAGES_PATH, WEBPACK_RESOLVE_PATH, INCORRECT_NAME_ERROR, TEMPLATE_FILES_PATH,
+  TS_ROOT_CONFIG_PATH,
 } from './constants';
 import { mkDir, appendText, copyPack } from './fs';
 
@@ -16,6 +17,7 @@ const COPY_LIST: (string | { from: string; to: string })[] = [
   'webpack.config.js',
   'webpack.const.js',
   'webpack.resolve.js',
+  'postcss.config.js',
   'tests/__mocks__/styleMock.js',
   'src/index.html',
   'src/index.scss',
@@ -34,6 +36,10 @@ getInput([
   const rootDirPath = path.join(PACKAGES_PATH, name);
   return mkDir(rootDirPath)
     .then(() => appendText(
+      TS_ROOT_CONFIG_PATH,
+      `\n      "@${alias}/*": ["${name}/src/${alias}/*"],`,
+      '"paths": {',
+    )).then(() => appendText(
       WEBPACK_RESOLVE_PATH,
       `\n      '@${alias}': path.resolve(__dirname, '${aliasPath}'),`,
       'alias: {',

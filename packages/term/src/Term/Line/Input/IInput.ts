@@ -24,4 +24,6 @@ export default interface IInput extends ITemplateEngine {
     options?: boolean | EventListenerOptions,
   ): void;
   moveCaretToEnd(isForce?: boolean): void;
+  getCaretOffset(): { left: number; top: number };
+  getEndOffset(): { left: number; top: number };
 }

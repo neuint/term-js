@@ -1,5 +1,3 @@
-import { memoize } from 'lodash-es';
-
 import { SizeType } from '@Term/types';
 import { NON_BREAKING_SPACE } from '@Term/constants/strings';
 

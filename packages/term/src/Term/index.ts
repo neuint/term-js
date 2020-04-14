@@ -13,9 +13,14 @@ import { getKeyCode } from '@Term/utils/event';
 import { DOWN_CODE, K_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { compareItemSize, getItemSize, getScrollbarSize } from '@Term/utils/viewport';
 import {
-  EditLineParamsType, FormattedValueFragmentType,
+  EditLineParamsType,
+  FormattedValueFragmentType,
   SizeType,
   TermConstructorParamsType,
+  TermInfoCaretType,
+  TermInfoEditType,
+  TermInfoElementsType,
+  TermInfoLabelType, TermInfoLinesTypes,
   TermParamsType,
   ValueType,
 } from '@Term/types';
@@ -475,34 +480,39 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private getTermInfo(): ITermInfo {
-    const { editLine, lines, params: { label, delimiter, header } } = this;
+    const { params: { header } } = this;
     return {
-      elements: {
-        root: this.getRef('content'),
-        edit: editLine?.getRef('content'),
-        title: this.getRef('header'),
-      },
       title: header,
-      caretPosition: editLine?.input?.caretPosition || 0,
-      lines: lines.map((line: ValueType): string => BaseInput.getValueString(line)),
-      editLine: BaseInput.getValueString(editLine?.value || ''),
-      parameterizedLines: lines,
-      parameterizedEditLine: editLine?.value || '',
+      elements: this.getTermInfoElements(),
+      label: this.getTermInfoLabel(),
+      caret: this.getTermInfoCaret(),
+      edit: this.getTermInfoEdit(),
+      lines: this.getTermInfoLines(),
       addEventListener: this.addEventListener,
       removeEventListener: this.removeEventListener,
-      updateLines: this.setLines,
-      setLabel: this.setLabel,
-      labelParams: { label, delimiter },
-      updateEditLine: (params: EditLineParamsType) => {
-        if (!editLine) return;
-        if (isObject(params) && !isArray(params)) {
-          editLine.secret = Boolean(params.secret);
-          editLine.value = params.value;
-        } else {
-          editLine.value = params;
-        }
-        this.updateTermInfo();
-      },
+    };
+  }
+
+  private getTermInfoElements(): TermInfoElementsType {
+    const { editLine } = this;
+    return {
+      root: this.getRef('content'),
+      edit: editLine?.getRef('content'),
+      title: this.getRef('header'),
+    };
+  }
+
+  private getTermInfoLabel(): TermInfoLabelType {
+    const { label, delimiter } = this.params;
+    return { label, delimiter, set: this.setLabel };
+  }
+
+  private getTermInfoCaret(): TermInfoCaretType {
+    const { editLine, itemSize } = this;
+    return {
+      position: editLine?.input?.caretPosition || 0,
+      offset: editLine?.caretOffset || { left: 0, top: 0 },
+      size: { width: itemSize.width, height: itemSize.height },
       setCaretPosition: (position: number) => {
         if (position < 0) {
           editLine?.moveCaretToEnd();
@@ -512,6 +522,34 @@ class Term extends TemplateEngine implements ITerm {
           this.updateTermInfo();
         }
       },
+    };
+  }
+
+  private getTermInfoEdit(): TermInfoEditType {
+    const { editLine } = this;
+    return {
+      value: BaseInput.getValueString(editLine?.value || ''),
+      parameterizedValue: editLine?.value || '',
+      update: (params: EditLineParamsType) => {
+        if (!editLine) return;
+        if (isObject(params) && !isArray(params)) {
+          editLine.secret = Boolean(params.secret);
+          editLine.value = params.value;
+        } else {
+          editLine.value = params;
+        }
+        this.updateTermInfo();
+      },
+      endOffset: editLine?.endOffset || { left: 0, top: 0 },
+    };
+  }
+
+  private getTermInfoLines(): TermInfoLinesTypes {
+    const { lines } = this;
+    return {
+      list: lines.map((line: ValueType): string => BaseInput.getValueString(line)),
+      parameterizedList: lines,
+      update: this.setLines,
     };
   }
 
