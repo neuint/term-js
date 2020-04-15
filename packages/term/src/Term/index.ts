@@ -277,10 +277,12 @@ class Term extends TemplateEngine implements ITerm {
       size.height = height;
       this.heightCache = [];
       vl.updateViewport();
+      this.updateTermInfo();
     } else if (size.height !== height) {
       size.width = width;
       size.height = height;
       vl.updateViewport();
+      this.updateTermInfo();
     }
   }
 
