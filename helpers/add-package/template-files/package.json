@@ -2,6 +2,8 @@
   "name": "@term-js/{{name}}",
   "version": "0.1.0",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
@@ -28,6 +30,7 @@
     }
   },
   "dependencies": {
+    "@term-js/term": "file:../term",
     "@term-js/term": "file:../term",
     "@types/lodash-es": "^4.17.3",
     "lodash-es": "^4.17.15"

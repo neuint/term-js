@@ -2,11 +2,13 @@
   "name": "@term-js/autocomplete-plugin",
   "version": "0.1.0",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server --config webpack.config.js",
-    "build": "NODE_ENV=production webpack --config webpack.config.js",
+    "build": "rollup -c",
     "test": "jest",
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts",
     "lint": "tslint --project tsconfig.json"
@@ -28,8 +30,8 @@
     }
   },
   "dependencies": {
+    "@term-js/context-menu-plugin": "file:../context-menu-plugin",
     "@term-js/term": "file:../term",
-    "@types/escape-html": "0.0.20",
     "@types/lodash-es": "^4.17.3",
     "lodash-es": "^4.17.15"
   },
@@ -65,6 +67,16 @@
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "rollup": "^2.3.4",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-copy": "^3.3.0",
+    "rollup-plugin-html": "^0.2.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.2",
+    "rollup-plugin-postcss": "^2.5.0",
+    "rollup-plugin-typescript2": "^0.27.0",
+    "rollup-plugin-url": "^3.0.1"
   }
 }
