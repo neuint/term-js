@@ -2,6 +2,7 @@ import IPluginManager from '@Term/PluginManager/IPluginManager';
 import IPlugin from '@Term/PluginManager/Plugin/IPlugin';
 import ITermInfo from '@Term/ITermInfo';
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
+import { isString } from 'lodash-es';
 
 class PluginManager implements IPluginManager {
   private pluginList: { name: string; inst: IPlugin }[] = [];
@@ -22,7 +23,7 @@ class PluginManager implements IPluginManager {
 
   public register(name: string, plugin: IPlugin) {
     const { pluginList, termInfo } = this;
-    if (this.getPluginIndex(name) >= 0) return;
+    if (this.getPluginIndex(name, plugin) >= 0) return;
     pluginList.push({ name, inst: plugin });
     plugin.setTermInfo(termInfo, this.keyboardShortcutsManager);
   }
@@ -42,9 +43,18 @@ class PluginManager implements IPluginManager {
     this.pluginList = [];
   }
 
-  private getPluginIndex(name: string): number {
+  public getPlugin(descriptor: string | (new () => IPlugin)): IPlugin | null {
     const { pluginList } = this;
-    return pluginList.findIndex(item => item.name === name);
+    return isString(descriptor)
+      ? pluginList.find(({ name }): boolean => name === descriptor)?.inst || null
+      : pluginList.find(({ inst }): boolean => inst instanceof descriptor)?.inst || null;
+  }
+
+  private getPluginIndex(name: string, plugin?: IPlugin): number {
+    const { pluginList } = this;
+    const nameIndex = pluginList.findIndex(item => item.name === name);
+    if (nameIndex >= 0 || !plugin) return nameIndex;
+    return pluginList.findIndex(item => item.inst.equal(plugin));
   }
 }
 

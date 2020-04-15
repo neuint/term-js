@@ -1,6 +1,7 @@
-import { PositionType, TargetType } from '@ContextMenu/types';
+import { ShowOptionsType, TargetType } from '@ContextMenu/types';
+import { IPlugin } from '@term-js/term';
 
-export default interface IContextMenu {
-  show(content: HTMLElement | string, target: TargetType, positions?: PositionType): void;
+export default interface IContextMenu extends IPlugin {
+  show(content: HTMLElement | string, target: TargetType, options: ShowOptionsType): void;
   hide(): void;
 }

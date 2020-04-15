@@ -22,6 +22,7 @@ const COPY_LIST: (string | { from: string; to: string })[] = [
   'src/index.html',
   'src/index.scss',
   { from: 'src/start.tts', to: 'src/start.ts' },
+  { from: 'src/index.tts', to: 'src/index.ts' },
   { from: 'typings/declarations.d.tts', to: 'src/typings/declarations.d.ts' },
 ];
 

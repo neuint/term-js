@@ -18,6 +18,7 @@ if (container) {
   });
   term.setHeader('context-menu-plugin');
   term.pluginManager.register('context-menu', contextMenu);
+  console.log(term.pluginManager.getPlugin(ContextMenu));
   (window as unknown as { term: ITerm }).term = term;
   (window as unknown as { contextMenu: IContextMenu }).contextMenu = contextMenu;
 }

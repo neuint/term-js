@@ -5,21 +5,31 @@ import './theme.scss';
 
 import IContextMenu from '@ContextMenu/IContextMenu';
 import ContextMenuView from '@ContextMenu/ContextMenuView';
-import { PositionType, TargetType } from '@ContextMenu/types';
-import { END_OF_LINE_TYPE, POSITION_TARGET_TYPE } from '@ContextMenu/constants';
+import { PositionType, ShowOptionsType, TargetType } from '@ContextMenu/types';
+import {
+  CLOSE_ACTION,
+  END_OF_LINE_TYPE,
+  ESC_KEY_CODE,
+  POSITION_TARGET_TYPE,
+} from '@ContextMenu/constants';
 import { getRelativePosition } from '@ContextMenu/utils/viewport';
+import { stopPropagation } from '@ContextMenu/utils/events';
 
 class ContextMenu extends Plugin implements IContextMenu {
   private contextMenuView?: ITemplateEngine;
   private target?: TargetType;
   private position?: PositionType;
   private isVisible: boolean = false;
+  private escHide: boolean = false;
+  private aroundClickHide: boolean = false;
   public show(
-    content: HTMLElement | string, target: TargetType, position?: PositionType,
+    content: HTMLElement | string, target: TargetType, options: ShowOptionsType = {},
   ) {
+    const { position, escHide = false, aroundClickHide = false } = options;
     if (target === POSITION_TARGET_TYPE && !position) return;
     this.target = target;
-    this.position = position;
+    this.escHide = escHide;
+    this.aroundClickHide = aroundClickHide;
     this.render(content);
     this.updatePosition();
   }
@@ -27,6 +37,8 @@ class ContextMenu extends Plugin implements IContextMenu {
   public hide() {
     const { contextMenuView } = this;
     if (contextMenuView) {
+      const root = contextMenuView.getRef('root');
+      if (root) root.removeEventListener('click', stopPropagation);
       contextMenuView.destroy();
       delete this.contextMenuView;
     }
@@ -34,12 +46,35 @@ class ContextMenu extends Plugin implements IContextMenu {
 
   public setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager) {
     super.setTermInfo(termInfo, keyboardShortcutsManager);
+    const { root } = termInfo.elements;
+    root?.addEventListener('click', this.rootClickHandler);
+    keyboardShortcutsManager.addShortcut(CLOSE_ACTION, { code: ESC_KEY_CODE });
+    keyboardShortcutsManager.addListener(CLOSE_ACTION, this.escHandler);
     this.updatePosition();
   }
 
   public updateTermInfo(termInfo: ITermInfo) {
     super.updateTermInfo(termInfo);
     this.updatePosition();
+  }
+
+  public destroy() {
+    const { keyboardShortcutsManager, termInfo } = this;
+    const root = termInfo?.elements.root;
+    if (keyboardShortcutsManager) {
+      keyboardShortcutsManager.removeListener(this.escHandler);
+      keyboardShortcutsManager.removeShortcut(CLOSE_ACTION);
+    }
+    if (root) root.removeEventListener('click', this.rootClickHandler);
+    super.destroy();
+  }
+
+  private escHandler = () => {
+    if (this.escHide) this.hide();
+  }
+
+  private rootClickHandler = () => {
+    if (this.aroundClickHide) this.hide();
   }
 
   private render(content: HTMLElement | string) {
@@ -50,6 +85,7 @@ class ContextMenu extends Plugin implements IContextMenu {
     contextMenuView.render();
     const root = contextMenuView.getRef('root');
     if (!root) return;
+    root.addEventListener('click', stopPropagation);
     this.contextMenuView = contextMenuView;
     this.isVisible = false;
     return isString(content) ? root.innerHTML = content : root.appendChild(content);

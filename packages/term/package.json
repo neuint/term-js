@@ -11,7 +11,7 @@
     "build": "rollup -c",
     "test": "jest",
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint --project tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -32,9 +32,11 @@
   "dependencies": {
     "@types/escape-html": "0.0.20",
     "@types/lodash-es": "^4.17.3",
+    "@types/uuid": "^7.0.2",
     "escape-html": "^1.0.3",
     "key-layers-js": "^1.0.0",
-    "lodash-es": "^4.17.15"
+    "lodash-es": "^4.17.15",
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
