@@ -10,37 +10,44 @@ import {
   CLOSE_ACTION,
   END_OF_LINE_TYPE,
   ESC_KEY_CODE,
+  PLUGIN_NAME,
   POSITION_TARGET_TYPE,
 } from '@ContextMenu/constants';
 import { getRelativePosition } from '@ContextMenu/utils/viewport';
 import { stopPropagation } from '@ContextMenu/utils/events';
 
 class ContextMenu extends Plugin implements IContextMenu {
+  public readonly name: string = PLUGIN_NAME;
   private contextMenuView?: ITemplateEngine;
   private target?: TargetType;
   private position?: PositionType;
   private isVisible: boolean = false;
   private escHide: boolean = false;
   private aroundClickHide: boolean = false;
+  private onHide?: () => void;
+
   public show(
     content: HTMLElement | string, target: TargetType, options: ShowOptionsType = {},
   ) {
-    const { position, escHide = false, aroundClickHide = false } = options;
+    this.hide();
+    const { position, escHide = false, aroundClickHide = false, onHide } = options;
     if (target === POSITION_TARGET_TYPE && !position) return;
     this.target = target;
     this.escHide = escHide;
+    this.onHide = onHide;
     this.aroundClickHide = aroundClickHide;
     this.render(content);
     this.updatePosition();
   }
 
   public hide() {
-    const { contextMenuView } = this;
+    const { contextMenuView, onHide } = this;
     if (contextMenuView) {
       const root = contextMenuView.getRef('root');
       if (root) root.removeEventListener('click', stopPropagation);
       contextMenuView.destroy();
       delete this.contextMenuView;
+      if (onHide) onHide();
     }
   }
 
@@ -67,6 +74,11 @@ class ContextMenu extends Plugin implements IContextMenu {
     }
     if (root) root.removeEventListener('click', this.rootClickHandler);
     super.destroy();
+  }
+
+  public clear() {
+    this.hide();
+    super.clear();
   }
 
   private escHandler = () => {

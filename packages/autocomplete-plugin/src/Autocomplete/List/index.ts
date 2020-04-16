@@ -4,11 +4,12 @@ import template from './template.html';
 import css from './index.scss';
 
 import IList from '@Autocomplete/List/IList';
-import { ItemRefListType } from '@Autocomplete/List/types';
+import Item from '@Autocomplete/Item';
+import IItem from '@Autocomplete/Item/IItem';
 
 class List extends TemplateEngine implements IList {
-  private itemRefList: ItemRefListType = {};
   private reRender: boolean = false;
+  private listItems: IItem[] = [];
 
   private itemsField: string[] = [];
   public get items(): string[] {
@@ -16,7 +17,6 @@ class List extends TemplateEngine implements IList {
   }
   public set items(val: string[]) {
     this.itemsField = val;
-    this.setItemRefList();
     this.render();
   }
 
@@ -25,8 +25,10 @@ class List extends TemplateEngine implements IList {
     return this.valueField;
   }
   public set value(val: string) {
-    this.valueField = val;
-    this.render();
+    if (this.valueField !== val) {
+      this.valueField = val;
+      this.render();
+    }
   }
 
   private indexField: number = 0;
@@ -34,50 +36,74 @@ class List extends TemplateEngine implements IList {
     return this.indexField;
   }
   public set index(val: number) {
-    this.indexField = Math.max(0, val);
+    const newIndex = Math.max(0, val);
+    if (this.indexField !== newIndex) {
+      this.indexField = newIndex;
+      this.render();
+    }
   }
 
-  constructor(container: HTMLElement) {
+  private onSelect?: (text: string) => void;
+
+  constructor(container: HTMLElement, onSelect?: (text: string) => void) {
     super(template, container);
-    this.setItemRefList();
+    this.onSelect = onSelect;
     this.render();
   }
 
   public render() {
     super.render({ css }, this.reRender ? { replace: this } : {});
-    const root = this.getRef('root');
     this.renderItems();
     this.reRender = true;
-    if (root) (root as HTMLElement).style.visibility = 'visible';
+  }
+
+  private onItemHover = (_: string, line: IItem) => {
+    const { listItems } = this;
+    listItems.forEach((item, index: number) => {
+      if (item === line) {
+        this.indexField = index;
+        item.active = true;
+      } else {
+        item.active = false;
+      }
+    });
+  }
+
+  private onItemClick = (text: string) => {
+    const { onSelect } = this;
+    if (onSelect) onSelect(text);
   }
 
   private renderItems() {
     const root = this.getRef('root');
-    const { itemRefList, itemsField, valueField } = this;
+    const { itemsField, valueField, indexField } = this;
+    const listItems: IItem[] = [];
+    let isSetActive = false;
     if (root && valueField) {
+      this.destroyItems();
       itemsField.forEach((item: string, index: number) => {
         if (item.includes(valueField)) {
-          root.appendChild(itemRefList[index].el);
+          const isActive = indexField === index;
+          isSetActive = isSetActive || isActive;
+          const listItem = new Item(root as HTMLElement, {
+            value: valueField, text: item, onHover: this.onItemHover, onClick: this.onItemClick,
+          });
+          listItem.render();
+          listItem.active = isActive;
+          listItems.push(listItem);
         }
       });
+      this.listItems = listItems;
+      if (!isSetActive) {
+        this.indexField = 0;
+        if (listItems[0]) listItems[0].active = true;
+      }
     }
   }
 
-  private setItemRefList() {
-    const { itemsField, itemRefList } = this;
-    this.itemRefList = itemsField.reduce((
-      acc: ItemRefListType, item: string, index: number,
-    ): ItemRefListType => {
-      if (itemRefList[index]?.val === item) {
-        acc[index] = itemRefList[index];
-      } else {
-        const el = document.createElement('li');
-        el.classList.add(css.item);
-        el.innerHTML = `<span class="${css.itemText}">${item}</span>`;
-        acc[index] = { el, val: item };
-      }
-      return acc;
-    }, {} as ItemRefListType);
+  private destroyItems() {
+    this.listItems.forEach(listItem => listItem.destroy());
+    this.listItems = [];
   }
 }
 

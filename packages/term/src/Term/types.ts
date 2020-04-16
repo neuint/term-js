@@ -55,6 +55,10 @@ export type TermInfoEditType = {
   parameterizedValue: EditLineParamsType;
   update: (params: EditLineParamsType) => void;
   endOffset: { left: number; top: number };
+  focus: () => void,
+  write: (
+    data: string | FormattedValueFragmentType, duration?: number,
+  ) => Promise<boolean> | boolean;
 };
 export type TermInfoLinesTypes = {
   list: string[];

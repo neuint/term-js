@@ -21,20 +21,25 @@ class PluginManager implements IPluginManager {
     });
   }
 
-  public register(name: string, plugin: IPlugin) {
+  public register(plugin: IPlugin, name?: string) {
     const { pluginList, termInfo } = this;
-    if (this.getPluginIndex(name, plugin) >= 0) return;
-    pluginList.push({ name, inst: plugin });
+    const pluginName = name || plugin.name;
+    if (this.getPluginIndex(pluginName, plugin) >= 0) return;
+    pluginList.push({ name: pluginName, inst: plugin });
+    this.clearPlugins();
     plugin.setTermInfo(termInfo, this.keyboardShortcutsManager);
   }
 
-  public unregister(name: string) {
+  public unregister(descriptor: string | IPlugin) {
     const { pluginList } = this;
-    const index = this.getPluginIndex(name);
+    const index = typeof descriptor === 'string'
+      ? this.getPluginIndex(descriptor)
+      : this.getPluginIndex(descriptor.name, descriptor);
     if (index < 0) return;
     pluginList.splice(index, 1);
     const item = pluginList[index];
     if (!item) return;
+    this.clearPlugins();
     item.inst.destroy();
   }
 
@@ -55,6 +60,10 @@ class PluginManager implements IPluginManager {
     const nameIndex = pluginList.findIndex(item => item.name === name);
     if (nameIndex >= 0 || !plugin) return nameIndex;
     return pluginList.findIndex(item => item.inst.equal(plugin));
+  }
+
+  private clearPlugins() {
+    this.pluginList.forEach(({ inst }) => inst.clear());
   }
 }
 

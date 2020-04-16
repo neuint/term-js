@@ -6,6 +6,7 @@ import {
   TermInfoLinesTypes,
 } from '@Term/types';
 import ITermEventMap from '@Term/ITermEventMap';
+import IPluginManager from '@Term/PluginManager/IPluginManager';
 
 export default interface ITermInfo {
   title: string;
@@ -14,6 +15,7 @@ export default interface ITermInfo {
   caret: TermInfoCaretType;
   edit: TermInfoEditType;
   lines: TermInfoLinesTypes;
+  pluginManager: IPluginManager;
   addEventListener<K extends keyof ITermEventMap>(
     type: K,
     handler: (e: ITermEventMap[K]) => void,

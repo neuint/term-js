@@ -135,9 +135,9 @@ class Term extends TemplateEngine implements ITerm {
     if (isUpdated) this.updateTermInfo();
   }
 
-  public write(
+  public write = (
     data: string | FormattedValueFragmentType, duration?: number,
-  ): Promise<boolean> | boolean {
+  ): Promise<boolean> | boolean => {
     const { editLine, isEditing } = this;
     if (!editLine || isEditing) return duration ? Promise.resolve(false) : false;
     this.isEditing = true;
@@ -490,6 +490,7 @@ class Term extends TemplateEngine implements ITerm {
       caret: this.getTermInfoCaret(),
       edit: this.getTermInfoEdit(),
       lines: this.getTermInfoLines(),
+      pluginManager: this.pluginManager,
       addEventListener: this.addEventListener,
       removeEventListener: this.removeEventListener,
     };
@@ -532,6 +533,8 @@ class Term extends TemplateEngine implements ITerm {
     return {
       value: BaseInput.getValueString(editLine?.value || ''),
       parameterizedValue: editLine?.value || '',
+      write: this.write,
+      focus: () => editLine?.focus(),
       update: (params: EditLineParamsType) => {
         if (!editLine) return;
         if (isObject(params) && !isArray(params)) {

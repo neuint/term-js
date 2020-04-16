@@ -1,4 +1,5 @@
 import { Emitter, EMITTER_TOP_LAYER_TYPE } from 'key-layers-js';
+import { v1 as guid } from 'uuid';
 
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
 import {
@@ -54,9 +55,13 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
     [actions: string]: ((action: string, e: Event) => void | boolean)[];
   } = {};
   private actionHandler?: (action: string, e: Event) => void;
+  private readonly unlockKey: string;
+  private isLock: boolean = false;
+  private lockWhiteList: string[] = [];
 
-  constructor(params: { onAction?: (action: string, e: Event) => void } = {}) {
+  constructor(params: { onAction?: (action: string, e: Event) => void } = {}, unlockKey?: string) {
     this.actionHandler = params.onAction;
+    this.unlockKey = unlockKey || guid();
   }
 
   public addListener(
@@ -121,6 +126,20 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
     this.deactivate();
   }
 
+  public lock(whiteList: string[] = []): (() => void) | undefined {
+    if (this.isLock) return;
+    this.isLock = true;
+    this.lockWhiteList = whiteList;
+    return () => this.unlock(this.unlockKey);
+  }
+
+  public unlock(key: string) {
+    if (this.unlockKey === key) {
+      this.isLock = false;
+      this.lockWhiteList = [];
+    }
+  }
+
   private getShortcutIndex(action: string, shortcut: ActionShortcutType): number | boolean {
     const info = this.shortcutsMapField[action];
     if (!info) return -1;
@@ -132,7 +151,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   }
 
   private addListeners() {
-    const { emitter, shortcutsMapField, listeners, actionHandler } = this;
+    const { emitter, shortcutsMapField, listeners, actionHandler, isLock, lockWhiteList } = this;
     if (!emitter) return;
     Object.keys(shortcutsMapField).forEach((action) => {
       const info = shortcutsMapField[action];
@@ -140,6 +159,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
         ? [info] : info) as ActionShortcutType[];
       list.map(KeyboardShortcutsManager.getNormalizedShortcut).forEach((item) => {
         emitter.addListener('keyDown', (e: Event) => {
+          if (isLock && !lockWhiteList.includes(action)) return;
           const callbackList = listeners[action];
           if (callbackList) callbackList.some(callback => callback(action, e));
           if (actionHandler) actionHandler(action, e);

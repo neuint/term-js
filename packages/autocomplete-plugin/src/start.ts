@@ -2,6 +2,7 @@ import { Term, ITerm } from '@term-js/term';
 import '@term-js/term/dist/index.css';
 
 import Autocomplete from '@Autocomplete/index';
+import IAutocomplete from '@Autocomplete/IAutocomplete';
 
 import './index.scss';
 
@@ -19,6 +20,7 @@ if (container) {
     lines: [],
   });
   term.setHeader('Test');
-  term.pluginManager.register('autocomplete', autocomplete);
+  term.pluginManager.register(autocomplete);
   (window as unknown as { term: ITerm }).term = term;
+  (window as unknown as { autocomplete: IAutocomplete }).autocomplete = autocomplete;
 }

@@ -1,15 +1,11 @@
 /* tslint:disable:no-empty */
-import { v1 as guid } from 'uuid';
-
 import IPlugin from './IPlugin';
 import ITermInfo from '@Term/ITermInfo';
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
+import { BASE_PLUGIN_NAME } from '@Term/PluginManager/constants';
 
 class Plugin implements IPlugin {
-  public static readonly guid: string = guid();
-  public get guid(): string {
-    return Plugin.guid;
-  }
+  public readonly name: string = BASE_PLUGIN_NAME;
 
   protected termInfo?: ITermInfo;
   protected keyboardShortcutsManager?: IKeyboardShortcutsManager;
@@ -23,11 +19,15 @@ class Plugin implements IPlugin {
     this.termInfo = termInfo;
   }
 
-  public destroy() {}
+  public destroy() {
+    this.clear();
+  }
 
   public equal(plugin: IPlugin): boolean {
-    return plugin.guid === this.guid;
+    return plugin.name === this.name;
   }
+
+  public clear() {}
 }
 
 export default Plugin;

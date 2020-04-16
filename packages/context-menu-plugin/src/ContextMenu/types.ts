@@ -4,4 +4,5 @@ export type ShowOptionsType = {
   position?: PositionType;
   escHide?: boolean;
   aroundClickHide?: boolean;
+  onHide?: () => void;
 };
