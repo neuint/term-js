@@ -1,0 +1,38 @@
+import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@term-js/term';
+import '@term-js/context-menu-plugin/dist/index.css';
+import './theme.scss';
+import IAutocomplete from '@Autocomplete/IAutocomplete';
+declare class Autocomplete extends Plugin implements IAutocomplete {
+    private activeSuggestions;
+    private activeSuggestion;
+    private list?;
+    private contextMenuPlugin?;
+    private unlockCallback?;
+    private isActive;
+    private readonly container;
+    private commandList;
+    get commands(): string[];
+    set commands(commandList: string[]);
+    constructor();
+    setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager): void;
+    updateTermInfo(termInfo: ITermInfo): void;
+    addCommand(command: string): void;
+    removeCommand(command: string): void;
+    clear(): void;
+    destroy(): void;
+    private unregisterShortcut;
+    private registerShortcut;
+    private setContextMenuPlugin;
+    private onAutocomplete;
+    private onNext;
+    private onDown;
+    private onUp;
+    private setSuggestions;
+    private showSuggestions;
+    private renderSuggestionsList;
+    private hideSuggestionsList;
+    private onSelect;
+    private onSubmit;
+    private onHideContextMenu;
+}
+export default Autocomplete;

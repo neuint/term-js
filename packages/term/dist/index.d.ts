@@ -1,0 +1,10 @@
+export { default as Term } from './Term';
+export { default as ITerm } from './Term/ITerm';
+export { default as ITermInfo } from './Term/ITermInfo';
+export { default as KeyboardShortcutsManager } from './Term/KeyboardShortcutsManager';
+export { default as IKeyboardShortcutsManager } from './Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
+export { TermConstructorParamsType, ValueType } from './Term/types';
+export { default as Plugin } from './Term/PluginManager/Plugin';
+export { default as IPlugin } from './Term/PluginManager/Plugin/IPlugin';
+export { default as TemplateEngine } from './Term/TemplateEngine';
+export { default as ITemplateEngine } from './Term/TemplateEngine/ITemplateEngine';
