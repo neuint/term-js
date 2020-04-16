@@ -1,0 +1,17 @@
+.root {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+
+  &.active {
+    background: var(--autocomplete-plugin-active-bg-color);
+  }
+}
+
+.text {
+  color: var(--autocomplete-plugin-text-color);
+}
+
+.matchText {
+  opacity: 0.3;
+}
+

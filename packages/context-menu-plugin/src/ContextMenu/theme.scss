@@ -1,0 +1,8 @@
+@import 'colors';
+
+:root {
+  --context-menu-plugin-overlay-bg-color: #{rgba($bunker, 0)};
+  --context-menu-plugin-bg-color: #{lighten($bunker, 10)};
+  --context-menu-plugin-border-color: #{darken($bunker, 10)};
+  --context-menu-plugin-text-color: $alabaster;
+}

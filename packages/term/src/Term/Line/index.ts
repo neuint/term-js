@@ -13,7 +13,7 @@ import { ValueType } from '@Term/types';
 import TemplateEngine from '../TemplateEngine';
 import ILine from './ILine';
 import { ContentEditableInput, ViewableInput } from './Input';
-import { DEFAULT_DELIMITER, NON_BREAKING_SPACE } from '../constants/strings';
+import { NON_BREAKING_SPACE } from '../constants/strings';
 import IInput from '@Term/Line/Input/IInput';
 import { ParamsType } from '@Term/Line/types';
 import BaseInput from '@Term/Line/Input/BaseInput';
@@ -114,6 +114,31 @@ class Line extends TemplateEngine implements ILine {
     if (inputField) inputField.secret = secret;
   }
 
+  public get caretOffset(): { left: number; top: number } {
+    const { input } = this;
+    return this.getInputRootOffset(input ? input.getCaretOffset() : { left: 0, top: 0 });
+  }
+
+  public get endOffset(): { left: number; top: number } {
+    const { input } = this;
+    return this.getInputRootOffset(input ? input.getEndOffset() : { left: 0, top: 0 });
+  }
+
+  private get labelWidth(): number {
+    const { label, characterSize: { width } } = this;
+    return label
+      ? ((label.params.label?.length || -1) + (label.params.delimiter?.length || -1) + 2) * width
+      : 0;
+  }
+  private get contentPadding(): { left: number; top: number } {
+    const content = this.getRef('content');
+    if (!content) return { left: 0, top: 0 };
+    const styles = window.getComputedStyle(content);
+    return {
+      left: Number(styles.paddingLeft.replace('px', '')),
+      top: Number(styles.paddingTop.replace('px', '')),
+    };
+  }
   private initialValue: ValueType = '';
   private caret?: ICaret;
   private className: string = '';
@@ -377,6 +402,14 @@ class Line extends TemplateEngine implements ILine {
     if (!caret) return;
     caret.lock = true;
     this.lockTimeout = setTimeout(() => caret.lock = false, LOCK_TIMEOUT);
+  }
+
+  private getInputRootOffset(offset: { left: number; top: number }): { left: number; top: number } {
+    const { label, input, labelWidth, contentPadding: { top: pt, left: pl } } = this;
+    if (!input && !label) return { left: pl, top: pt };
+    return input
+      ? { left: offset.left + labelWidth + pl, top: offset.top + pt }
+      : { left: labelWidth + pl, top: pt };
   }
 }
 

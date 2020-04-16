@@ -11,7 +11,7 @@ const isProduction = typeof process.env.NODE_ENV !== undefined
 module.exports = {
   mode: isProduction ? 'production' : 'development',
   target: 'web',
-  entry: path.resolve(__dirname, isProduction ? './src/index.ts' : './src/index.ts'),
+  entry: path.resolve(__dirname, isProduction ? './src/Term/index.ts' : './src/start.ts'),
   devtool: isProduction ? false : 'inline-source-map',
   context: __dirname,
 
@@ -81,14 +81,11 @@ module.exports = {
   resolve,
   externals: {},
   plugins: [
-    new MiniCssExtractPlugin({ filename: 'termjs.css' }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, './src/index.html'),
-    }),
-    // ...(isProduction ? [] : [
-    //   new HtmlWebpackPlugin({
-    //     template: path.join(__dirname, './src/index.html'),
-    //   }),
-    // ]),
+    new MiniCssExtractPlugin({ filename: 'term-js.css' }),
+    ...(isProduction ? [] : [
+      new HtmlWebpackPlugin({
+        template: path.join(__dirname, './src/index.html'),
+      }),
+    ]),
   ],
 };

@@ -107,14 +107,13 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     return (new Array(str.length)).fill(SECRET_CHARACTER).join('');
   }
 
-  protected characterWidth: number = 16;
-  protected characterHeight: number = 8;
+  protected characterWidth: number = 8;
+  protected characterHeight: number = 16;
   public get characterSize(): { width: number; height: number } {
-    return { width: this.characterWidth, height: this.characterHeight };
-  }
-  public set characterSize(size: { width: number; height: number }) {
-    this.characterWidth = size.width;
-    this.characterHeight = size.height;
+    const { characterContainer } = this;
+    return characterContainer
+      ? { width: characterContainer.offsetWidth, height: characterContainer.offsetHeight }
+      : { width: this.characterWidth, height: this.characterHeight };
   }
 
   public get caretPosition(): number {
@@ -165,11 +164,14 @@ abstract class BaseInput extends TemplateEngine implements IInput {
       || activeElement?.parentNode === root;
   }
 
+  private characterContainer?: HTMLElement;
+
   protected constructor(
     template: string, container?: Element, cssData?: { [key: string]: string },
   ) {
     super(template, container);
     this.render({ css: cssData });
+    this.setCharacterContainer();
     this.addHandlers();
   }
 
@@ -249,6 +251,37 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     super.destroy();
   }
 
+  public getCaretOffset(): { left: number; top: number } {
+    const { caretPosition, characterSize } = this;
+    const rowCharactersCount = this.getRowCharactersCount();
+    if (!rowCharactersCount) return { left: 0, top: 0 };
+    const row = Math.floor(caretPosition / rowCharactersCount);
+    const relativePosition = caretPosition - row * rowCharactersCount;
+    return {
+      left: relativePosition * characterSize.width,
+      top: row * characterSize.height,
+    };
+  }
+
+  public getEndOffset(): { left: number; top: number } {
+    const { characterSize, valueField } = this;
+    const rowCharactersCount = this.getRowCharactersCount();
+    if (!rowCharactersCount) return { left: 0, top: 0 };
+    const charactersCount = BaseInput.getValueString(valueField).length;
+    const row = Math.floor(charactersCount / rowCharactersCount);
+    const relativePosition = charactersCount - row * rowCharactersCount;
+    return {
+      left: relativePosition * characterSize.width,
+      top: row * characterSize.height,
+    };
+  }
+
+  private getRowCharactersCount(): number {
+    const { characterSize } = this;
+    const root = this.getRef('input');
+    return root ? Math.floor((root as HTMLElement).offsetWidth / characterSize.width) : 0;
+  }
+
   private getEventFormattedValueFragment(e: Event): FormattedValueFragmentType | null {
     const target = e.target as Element;
     if (!target) return null;
@@ -262,6 +295,21 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     const valueFieldItem = dataIndex ? valueField[Number(dataIndex)] : null;
     return !valueFieldItem || isString(valueFieldItem)
       ? null : valueFieldItem as FormattedValueFragmentType;
+  }
+
+  private setCharacterContainer() {
+    const root = this.getRef('root');
+    if (root) {
+      const characterContainer = document.createElement('span');
+      characterContainer.style.position = 'absolute';
+      characterContainer.style.visibility = 'hidden';
+      characterContainer.style.pointerEvents = 'none';
+      characterContainer.style.left = '0';
+      characterContainer.style.top = '0';
+      characterContainer.innerHTML = NON_BREAKING_SPACE;
+      (root as HTMLElement).appendChild(characterContainer);
+      this.characterContainer = characterContainer;
+    }
   }
 }
 

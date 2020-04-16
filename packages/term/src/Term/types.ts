@@ -37,3 +37,31 @@ export type TermParamsType = {
   scrollbarSize: number;
   size: SizeType;
 };
+
+export type TermInfoElementsType = { root?: Element; edit?: Element; title?: Element };
+export type TermInfoLabelType = {
+  label?: string;
+  delimiter?: string;
+  set(params?: { label?: string; delimiter?: string }): void;
+};
+export type TermInfoCaretType = {
+  position: number;
+  offset: { left: number; top: number };
+  size: { width: number; height: number };
+  setCaretPosition: (position: number) => void;
+};
+export type TermInfoEditType = {
+  value: string;
+  parameterizedValue: EditLineParamsType;
+  update: (params: EditLineParamsType) => void;
+  endOffset: { left: number; top: number };
+  focus: () => void,
+  write: (
+    data: string | FormattedValueFragmentType, duration?: number,
+  ) => Promise<boolean> | boolean;
+};
+export type TermInfoLinesTypes = {
+  list: string[];
+  parameterizedList: ValueType[];
+  update: (lines: ValueType[]) => void;
+};

@@ -3,7 +3,8 @@ import ITermInfo from '@Term/ITermInfo';
 
 export default interface IPluginManager {
   updateTermInfo(termInfo: ITermInfo): void;
-  register(name: string, plugin: IPlugin): void;
-  unregister(name: string): void;
+  register(plugin: IPlugin, name?: string): void;
+  unregister(descriptor: string | IPlugin): void;
+  getPlugin(descriptor: string | (new () => IPlugin)): IPlugin | null;
   destroy(): void;
 }

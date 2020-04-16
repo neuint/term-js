@@ -11,6 +11,8 @@ export default interface ILine extends ITemplateEngine, IVirtualizedItem<ITempla
   secret: boolean;
   disabled: boolean;
   visible: boolean;
+  caretOffset: { left: number; top: number };
+  endOffset: { left: number; top: number };
   stopEdit(): void;
   focus(): void;
   updateViewport(): void;

@@ -81,7 +81,7 @@ class TemplateEngine extends Animation implements ITemplateEngine {
     const conditionList = template.match(IF_OPEN_PATTERN);
     if (!conditionList) return template;
     return conditionList.reduce((acc: string, item: string) => {
-      const condition = item.replace(/^<If\scondition="\{/, '').replace(/}">$/, '');
+      const condition = item.replace(/^<If\scondition="\{/i, '').replace(/}">$/, '');
       return acc.replace(item, `<% if (${condition}) { %>`);
     }, template).replace(IF_CLOSE_PATTERN, '<% } %>');
   }
@@ -91,7 +91,7 @@ class TemplateEngine extends Animation implements ITemplateEngine {
     const chooseList = template.match(CHOOSE_PATTERN) || [];
     return chooseList.reduce((acc: string, item) => {
       return this.getTemplateExecutorStringWithLodashWhen(
-        acc, item.replace(/<Choose>[^<]*/, ''),
+        acc, item.replace(/<Choose>[^<]*/i, ''),
       );
     }, template).replace(CHOOSE_OPEN_PATTERN, '').replace(CHOOSE_CLOSE_PATTERN, '');
   }
@@ -105,7 +105,7 @@ class TemplateEngine extends Animation implements ITemplateEngine {
       const openBlockList = item.match(WHEN_OPEN_PATTERN);
       if (!openBlockList) return acc;
       const openBlock = openBlockList[0];
-      const condition = openBlock.replace(/^<When\scondition="\{/, '').replace(/}">$/, '');
+      const condition = openBlock.replace(/^<When\scondition="\{/i, '').replace(/}">$/, '');
       const processedBlock = item.replace(openBlock, `<%${index ? ' else' : ''} if (${condition}) { %>`);
       return acc.replace(item, processedBlock);
     }, template).replace(WHEN_CLOSE_PATTERN, '<% } %>');
