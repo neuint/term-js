@@ -1,179 +1,148 @@
-import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@term-js/term';
-import { ContextMenu, IContextMenu, END_OF_LINE_TYPE } from '@term-js/context-menu-plugin';
-import '@term-js/context-menu-plugin/dist/index.css';
+import { v1 as uuid } from 'uuid';
+import {
+  Plugin,
+  ITermInfo,
+  IKeyboardShortcutsManager,
+  ActionShortcutType,
+  InfoType,
+} from '@term-js/term';
+import { Dropdown, IDropdown } from '@term-js/dropdown-plugin';
+import '@term-js/dropdown-plugin/dist/index.css';
 
 import './theme.scss';
+import css from './index.scss';
 
-import {
-  DOWN_KEY_CODE, TAB_KEY_CODE, UP_KEY_CODE, ENTER_KEY_CODE,
-} from '@Autocomplete/constants/keyCodes';
-import {
-  AUTOCOMPLETE_ACTION,
-  AUTOCOMPLETE_NEXT_ACTION,
-  AUTOCOMPLETE_DOWN_ACTION,
-  AUTOCOMPLETE_UP_ACTION,
-  AUTOCOMPLETE_SUBMIT_ACTION,
-} from '@Autocomplete/constants/actions';
+import { PLUGIN_NAME, SHOW_ACTION } from '@Autocomplete/constants';
 import IAutocomplete from '@Autocomplete/IAutocomplete';
-import List from '@Autocomplete/List';
-import IList from '@Autocomplete/List/IList';
+import { ListInfoType } from '@Autocomplete/types';
 
 class Autocomplete extends Plugin implements IAutocomplete {
+  public readonly name: string = PLUGIN_NAME;
+  private listsInfo: ListInfoType[] = [];
   private activeSuggestions: string[] = [];
-  private activeSuggestion: string = '';
-  private list?: IList;
-  private contextMenuPlugin?: IContextMenu;
-  private unlockCallback?: () => void;
-  private isActive: boolean = false;
-  private readonly container: HTMLElement;
+  private dropdownPlugin?: IDropdown;
 
   private commandList: string[] = [];
-  public get commands(): string[] {
-    return this.commandList;
-  }
-  public set commands(commandList: string[]) {
-    this.commandList = commandList;
+  private active: string = '';
+  private isSetShowHandler: boolean = false;
+
+  public addList(items: string[], actionShortcut: ActionShortcutType, icon?: string) {
+    const info: ListInfoType = {
+      icon, items, actionShortcut, isRegistered: false, uuid: uuid(),
+    };
+    this.listsInfo.push(info);
+    this.registerShortcut(info);
+    return () => this.removeList(info.uuid);
   }
 
-  constructor() {
-    super();
-    this.container = document.createElement('div');
+  public removeList(uuidValue: string) {
+    const { listsInfo, keyboardShortcutsManager } = this;
+    const index = listsInfo.findIndex(item => item.uuid === uuidValue);
+    if (index < 0) return;
+    const listInfo = listsInfo[index];
+    listsInfo.splice(index, 1);
+    if (keyboardShortcutsManager) {
+      keyboardShortcutsManager.removeShortcut(SHOW_ACTION, listInfo.actionShortcut);
+    }
   }
 
   public setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager) {
     super.setTermInfo(termInfo, keyboardShortcutsManager);
     this.registerShortcut();
-    this.setContextMenuPlugin();
+    this.setDropdownPlugin();
   }
 
   public updateTermInfo(termInfo: ITermInfo) {
-    const { isActive, termInfo: termInfoPrev } = this;
+    const { termInfo: termInfoPrev, active } = this;
     const prevValue = termInfoPrev?.edit.value;
     const currentValue = termInfo.edit.value;
     super.updateTermInfo(termInfo);
-    if (currentValue && prevValue !== currentValue && isActive) {
+    if (active && currentValue && prevValue !== currentValue) {
       this.setSuggestions();
       this.showSuggestions();
-    } else if (isActive && !currentValue) {
+    } else if (active && !currentValue) {
       this.clear();
     }
   }
 
-  public addCommand(command: string) {
-    const { commandList } = this;
-    if (!commandList.includes(command)) commandList.push(command);
-  }
-
-  public removeCommand(command: string) {
-    const { commandList } = this;
-    const index = commandList.indexOf(command);
-    if (index >= 0) commandList.splice(index, 1);
-  }
-
-  public clear(): void {
+  public clear() {
     this.hideSuggestionsList();
-    this.activeSuggestions = [];
-    this.activeSuggestion = '';
-    this.isActive = false;
-    this.contextMenuPlugin?.hide();
+    this.active = '';
     super.clear();
   }
 
   public destroy() {
     this.unregisterShortcut();
+    this.dropdownPlugin?.hide();
     super.destroy();
   }
 
   private unregisterShortcut() {
     const { keyboardShortcutsManager } = this;
-    if (keyboardShortcutsManager) {
-      keyboardShortcutsManager.removeShortcut(AUTOCOMPLETE_NEXT_ACTION);
-      keyboardShortcutsManager.removeShortcut(AUTOCOMPLETE_DOWN_ACTION);
-      keyboardShortcutsManager.removeShortcut(AUTOCOMPLETE_UP_ACTION);
-      keyboardShortcutsManager.removeShortcut(AUTOCOMPLETE_SUBMIT_ACTION);
-      keyboardShortcutsManager.removeShortcut(AUTOCOMPLETE_ACTION);
+    if (keyboardShortcutsManager) keyboardShortcutsManager.removeShortcut(SHOW_ACTION);
+  }
+
+  private registerShortcut(info?: ListInfoType) {
+    const { keyboardShortcutsManager, listsInfo, isSetShowHandler } = this;
+    if (!keyboardShortcutsManager || (info && info.isRegistered)) return;
+    if (info) {
+      keyboardShortcutsManager.addShortcut(SHOW_ACTION, info.actionShortcut, info.uuid);
+      info.isRegistered = true;
+    } else {
+      listsInfo.forEach(item => this.registerShortcut(item));
+    }
+    if (!isSetShowHandler) {
+      keyboardShortcutsManager.addListener(SHOW_ACTION, this.onAutocomplete);
+      this.isSetShowHandler = true;
     }
   }
 
-  private registerShortcut() {
-    const { keyboardShortcutsManager } = this;
-    if (keyboardShortcutsManager) {
-      keyboardShortcutsManager.addShortcut(AUTOCOMPLETE_NEXT_ACTION, { code: TAB_KEY_CODE });
-      keyboardShortcutsManager.addShortcut(AUTOCOMPLETE_DOWN_ACTION, { code: DOWN_KEY_CODE });
-      keyboardShortcutsManager.addShortcut(AUTOCOMPLETE_UP_ACTION, { code: UP_KEY_CODE });
-      keyboardShortcutsManager.addShortcut(AUTOCOMPLETE_SUBMIT_ACTION, { code: ENTER_KEY_CODE });
-      keyboardShortcutsManager.addShortcut(AUTOCOMPLETE_ACTION, { code: TAB_KEY_CODE });
-      keyboardShortcutsManager.addListener(AUTOCOMPLETE_NEXT_ACTION, this.onNext);
-      keyboardShortcutsManager.addListener(AUTOCOMPLETE_DOWN_ACTION, this.onDown);
-      keyboardShortcutsManager.addListener(AUTOCOMPLETE_UP_ACTION, this.onUp);
-      keyboardShortcutsManager.addListener(AUTOCOMPLETE_SUBMIT_ACTION, this.onSubmit);
-      keyboardShortcutsManager.addListener(AUTOCOMPLETE_ACTION, this.onAutocomplete);
-    }
-  }
-
-  private setContextMenuPlugin() {
+  private setDropdownPlugin() {
     const { termInfo } = this;
     if (!termInfo) return;
-    const contextMenuPlugin = termInfo.pluginManager.getPlugin(ContextMenu);
-    if (contextMenuPlugin) {
-      this.contextMenuPlugin = contextMenuPlugin as IContextMenu;
+    const dropdownPlugin = termInfo.pluginManager.getPlugin(Dropdown);
+    if (dropdownPlugin) {
+      this.dropdownPlugin = dropdownPlugin as IDropdown;
     } else {
-      this.contextMenuPlugin = new ContextMenu();
-      termInfo.pluginManager.register(this.contextMenuPlugin);
+      this.dropdownPlugin = new Dropdown();
+      termInfo.pluginManager.register(this.dropdownPlugin);
     }
   }
 
-  private onAutocomplete = (action: string, e: Event) => {
-    if (!this.isActive) {
-      e.preventDefault();
-      this.setSuggestions();
+  private onAutocomplete = (action: string, e: Event, info?: { shortcut?: InfoType }) => {
+    const { dropdownPlugin, listsInfo, active } = this;
+    const infoUuid = info?.shortcut;
+    if (!infoUuid || (active && active !== infoUuid)) return;
+    this.commandList = listsInfo.find(item => item.uuid === infoUuid)?.items || [];
+    e.preventDefault();
+    if (dropdownPlugin && this.setSuggestions()) {
+      this.active = infoUuid as string;
+      dropdownPlugin.isActionsLock = true;
       this.showSuggestions();
+      setTimeout(() => dropdownPlugin.isActionsLock = false, 0);
     }
   }
 
-  private onNext = (action: string, e: Event) => {
-    const { isActive, list } = this;
-    if (isActive && list) {
-      e.stopPropagation();
-      e.preventDefault();
-      const nextIndex = list.index + 1;
-      list.index = nextIndex >= list.items.length ? 0 : nextIndex;
-    }
-  }
-
-  private onDown = (action: string, e: Event) => {
-    const { isActive, list } = this;
-    if (isActive && list) {
-      e.stopPropagation();
-      e.preventDefault();
-      list.index = Math.min(list.index + 1, list.items.length - 1);
-    }
-  }
-
-  private onUp = (action: string, e: Event) => {
-    const { isActive, list } = this;
-    if (isActive && list) {
-      e.stopPropagation();
-      e.preventDefault();
-      list.index = Math.max(list.index - 1, 0);
-    }
-  }
-
-  private setSuggestions() {
+  private setSuggestions(): boolean {
     const { termInfo, commandList } = this;
-    if (!termInfo) return [];
+    if (!termInfo) return this.setNewSuggestions([]);
     const { caret: { position }, edit: { value } } = termInfo;
-    if (position !== value.length) return [];
-    const activeSuggestions = commandList
-      .filter(command => command.indexOf(value) === 0 && command !== value);
-    if (activeSuggestions.length) this.activeSuggestion = activeSuggestions[0];
-    this.activeSuggestions = activeSuggestions;
+    return this.setNewSuggestions(position !== value.length
+      ? []
+      : commandList
+        .filter(command => command.indexOf(value) === 0 && command !== value));
+  }
+
+  private setNewSuggestions(newActiveSuggestions: string[]): boolean {
+    const { activeSuggestions } = this;
+    this.activeSuggestions = newActiveSuggestions;
+    return activeSuggestions.length !== newActiveSuggestions.length
+      || newActiveSuggestions.some((item, i) => item !== activeSuggestions[i]);
   }
 
   private showSuggestions() {
     const { activeSuggestions } = this;
     if (activeSuggestions.length) {
-      this.isActive = true;
       this.renderSuggestionsList();
     } else {
       this.clear();
@@ -181,39 +150,23 @@ class Autocomplete extends Plugin implements IAutocomplete {
   }
 
   private renderSuggestionsList() {
-    const {
-      contextMenuPlugin, container, activeSuggestions, keyboardShortcutsManager, unlockCallback,
-      termInfo,
-    } = this;
+    const { dropdownPlugin, activeSuggestions, termInfo, active, listsInfo } = this;
     const value = termInfo?.edit.value;
-    if (!contextMenuPlugin || !keyboardShortcutsManager || !value) return;
-    if (!this.list) this.list = new List(container, this.onSelect);
-    if (!unlockCallback) {
-      this.unlockCallback = keyboardShortcutsManager.lock([
-        AUTOCOMPLETE_NEXT_ACTION,
-        AUTOCOMPLETE_DOWN_ACTION,
-        AUTOCOMPLETE_UP_ACTION,
-        AUTOCOMPLETE_SUBMIT_ACTION,
-      ]);
-    }
-    const list = this.list as IList;
-    list.items = activeSuggestions;
-    list.value = value.trim();
-    contextMenuPlugin.show(container, END_OF_LINE_TYPE, {
-      escHide: true, aroundClickHide: true, onHide: this.onHideContextMenu,
+    if (!dropdownPlugin || !value) return;
+    const icon = listsInfo.find(item => item.uuid === active)?.icon;
+    dropdownPlugin.show(activeSuggestions, {
+      onSelect: this.onSelect,
+      onClose: this.onClose,
+      append: icon,
+      className: icon ? css.withIcon : '',
     });
+    dropdownPlugin.highlight = value.trim();
   }
 
   private hideSuggestionsList() {
-    const { list, unlockCallback } = this;
-    if (unlockCallback) {
-      unlockCallback();
-      delete this.unlockCallback;
-    }
-    if (list) {
-      list.destroy();
-      delete this.list;
-    }
+    const { dropdownPlugin } = this;
+    if (dropdownPlugin) dropdownPlugin.hide();
+    this.activeSuggestions = [];
   }
 
   private onSelect = (text: string) => {
@@ -226,22 +179,9 @@ class Autocomplete extends Plugin implements IAutocomplete {
     this.clear();
   }
 
-  private onSubmit = (action: string, e: Event) => {
-    const { termInfo, isActive, list } = this;
-    if (termInfo && isActive && list) {
-      e.stopPropagation();
-      e.preventDefault();
-      const { edit } = termInfo;
-      const text = list.items[list.index];
-      edit.focus();
-      edit.write(text.replace(edit.value, ''));
-    }
-    this.clear();
-  }
-
-  private onHideContextMenu = () => {
-    const { isActive } = this;
-    if (isActive) this.clear();
+  private onClose = () => {
+    this.activeSuggestions = [];
+    this.active = '';
   }
 }
 

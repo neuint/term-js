@@ -2,9 +2,10 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
+      "@Autocomplete/*": ["autocomplete-plugin/src/Autocomplete/*"],
+      "@Dropdown/*": ["dropdown-plugin/src/Dropdown/*"],
       "@ContextMenu/*": ["context-menu-plugin/src/ContextMenu/*"],
-      "@Term/*": ["term/src/Term/*"],
-      "@Autocomplete/*": ["autocomplete-plugin/src/Autocomplete/*"]
+      "@Term/*": ["term/src/Term/*"]
     }
   },
   "exclude": ["node_modules", "webpack.*.js"]

@@ -1,7 +1,6 @@
-import { IPlugin } from '@term-js/term';
+import { IPlugin, ActionShortcutType } from '@term-js/term';
 
 export default interface IAutocomplete extends IPlugin {
-  commands: string[];
-  addCommand(command: string): void;
-  removeCommand(command: string): void;
+  addList(items: string[], actionShortcut: ActionShortcutType, icon?: string): () => void;
+  removeList(uuid: string): void;
 }

@@ -15,6 +15,7 @@ export default interface ITermInfo {
   caret: TermInfoCaretType;
   edit: TermInfoEditType;
   lines: TermInfoLinesTypes;
+  history: string[];
   pluginManager: IPluginManager;
   addEventListener<K extends keyof ITermEventMap>(
     type: K,

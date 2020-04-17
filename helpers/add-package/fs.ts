@@ -85,5 +85,7 @@ export const copyPack = <T extends string | Buffer>(
   }[],
 ): Promise<undefined> => {
   const item = items.shift();
-  return copy<T>(item.from, item.to, item.params).then(() => copyPack<T>(items));
+  return item
+    ? copy<T>(item.from, item.to, item.params).then(() => copyPack<T>(items))
+    : Promise.resolve(undefined);
 };

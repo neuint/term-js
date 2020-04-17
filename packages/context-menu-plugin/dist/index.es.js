@@ -5218,7 +5218,7 @@ const UP_CODE = 38;
 const DOWN_CODE = 40;
 const NON_BREAKING_SPACE = '&nbsp;';
 
-var css$2 = {"root":"index_root__AumwI","visible":"index_visible__3pNIu","content":"index_content__9Rwz7","helpContainer":"index_helpContainer__2PClm","inputContainer":"index_inputContainer__2NU4e"};
+var css$2 = {"root":"root-term-️cab119304dc90a90f699151e7c15d7ee","visible":"visible-term-️cab119304dc90a90f699151e7c15d7ee","content":"content-term-️cab119304dc90a90f699151e7c15d7ee","helpContainer":"helpContainer-term-️cab119304dc90a90f699151e7c15d7ee","inputContainer":"inputContainer-term-️cab119304dc90a90f699151e7c15d7ee"};
 
 var lineTemplate = "<div ref=\"root\" class=\"root visible {className}\">\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"helpContainer\" class=\"labelText helpContainer\">{nbs}</div>\n    <div ref=\"labelContainer\"></div>\n    <div ref=\"inputContainer\" class=\"inputContainer\"></div>\n  </div>\n</div>\n";
 
@@ -5285,7 +5285,7 @@ class BaseCaret extends TemplateEngine {
 
 var SimpleCaretTemplate = "<span ref=\"root\" class=\"root\">\n  <span ref=\"character\" class=\"character\"></span>\n</span>\n";
 
-var css$3 = {"root":"index_root__28iIn","carriage-return-blink":"index_carriage-return-blink__3ufcR","lock":"index_lock__10toH","busy":"index_busy__1Bocg","none":"index_none__3BwA2","carriage-return-busy":"index_carriage-return-busy__TLD-_","hidden":"index_hidden__QrtuK"};
+var css$3 = {"root":"root-term-️e70267db75c0341d98d4d4a58c7a4fe6","carriage-return-blink":"carriage-return-blink-term-️e70267db75c0341d98d4d4a58c7a4fe6","lock":"lock-term-️e70267db75c0341d98d4d4a58c7a4fe6","busy":"busy-term-️e70267db75c0341d98d4d4a58c7a4fe6","none":"none-term-️e70267db75c0341d98d4d4a58c7a4fe6","carriage-return-busy":"carriage-return-busy-term-️e70267db75c0341d98d4d4a58c7a4fe6","hidden":"hidden-term-️e70267db75c0341d98d4d4a58c7a4fe6"};
 
 class SimpleCaret extends BaseCaret {
     constructor(container) {
@@ -5345,9 +5345,9 @@ const LOCK_TIMEOUT = 600;
 
 var template$3 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
 
-var css$4 = {"root":"index_root__2b6vV","input":"index_input__3ej3X","hiddenCaret":"index_hiddenCaret__1hEUI","hidden":"index_hidden__S0u7d"};
+var css$4 = {"root":"root-term-️f48df653df791725509e2a00ded23e06","input":"input-term-️f48df653df791725509e2a00ded23e06","hiddenCaret":"hiddenCaret-term-️f48df653df791725509e2a00ded23e06","hidden":"hidden-term-️f48df653df791725509e2a00ded23e06"};
 
-var css$5 = {"secret":"index_secret__2YcEB"};
+var css$5 = {"secret":"secret-term-️d139f1b48647dd08a4d620b7f948a15f"};
 
 /*!
  * escape-html
@@ -5963,7 +5963,7 @@ class ContentEditableInput extends BaseInput {
 
 var template$4 = "<div ref=\"root\">\n  <div ref=\"input\" class=\"root\">{value}</div>\n</div>\n";
 
-var css$6 = {"root":"index_root__1UtRO"};
+var css$6 = {"root":"root-term-️457efebe90f812d594ffccb8790b07ab"};
 
 class ViewableInput extends BaseInput {
     set value(val) {
@@ -5983,7 +5983,7 @@ class ViewableInput extends BaseInput {
     }
 }
 
-var css$7 = {"label":"index_label__vyMdB","labelTextContainer":"index_labelTextContainer__10s7C","labelText":"index_labelText__2Tif0"};
+var css$7 = {"label":"label-term-️679afd4849096768cfa38bb85a2048b8","labelTextContainer":"labelTextContainer-term-️679afd4849096768cfa38bb85a2048b8","labelText":"labelText-term-️679afd4849096768cfa38bb85a2048b8"};
 
 var template$5 = "<if condition=\"{label || delimiter}\">\n  <div class=\"label\">\n    <if condition=\"{label}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"label\">{label}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </if>\n    <if condition=\"{delimiter}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"delimiter\">{delimiter}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </if>\n  </div>\n</if>\n\n";
 
@@ -8562,7 +8562,7 @@ function isString$1(value) {
 
 var template$1 = "<div ref=\"root\" class=\"root\"></div>\n";
 
-var css = {"root":"index_root__1O-1I"};
+var css = {"root":"root-context-menu-plugin-️74022d6f2c3e8e38c498d8c8405a8378"};
 
 class ContextMenuView extends TemplateEngine {
     constructor(container) {
@@ -8766,5 +8766,5 @@ class ContextMenu extends Plugin {
     }
 }
 
-export { ContextMenu, END_OF_LINE_TYPE, POSITION_TARGET_TYPE };
+export { CLOSE_ACTION, ContextMenu, END_OF_LINE_TYPE, POSITION_TARGET_TYPE };
 //# sourceMappingURL=index.es.js.map

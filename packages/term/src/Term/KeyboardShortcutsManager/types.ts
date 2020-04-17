@@ -1,3 +1,5 @@
+import { InfoType } from '@Term/types';
+
 export type KeyCodeType = number | number[];
 
 export type NormalizedActionShortcutType = {
@@ -15,3 +17,10 @@ export type ActionShortcutType = KeyCodeType | {
   alt?: boolean;
   shift?: boolean;
 };
+
+export type ShortcutMapItemType = {
+  actionShortcut: ActionShortcutType;
+  info?: InfoType
+};
+
+export type CallbackInfoType = { shortcut?: InfoType, listener?: InfoType };

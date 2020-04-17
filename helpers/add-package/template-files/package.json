@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "@term-js/term": "file:../term",
-    "@term-js/term": "file:../term",
     "@types/lodash-es": "^4.17.3",
     "lodash-es": "^4.17.15"
   },
@@ -63,10 +62,19 @@
     "terser-webpack-plugin": "^2.3.5",
     "ts-jest": "^25.3.1",
     "tslint": "^6.1.1",
-    "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "rollup": "^2.3.4",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-copy": "^3.3.0",
+    "rollup-plugin-html": "^0.2.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.2",
+    "rollup-plugin-postcss": "^2.5.0",
+    "rollup-plugin-typescript2": "^0.27.0",
+    "rollup-plugin-url": "^3.0.1"
   }
 }

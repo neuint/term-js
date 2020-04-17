@@ -6,8 +6,14 @@ import resolve from 'rollup-plugin-node-resolve';
 import url from 'rollup-plugin-url';
 import html from "rollup-plugin-html";
 import babel from 'rollup-plugin-babel';
+import copy from 'rollup-plugin-copy';
+import md5 from 'md5';
 
+import { CSS_MODULES_BLACK_LIST } from './rollup.const';
 import pkg from './package.json';
+
+const PACKAGE_NAME = pkg.name.replace('@term-js/', '');
+const SPLIT_PATTERN = new RegExp(`\\/${PACKAGE_NAME}\\/`);
 
 export default {
   input: 'src/index.ts',
@@ -34,7 +40,15 @@ export default {
       extract: true,
       minimize: true,
       sourceMap: true,
-      modules: true,
+      modules: {
+        generateScopedName: (name, filename) => {
+          if (CSS_MODULES_BLACK_LIST.some((item) => filename.includes(item)
+            || name.includes(item))) {
+            return name;
+          }
+          return `${name}-${PACKAGE_NAME}-️${md5(filename.split(SPLIT_PATTERN)[1])}`
+        },
+      },
       use: ['sass'],
     }),
     url(),
@@ -46,6 +60,11 @@ export default {
     commonjs(),
     babel({
       exclude: 'node_modules/**'
+    }),
+    copy({
+      targets: [
+        { src: 'src/Term/assets', dest: 'dist' },
+      ],
     }),
   ]
 };

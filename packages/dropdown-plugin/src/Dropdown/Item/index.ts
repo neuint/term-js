@@ -1,10 +1,12 @@
 import { TemplateEngine } from '@term-js/term';
-import IItem from '@Autocomplete/Item/IItem';
+import IItem from '@Dropdown/Item/IItem';
 
 import template from './template.html';
 import css from './index.scss';
 
 class Item extends TemplateEngine implements IItem {
+  public readonly index: number;
+
   private isActive: boolean = false;
   public get active(): boolean {
     return this.isActive;
@@ -33,13 +35,15 @@ class Item extends TemplateEngine implements IItem {
     params: {
       value: string;
       text: string;
+      index: number;
       onHover?: (text: string, item: IItem) => void;
       onClick?: (text: string, item: IItem) => void;
     },
   ) {
     super(template, container);
-    const { value, text, onHover, onClick } = params;
+    const { value, text, index, onHover, onClick } = params;
     this.text = text;
+    this.index = index;
     this.match = value;
     this.onHover = onHover;
     this.onClick = onClick;

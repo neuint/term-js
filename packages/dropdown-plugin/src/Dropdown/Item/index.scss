@@ -3,12 +3,12 @@
   cursor: pointer;
 
   &.active {
-    background: var(--autocomplete-plugin-active-bg-color);
+    background: var(--dropdown-plugin-active-bg-color);
   }
 }
 
 .text {
-  color: var(--autocomplete-plugin-text-color);
+  color: var(--dropdown-plugin-text-color);
 }
 
 .matchText {

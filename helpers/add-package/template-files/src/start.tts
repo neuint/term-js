@@ -1,10 +1,14 @@
 import { Term, ITerm } from '@term-js/term';
 import '@term-js/term/dist/index.css';
 
+import {{alias}} from '@{{alias}}/index';
+import I{{alias}} from '@{{alias}}/I{{alias}}';
+
 import './index.scss';
 
 const container = document.querySelector('#root');
 if (container) {
+  const plugin: I{{alias}} = new {{alias}}();
   const term = new Term(container, {
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
@@ -13,5 +17,7 @@ if (container) {
     lines: [],
   });
   term.setHeader('{{name}}');
+  term.pluginManager.register(plugin);
   (window as unknown as { term: ITerm }).term = term;
+  (window as unknown as { plugin: I{{alias}} }).plugin = plugin;
 }

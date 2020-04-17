@@ -65,3 +65,6 @@ export type TermInfoLinesTypes = {
   parameterizedList: ValueType[];
   update: (lines: ValueType[]) => void;
 };
+
+export type InfoType = { [key: string]: boolean | string | number }
+| boolean | string | number;

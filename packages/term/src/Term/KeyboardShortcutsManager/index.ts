@@ -3,11 +3,13 @@ import { v1 as guid } from 'uuid';
 
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
 import {
-  ActionShortcutType,
+  ActionShortcutType, CallbackInfoType,
   NormalizedActionShortcutType,
+  ShortcutMapItemType,
 } from '@Term/KeyboardShortcutsManager/types';
 import { isArray, isNumber } from 'lodash-es';
 import { checkArraysEqual } from '@Term/utils/array';
+import { InfoType } from '@Term/types';
 
 class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   private static checkShortcutsEqual(
@@ -46,13 +48,13 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
 
   private emitter?: Emitter;
 
-  private shortcutsMapField: { [action: string]: ActionShortcutType | ActionShortcutType[] } = {};
-  public get shortcutsMap(): { [action: string]: ActionShortcutType | ActionShortcutType[] } {
-    return this.shortcutsMapField;
-  }
+  private shortcutsMapField: { [action: string]: ShortcutMapItemType[] } = {};
 
   private listeners: {
-    [actions: string]: ((action: string, e: Event) => void | boolean)[];
+    [actions: string]: {
+      callback: (action: string, e: Event, info?: CallbackInfoType) => void | boolean;
+      info?: InfoType;
+    }[];
   } = {};
   private actionHandler?: (action: string, e: Event) => void;
   private readonly unlockKey: string;
@@ -65,17 +67,21 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   }
 
   public addListener(
-    action: string, callback: (action: string, e: Event) => void | boolean,
+    action: string,
+    callback: (action: string, e: Event, info?: CallbackInfoType) => void | boolean,
+    info?: InfoType,
   ): void {
     const { listeners } = this;
     if (!listeners[action]) listeners[action] = [];
-    listeners[action].push(callback);
+    listeners[action].push({ callback, info });
   }
 
-  public removeListener(callback: (action: string, e: Event) => void | boolean): void {
+  public removeListener(
+    callback: (action: string, e: Event, info?: CallbackInfoType) => void | boolean,
+  ): void {
     const { listeners } = this;
     Object.keys(listeners).some((action: string) => {
-      const index = listeners[action].indexOf(callback);
+      const index = listeners[action].findIndex(item => item.callback === callback);
       if (index >= 0) {
         listeners[action].splice(index, 1);
         return true;
@@ -84,15 +90,14 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
     });
   }
 
-  public addShortcut(action: string, shortcut: ActionShortcutType) {
+  public addShortcut(action: string, shortcut: ActionShortcutType, info?: InfoType) {
     const { shortcutsMapField } = this;
     const shortcutIndex = this.getShortcutIndex(action, shortcut);
     if (shortcutIndex >= 0) return;
     if (!shortcutsMapField[action]) shortcutsMapField[action] = [];
-    if (!isArray(shortcutsMapField[action])) {
-      shortcutsMapField[action] = [shortcutsMapField[action] as ActionShortcutType];
-    }
-    (shortcutsMapField[action] as ActionShortcutType[]).push(shortcut);
+    (shortcutsMapField[action] as ShortcutMapItemType[]).push({
+      info, actionShortcut: shortcut,
+    });
     this.deactivate();
     this.activate();
   }
@@ -103,7 +108,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
     const shortcutIndex = this.getShortcutIndex(action, shortcut);
     if (shortcutIndex === true) return delete shortcutsMapField[action];
     if (shortcutIndex >= 0) {
-      (shortcutsMapField[action] as ActionShortcutType[]).splice(shortcutIndex as number, 1);
+      (shortcutsMapField[action] as ShortcutMapItemType[]).splice(shortcutIndex as number, 1);
       this.deactivate();
       this.activate();
     }
@@ -143,27 +148,28 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
   private getShortcutIndex(action: string, shortcut: ActionShortcutType): number | boolean {
     const info = this.shortcutsMapField[action];
     if (!info) return -1;
-    const isFirstIndex = (isNumber(info) && info === shortcut || isArray(info) && isNumber(info[0]))
-        && KeyboardShortcutsManager.checkShortcutsEqual(info as ActionShortcutType, shortcut);
-    if (isFirstIndex) return true;
-    return (info as ActionShortcutType[])
-      .findIndex(item => KeyboardShortcutsManager.checkShortcutsEqual(item, shortcut));
+    return (info as ShortcutMapItemType[]).findIndex(
+      item => KeyboardShortcutsManager.checkShortcutsEqual(item.actionShortcut, shortcut),
+    );
   }
 
   private addListeners() {
     const { emitter, shortcutsMapField, listeners, actionHandler, isLock, lockWhiteList } = this;
     if (!emitter) return;
     Object.keys(shortcutsMapField).forEach((action) => {
-      const info = shortcutsMapField[action];
-      const list: ActionShortcutType[] = (isNumber(info) || (isArray(info) && isNumber(info[0]))
-        ? [info] : info) as ActionShortcutType[];
-      list.map(KeyboardShortcutsManager.getNormalizedShortcut).forEach((item) => {
+      shortcutsMapField[action].forEach((item) => {
+        const { info: shortcut } = item;
+        const actionShortcut = KeyboardShortcutsManager.getNormalizedShortcut(item.actionShortcut);
         emitter.addListener('keyDown', (e: Event) => {
           if (isLock && !lockWhiteList.includes(action)) return;
           const callbackList = listeners[action];
-          if (callbackList) callbackList.some(callback => callback(action, e));
+          if (callbackList) {
+            callbackList.some(
+              ({ callback, info: listener }) => callback(action, e, { listener, shortcut }),
+            );
+          }
           if (actionHandler) actionHandler(action, e);
-        }, item);
+        }, actionShortcut);
       });
     });
   }
