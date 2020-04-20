@@ -4925,7 +4925,7 @@ var index = function () {
   return ResizeObserver;
 }();
 
-var css = {"term":"index_term__hR_ir","header":"index_header__2gVgP","hidden":"index_hidden__3kun4","headerText":"index_headerText__oY6A_","content":"index_content__2jPsd","linesContainer":"index_linesContainer__2Yr0f","line":"index_line__117xg","editLine":"index_editLine__2VGpu"};
+var css = {"term":"term-term-️0e2edb9a914aa6e9f9eafd6a264c9040","header":"header-term-️0e2edb9a914aa6e9f9eafd6a264c9040","hidden":"hidden-term-️0e2edb9a914aa6e9f9eafd6a264c9040","headerText":"headerText-term-️0e2edb9a914aa6e9f9eafd6a264c9040","content":"content-term-️0e2edb9a914aa6e9f9eafd6a264c9040","linesContainer":"linesContainer-term-️0e2edb9a914aa6e9f9eafd6a264c9040","line":"line-term-️0e2edb9a914aa6e9f9eafd6a264c9040","editLine":"editLine-term-️0e2edb9a914aa6e9f9eafd6a264c9040"};
 
 var template$1 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header hidden\">\n    <span ref=\"headerText\" class=\"headerText\">{header}</span>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
 
@@ -5270,7 +5270,7 @@ class TemplateEngine extends Animation {
 
 var template$2 = "<div ref=\"root\" class=\"root className\">\n  <div ref=\"virtualizedList\" class=\"virtualizedList\">\n    <div ref=\"itemsContainer\" class=\"itemsContainer\"></div>\n  </div>\n  <div ref=\"generalList\" class=\"generalList\"></div>\n</div>\n";
 
-var css$1 = {"root":"index_root__3jaXb","virtualizedList":"index_virtualizedList__1hYqI","itemsContainer":"index_itemsContainer__3n2iT"};
+var css$1 = {"root":"root-term-️cb1d06823d821bc83bbb35855a5f1808","virtualizedList":"virtualizedList-term-️cb1d06823d821bc83bbb35855a5f1808","itemsContainer":"itemsContainer-term-️cb1d06823d821bc83bbb35855a5f1808"};
 
 class VirtualizedList extends TemplateEngine {
     constructor(container, params) {
@@ -5610,7 +5610,7 @@ const compareItemSize = (first, second) => {
     return first.width === second.width && first.height === second.height;
 };
 
-var css$2 = {"root":"index_root__AumwI","visible":"index_visible__3pNIu","content":"index_content__9Rwz7","helpContainer":"index_helpContainer__2PClm","inputContainer":"index_inputContainer__2NU4e"};
+var css$2 = {"root":"root-term-️cab119304dc90a90f699151e7c15d7ee","visible":"visible-term-️cab119304dc90a90f699151e7c15d7ee","content":"content-term-️cab119304dc90a90f699151e7c15d7ee","helpContainer":"helpContainer-term-️cab119304dc90a90f699151e7c15d7ee","inputContainer":"inputContainer-term-️cab119304dc90a90f699151e7c15d7ee"};
 
 var lineTemplate = "<div ref=\"root\" class=\"root visible {className}\">\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"helpContainer\" class=\"labelText helpContainer\">{nbs}</div>\n    <div ref=\"labelContainer\"></div>\n    <div ref=\"inputContainer\" class=\"inputContainer\"></div>\n  </div>\n</div>\n";
 
@@ -5677,7 +5677,7 @@ class BaseCaret extends TemplateEngine {
 
 var SimpleCaretTemplate = "<span ref=\"root\" class=\"root\">\n  <span ref=\"character\" class=\"character\"></span>\n</span>\n";
 
-var css$3 = {"root":"index_root__28iIn","carriage-return-blink":"index_carriage-return-blink__3ufcR","lock":"index_lock__10toH","busy":"index_busy__1Bocg","none":"index_none__3BwA2","carriage-return-busy":"index_carriage-return-busy__TLD-_","hidden":"index_hidden__QrtuK"};
+var css$3 = {"root":"root-term-️e70267db75c0341d98d4d4a58c7a4fe6","carriage-return-blink":"carriage-return-blink-term-️e70267db75c0341d98d4d4a58c7a4fe6","lock":"lock-term-️e70267db75c0341d98d4d4a58c7a4fe6","busy":"busy-term-️e70267db75c0341d98d4d4a58c7a4fe6","none":"none-term-️e70267db75c0341d98d4d4a58c7a4fe6","carriage-return-busy":"carriage-return-busy-term-️e70267db75c0341d98d4d4a58c7a4fe6","hidden":"hidden-term-️e70267db75c0341d98d4d4a58c7a4fe6"};
 
 class SimpleCaret extends BaseCaret {
     constructor(container) {
@@ -5737,9 +5737,9 @@ const LOCK_TIMEOUT = 600;
 
 var template$3 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
 
-var css$4 = {"root":"index_root__2b6vV","input":"index_input__3ej3X","hiddenCaret":"index_hiddenCaret__1hEUI","hidden":"index_hidden__S0u7d"};
+var css$4 = {"root":"root-term-️f48df653df791725509e2a00ded23e06","input":"input-term-️f48df653df791725509e2a00ded23e06","hiddenCaret":"hiddenCaret-term-️f48df653df791725509e2a00ded23e06","hidden":"hidden-term-️f48df653df791725509e2a00ded23e06"};
 
-var css$5 = {"secret":"index_secret__2YcEB"};
+var css$5 = {"secret":"secret-term-️d139f1b48647dd08a4d620b7f948a15f"};
 
 /*!
  * escape-html
@@ -6355,7 +6355,7 @@ class ContentEditableInput extends BaseInput {
 
 var template$4 = "<div ref=\"root\">\n  <div ref=\"input\" class=\"root\">{value}</div>\n</div>\n";
 
-var css$6 = {"root":"index_root__1UtRO"};
+var css$6 = {"root":"root-term-️457efebe90f812d594ffccb8790b07ab"};
 
 class ViewableInput extends BaseInput {
     set value(val) {
@@ -6375,7 +6375,7 @@ class ViewableInput extends BaseInput {
     }
 }
 
-var css$7 = {"label":"index_label__vyMdB","labelTextContainer":"index_labelTextContainer__10s7C","labelText":"index_labelText__2Tif0"};
+var css$7 = {"label":"label-term-️679afd4849096768cfa38bb85a2048b8","labelTextContainer":"labelTextContainer-term-️679afd4849096768cfa38bb85a2048b8","labelText":"labelText-term-️679afd4849096768cfa38bb85a2048b8"};
 
 var template$5 = "<if condition=\"{label || delimiter}\">\n  <div class=\"label\">\n    <if condition=\"{label}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"label\">{label}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </if>\n    <if condition=\"{delimiter}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"delimiter\">{delimiter}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </if>\n  </div>\n</if>\n\n";
 
@@ -8879,19 +8879,16 @@ class KeyboardShortcutsManager {
         }
         return normalizedShortcut;
     }
-    get shortcutsMap() {
-        return this.shortcutsMapField;
-    }
-    addListener(action, callback) {
+    addListener(action, callback, info) {
         const { listeners } = this;
         if (!listeners[action])
             listeners[action] = [];
-        listeners[action].push(callback);
+        listeners[action].push({ callback, info });
     }
     removeListener(callback) {
         const { listeners } = this;
         Object.keys(listeners).some((action) => {
-            const index = listeners[action].indexOf(callback);
+            const index = listeners[action].findIndex(item => item.callback === callback);
             if (index >= 0) {
                 listeners[action].splice(index, 1);
                 return true;
@@ -8899,17 +8896,16 @@ class KeyboardShortcutsManager {
             return false;
         });
     }
-    addShortcut(action, shortcut) {
+    addShortcut(action, shortcut, info) {
         const { shortcutsMapField } = this;
         const shortcutIndex = this.getShortcutIndex(action, shortcut);
         if (shortcutIndex >= 0)
             return;
         if (!shortcutsMapField[action])
             shortcutsMapField[action] = [];
-        if (!isArray(shortcutsMapField[action])) {
-            shortcutsMapField[action] = [shortcutsMapField[action]];
-        }
-        shortcutsMapField[action].push(shortcut);
+        shortcutsMapField[action].push({
+            info, actionShortcut: shortcut,
+        });
         this.deactivate();
         this.activate();
     }
@@ -8958,31 +8954,26 @@ class KeyboardShortcutsManager {
         const info = this.shortcutsMapField[action];
         if (!info)
             return -1;
-        const isFirstIndex = (isNumber(info) && info === shortcut || isArray(info) && isNumber(info[0]))
-            && KeyboardShortcutsManager.checkShortcutsEqual(info, shortcut);
-        if (isFirstIndex)
-            return true;
-        return info
-            .findIndex(item => KeyboardShortcutsManager.checkShortcutsEqual(item, shortcut));
+        return info.findIndex(item => KeyboardShortcutsManager.checkShortcutsEqual(item.actionShortcut, shortcut));
     }
     addListeners() {
         const { emitter, shortcutsMapField, listeners, actionHandler, isLock, lockWhiteList } = this;
         if (!emitter)
             return;
         Object.keys(shortcutsMapField).forEach((action) => {
-            const info = shortcutsMapField[action];
-            const list = (isNumber(info) || (isArray(info) && isNumber(info[0]))
-                ? [info] : info);
-            list.map(KeyboardShortcutsManager.getNormalizedShortcut).forEach((item) => {
+            shortcutsMapField[action].forEach((item) => {
+                const { info: shortcut } = item;
+                const actionShortcut = KeyboardShortcutsManager.getNormalizedShortcut(item.actionShortcut);
                 emitter.addListener('keyDown', (e) => {
                     if (isLock && !lockWhiteList.includes(action))
                         return;
                     const callbackList = listeners[action];
-                    if (callbackList)
-                        callbackList.some(callback => callback(action, e));
+                    if (callbackList) {
+                        callbackList.some(({ callback, info: listener }) => callback(action, e, { listener, shortcut }));
+                    }
                     if (actionHandler)
                         actionHandler(action, e);
-                }, item);
+                }, actionShortcut);
             });
         });
     }
@@ -9480,6 +9471,7 @@ class Term extends TemplateEngine {
             caret: this.getTermInfoCaret(),
             edit: this.getTermInfoEdit(),
             lines: this.getTermInfoLines(),
+            history: this.history.list,
             pluginManager: this.pluginManager,
             addEventListener: this.addEventListener,
             removeEventListener: this.removeEventListener,

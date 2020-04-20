@@ -3,9 +3,9 @@ import { TemplateEngine } from '@term-js/term';
 import template from './template.html';
 import css from './index.scss';
 
-import IList from '@Autocomplete/List/IList';
-import Item from '@Autocomplete/Item';
-import IItem from '@Autocomplete/Item/IItem';
+import IList from '@Dropdown/List/IList';
+import Item from '@Dropdown/Item';
+import IItem from '@Dropdown/Item/IItem';
 
 class List extends TemplateEngine implements IList {
   private reRender: boolean = false;
@@ -43,9 +43,9 @@ class List extends TemplateEngine implements IList {
     }
   }
 
-  private onSelect?: (text: string) => void;
+  private onSelect?: (text: string, index: number) => void;
 
-  constructor(container: HTMLElement, onSelect?: (text: string) => void) {
+  constructor(container: HTMLElement, onSelect?: (text: string, index: number) => void) {
     super(template, container);
     this.onSelect = onSelect;
     this.render();
@@ -69,9 +69,9 @@ class List extends TemplateEngine implements IList {
     });
   }
 
-  private onItemClick = (text: string) => {
+  private onItemClick = (text: string, item: IItem) => {
     const { onSelect } = this;
-    if (onSelect) onSelect(text);
+    if (onSelect) onSelect(text, item.index);
   }
 
   private renderItems() {
@@ -79,14 +79,18 @@ class List extends TemplateEngine implements IList {
     const { itemsField, valueField, indexField } = this;
     const listItems: IItem[] = [];
     let isSetActive = false;
-    if (root && valueField) {
+    if (root) {
       this.destroyItems();
       itemsField.forEach((item: string, index: number) => {
-        if (item.includes(valueField)) {
+        if (!valueField || item.includes(valueField)) {
           const isActive = indexField === index;
           isSetActive = isSetActive || isActive;
           const listItem = new Item(root as HTMLElement, {
-            value: valueField, text: item, onHover: this.onItemHover, onClick: this.onItemClick,
+            index,
+            value: valueField,
+            text: item,
+            onHover: this.onItemHover,
+            onClick: this.onItemClick,
           });
           listItem.render();
           listItem.active = isActive;

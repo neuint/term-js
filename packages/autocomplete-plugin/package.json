@@ -30,10 +30,12 @@
     }
   },
   "dependencies": {
-    "@term-js/context-menu-plugin": "file:../context-menu-plugin",
+    "@term-js/dropdown-plugin": "file:../dropdown-plugin",
     "@term-js/term": "file:../term",
     "@types/lodash-es": "^4.17.3",
-    "lodash-es": "^4.17.15"
+    "@types/uuid": "^7.0.2",
+    "lodash-es": "^4.17.15",
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
@@ -63,7 +65,6 @@
     "terser-webpack-plugin": "^2.3.5",
     "ts-jest": "^25.3.1",
     "tslint": "^6.1.1",
-    "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",

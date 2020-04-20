@@ -1,0 +1,26 @@
+import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@term-js/term';
+
+import I{{alias}} from '@{{alias}}/I{{alias}}';
+import { PLUGIN_NAME } from '@{{alias}}/constants';
+
+class {{alias}} extends Plugin implements I{{alias}} {
+  public readonly name: string = PLUGIN_NAME;
+
+  public setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager) {
+    super.setTermInfo(termInfo, keyboardShortcutsManager);
+  }
+
+  public updateTermInfo(termInfo: ITermInfo) {
+    super.updateTermInfo(termInfo);
+  }
+
+  public clear() {
+    super.clear();
+  }
+
+  public destroy() {
+    super.destroy();
+  }
+}
+
+export default {{alias}};

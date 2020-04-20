@@ -490,6 +490,7 @@ class Term extends TemplateEngine implements ITerm {
       caret: this.getTermInfoCaret(),
       edit: this.getTermInfoEdit(),
       lines: this.getTermInfoLines(),
+      history: this.history.list,
       pluginManager: this.pluginManager,
       addEventListener: this.addEventListener,
       removeEventListener: this.removeEventListener,
