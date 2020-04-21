@@ -11,7 +11,7 @@ if (container) {
     virtualizedBottomOffset: 400,
     label: 'guest',
     editLine: '',
-    lines: (new Array(100).fill(null)).map((
+    lines: (new Array(1).fill(null)).map((
       _, index,
     ): ValueType => ([
       { str: 'User name: ', className: css.granted },

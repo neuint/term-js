@@ -9072,6 +9072,8 @@ class CaretEvent {
     }
 }
 
+const IS_MAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
 class Term extends TemplateEngine {
     constructor(container, params = { lines: [], editLine: '' }) {
         super(template$1, container);
@@ -9214,6 +9216,7 @@ class Term extends TemplateEngine {
             editLine.visible = false;
             this.lines.push(formattedValue);
             this.clearHistoryState();
+            this.history.list = list;
             vl.length = this.lines.length;
             vl.scrollBottom();
             editLine.clear();
@@ -9245,10 +9248,13 @@ class Term extends TemplateEngine {
             }
         };
         this.lineKeydownHandler = (e) => {
-            ({
-                [UP_CODE]: this.prevHistory,
-                [DOWN_CODE]: this.nextHistory,
-            }[Number(getKeyCode(e))] || noop)(e);
+            const keyCode = Number(getKeyCode(e));
+            if (keyCode === UP_CODE) {
+                this.prevHistory(e);
+            }
+            else if (keyCode === DOWN_CODE) {
+                this.nextHistory(e);
+            }
         };
         this.prevHistory = (e) => {
             const { index, list } = this.history;
@@ -9256,7 +9262,9 @@ class Term extends TemplateEngine {
         };
         this.nextHistory = (e) => {
             const { index, list } = this.history;
-            this.applyHistory(e, index === list.length - 1 ? -1 : index + 1);
+            return index < 0
+                ? this.applyHistory(e, -1)
+                : this.applyHistory(e, index === list.length - 1 ? -1 : index + 1);
         };
         this.clearHandler = () => {
             this.setLines([]);
@@ -9426,16 +9434,20 @@ class Term extends TemplateEngine {
         if (!list.length || !editLine || stopHistory)
             return;
         if (index === newIndex)
-            return;
+            return e.stopPropagation();
         this.history.index = newIndex;
-        editLine.value = list[newIndex];
+        editLine.value = newIndex >= 0 ? list[newIndex] || '' : '';
         editLine.moveCaretToEnd();
         e.preventDefault();
     }
     addKeyboardShortcutsManagerListeners() {
         const { keyboardShortcutsManager } = this;
-        keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, meta: true });
-        keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, ctrl: true });
+        if (IS_MAC) {
+            keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, meta: true });
+        }
+        else {
+            keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, ctrl: true });
+        }
         keyboardShortcutsManager.addListener(CLEAR_ACTION_NAME, this.clearHandler);
     }
     registerListener(type, handler, options) {
