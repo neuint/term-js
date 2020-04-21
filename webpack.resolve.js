@@ -6,6 +6,7 @@ module.exports = {
     extensions: ['.ts', '.js', '.json'],
     modules: ['node_modules'],
     alias: {
+      '@CommandSearch': path.resolve(__dirname, 'packages/command-search-plugin/src/CommandSearch'),
       '@HistorySearch': path.resolve(__dirname, 'packages/history-search-plugin/src/HistorySearch'),
       '@Autocomplete': path.resolve(__dirname, 'packages/autocomplete-plugin/src/Autocomplete'),
       '@Dropdown': path.resolve(__dirname, 'packages/dropdown-plugin/src/Dropdown'),
