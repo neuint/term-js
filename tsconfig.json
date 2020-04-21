@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
+      "@HistorySearch/*": ["history-search-plugin/src/HistorySearch/*"],
       "@Autocomplete/*": ["autocomplete-plugin/src/Autocomplete/*"],
       "@Dropdown/*": ["dropdown-plugin/src/Dropdown/*"],
       "@ContextMenu/*": ["context-menu-plugin/src/ContextMenu/*"],

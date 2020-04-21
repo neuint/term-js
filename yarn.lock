@@ -1925,18 +1925,28 @@
   dependencies:
     type-detect "4.0.8"
 
+"@term-js/autocomplete-plugin@file:packages/autocomplete-plugin":
+  version "0.1.0"
+  dependencies:
+    "@term-js/dropdown-plugin" "file:../../Library/Caches/Yarn/v4/npm-@term-js-autocomplete-plugin-0.1.0-b3f353ac-c80f-47da-938b-24531c5d48dd-1587406559912/node_modules/@term-js/dropdown-plugin"
+    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-autocomplete-plugin-0.1.0-b3f353ac-c80f-47da-938b-24531c5d48dd-1587406559912/node_modules/@term-js/term"
+    "@types/lodash-es" "^4.17.3"
+    "@types/uuid" "^7.0.2"
+    lodash-es "^4.17.15"
+    uuid "^7.0.3"
+
 "@term-js/context-menu-plugin@file:packages/context-menu-plugin":
   version "0.1.0"
   dependencies:
-    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-context-menu-plugin-0.1.0-63f19700-3de8-451c-97c0-682cfc94fa4e-1587206226524/node_modules/@term-js/term"
+    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-context-menu-plugin-0.1.0-5de524d5-6e2d-4e9a-b4be-8da1d5cc7223-1587406559911/node_modules/@term-js/term"
     "@types/lodash-es" "^4.17.3"
     lodash-es "^4.17.15"
 
 "@term-js/dropdown-plugin@file:packages/dropdown-plugin":
   version "0.1.0"
   dependencies:
-    "@term-js/context-menu-plugin" "file:../../Library/Caches/Yarn/v4/npm-@term-js-dropdown-plugin-0.1.0-f4397d48-74f1-4553-8d3a-493a6ef24cdb-1587206226521/node_modules/@term-js/context-menu-plugin"
-    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-dropdown-plugin-0.1.0-f4397d48-74f1-4553-8d3a-493a6ef24cdb-1587206226521/node_modules/@term-js/term"
+    "@term-js/context-menu-plugin" "file:../../Library/Caches/Yarn/v4/npm-@term-js-dropdown-plugin-0.1.0-bf7b8367-93f5-4dc1-a1dd-26d862b5f0bb-1587406559911/node_modules/@term-js/context-menu-plugin"
+    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-dropdown-plugin-0.1.0-bf7b8367-93f5-4dc1-a1dd-26d862b5f0bb-1587406559911/node_modules/@term-js/term"
     "@types/lodash-es" "^4.17.3"
     lodash-es "^4.17.15"
 

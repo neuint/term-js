@@ -21,6 +21,7 @@ const COPY_LIST: (string | { from: string; to: string })[] = [
   'tests/__mocks__/styleMock.js',
   'src/index.html',
   'src/index.scss',
+  'rollup.const.js',
   'rollup.config.js',
   { from: 'src/start.tts', to: 'src/start.ts' },
   { from: 'src/index.tts', to: 'src/index.ts' },

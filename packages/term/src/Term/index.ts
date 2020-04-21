@@ -1,4 +1,4 @@
-import { noop, last, get, isUndefined, isArray, isString, isObject } from 'lodash-es';
+import { last, get, isUndefined, isArray, isString, isObject } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 
 import './fonts.scss';
@@ -48,6 +48,7 @@ import { CHANGE_EVENT_TYPE } from '@Term/Line/Input/ContentEditableInput/constan
 import CaretEvent from '@Term/events/CaretEvent';
 import ICaret from '@Term/BaseCaret/ICaret';
 import { DEFAULT_DELIMITER } from '@Term/constants/strings';
+import { IS_MAC } from '@Term/constants/browser';
 
 class Term extends TemplateEngine implements ITerm {
   private readonly ro: ResizeObserver;
@@ -342,6 +343,7 @@ class Term extends TemplateEngine implements ITerm {
     editLine.visible = false;
     this.lines.push(formattedValue);
     this.clearHistoryState();
+    this.history.list = list;
     vl.length = this.lines.length;
     vl.scrollBottom();
     editLine.clear();
@@ -390,10 +392,12 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private lineKeydownHandler = (e: KeyboardEvent) => {
-    (({
-      [UP_CODE]: this.prevHistory,
-      [DOWN_CODE]: this.nextHistory,
-    } as { [code: number]: (e: KeyboardEvent) => void })[Number(getKeyCode(e))] || noop)(e);
+    const keyCode = Number(getKeyCode(e));
+    if (keyCode === UP_CODE) {
+      this.prevHistory(e);
+    } else if (keyCode === DOWN_CODE) {
+      this.nextHistory(e);
+    }
   }
 
   private prevHistory = (e: KeyboardEvent) => {
@@ -403,23 +407,28 @@ class Term extends TemplateEngine implements ITerm {
 
   private nextHistory = (e: KeyboardEvent) => {
     const { index, list } = this.history;
-    this.applyHistory(e, index === list.length - 1 ? -1 : index + 1);
+    return index < 0
+      ? this.applyHistory(e, -1)
+      : this.applyHistory(e, index === list.length - 1 ? -1 : index + 1);
   }
 
   private applyHistory(e: KeyboardEvent, newIndex: number) {
     const { history: { index, list, stopHistory }, editLine } = this;
     if (!list.length || !editLine || stopHistory) return;
-    if (index === newIndex) return;
+    if (index === newIndex) return e.stopPropagation();
     this.history.index = newIndex;
-    editLine.value = list[newIndex];
+    editLine.value = newIndex >= 0 ? list[newIndex] || '' : '';
     editLine.moveCaretToEnd();
     e.preventDefault();
   }
 
   private addKeyboardShortcutsManagerListeners() {
     const { keyboardShortcutsManager } = this;
-    keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, meta: true });
-    keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, ctrl: true });
+    if (IS_MAC) {
+      keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, meta: true });
+    } else {
+      keyboardShortcutsManager.addShortcut(CLEAR_ACTION_NAME, { code: K_CODE, ctrl: true });
+    }
     keyboardShortcutsManager.addListener(CLEAR_ACTION_NAME, this.clearHandler);
   }
 

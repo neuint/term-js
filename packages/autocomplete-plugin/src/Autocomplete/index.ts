@@ -114,6 +114,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
     const infoUuid = info?.shortcut;
     if (!infoUuid || (active && active !== infoUuid)) return;
     this.commandList = listsInfo.find(item => item.uuid === infoUuid)?.items || [];
+    e.stopPropagation();
     e.preventDefault();
     if (dropdownPlugin && this.setSuggestions()) {
       this.active = infoUuid as string;

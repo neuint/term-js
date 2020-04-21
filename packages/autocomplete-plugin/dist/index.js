@@ -26008,7 +26008,7 @@ class Dropdown extends Plugin$1 {
     }
 }
 
-var css$9 = {"withIcon":"index_withIcon__r07wM"};
+var css$9 = {"withIcon":"withIcon-autocomplete-plugin-️3606278efd34a3558ed3ac1666cdcb6e"};
 
 const SHOW_ACTION = 'autocomplete-plugin-show';
 const PLUGIN_NAME$2 = 'autocomplete-plugin';
@@ -26029,6 +26029,7 @@ class Autocomplete extends Plugin {
             if (!infoUuid || (active && active !== infoUuid))
                 return;
             this.commandList = ((_a = listsInfo.find(item => item.uuid === infoUuid)) === null || _a === void 0 ? void 0 : _a.items) || [];
+            e.stopPropagation();
             e.preventDefault();
             if (dropdownPlugin && this.setSuggestions()) {
                 this.active = infoUuid;

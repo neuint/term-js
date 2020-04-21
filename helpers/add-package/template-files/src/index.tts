@@ -1,0 +1,2 @@
+export { default as {{alias}} } from '@{{alias}}/index';
+export { default as I{{alias}} } from '@{{alias}}/I{{alias}}';
