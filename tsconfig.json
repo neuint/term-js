@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
+      "@StatusBar/*": ["status-bar-plugin/src/StatusBar/*"],
       "@CommandSearch/*": ["command-search-plugin/src/CommandSearch/*"],
       "@HistorySearch/*": ["history-search-plugin/src/HistorySearch/*"],
       "@Autocomplete/*": ["autocomplete-plugin/src/Autocomplete/*"],
