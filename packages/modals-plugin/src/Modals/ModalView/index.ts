@@ -33,11 +33,17 @@ class ModalView extends TemplateEngine implements IModalView {
 
   public render() {
     if (this.isRendered) return;
-    const { title, closeButton, content: optionsContent, actions = [] } = this.options;
+    const {
+      title, closeButton, content: optionsContent, actions = [], className = '', isAbsolute = false,
+    } = this.options;
     super.render({
-      css, title, closeButton, actions: Boolean(actions.length),
+      css, className, title, closeButton, actions: Boolean(actions.length),
       content: typeof optionsContent === 'string' ? optionsContent : '',
     });
+    if (isAbsolute) {
+      const modal = this.getModalView() as HTMLElement;
+      modal.classList.add(css.absoluteModal);
+    }
     this.renderActions();
     this.addEventListeners();
     this.isRendered = true;
@@ -46,6 +52,10 @@ class ModalView extends TemplateEngine implements IModalView {
   public destroy() {
     this.removeEventListeners();
     super.destroy();
+  }
+
+  public getModalView(): HTMLElement | undefined {
+    return this.getRef('modal') as HTMLElement;
   }
 
   private renderActions() {

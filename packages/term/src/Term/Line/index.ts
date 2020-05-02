@@ -183,6 +183,13 @@ class Line extends TemplateEngine implements ILine {
     }
   }
 
+  public blur() {
+    const { inputField } = this;
+    if (!inputField) return;
+    const { isFocused } = inputField;
+    if (isFocused) inputField.blur();
+  }
+
   public render(params: { label?: string, delimiter?: string }) {
     const { editable, className, secret } = this;
     const reRender = Boolean(this.getRef('root'));
@@ -354,7 +361,7 @@ class Line extends TemplateEngine implements ILine {
       return;
     }
     const { caretPosition } = inputField;
-    if (document.hasFocus() && caretPosition >= 0) {
+    if (inputField.isFocused && caretPosition >= 0) {
       this.showCaret(caretPosition);
     } else {
       this.hideCaret();

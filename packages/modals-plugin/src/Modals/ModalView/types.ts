@@ -5,6 +5,8 @@ export type ActionType = {
 };
 
 export type OptionsType = {
+  isAbsolute?: boolean;
+  className?: string;
   overlayHide?: boolean;
   closeButton?: boolean;
   content: string | HTMLElement;

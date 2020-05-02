@@ -22,6 +22,12 @@ $modals-plugin-close-button-size: 1.5rem;
   border-radius: $modals-plugin-border-radius;
 }
 
+.absoluteModal {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .header {
   position: relative;
   height: 2.5rem;

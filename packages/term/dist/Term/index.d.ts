@@ -32,6 +32,7 @@ declare class Term extends TemplateEngine implements ITerm {
     write: (data: string | FormattedValueFragmentType, duration?: number | undefined) => boolean | Promise<boolean>;
     setCaret(caret: string): void;
     setHeader(text: string): void;
+    blur(): void;
     private updateEditLine;
     private init;
     private preStart;

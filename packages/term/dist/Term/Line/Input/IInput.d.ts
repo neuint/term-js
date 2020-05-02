@@ -18,6 +18,7 @@ export default interface IInput extends ITemplateEngine {
     secret: boolean;
     getSimpleValue(showSecret?: boolean): string;
     focus(): void;
+    blur(): void;
     addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
     removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
     moveCaretToEnd(isForce?: boolean): void;

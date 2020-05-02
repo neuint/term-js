@@ -70,6 +70,7 @@ export declare type TermInfoEditType = {
         top: number;
     };
     focus: () => void;
+    blur: () => void;
     write: (data: string | FormattedValueFragmentType, duration?: number) => Promise<boolean> | boolean;
 };
 export declare type TermInfoLinesTypes = {

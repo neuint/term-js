@@ -58,6 +58,7 @@ declare abstract class BaseInput extends TemplateEngine implements IInput {
     addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
     removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
     focus(): void;
+    blur(): void;
     destroy(): void;
     getCaretOffset(): {
         left: number;

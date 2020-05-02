@@ -6035,6 +6035,11 @@ class BaseInput extends TemplateEngine {
         if (root)
             root.focus();
     }
+    blur() {
+        const root = this.getRef('input');
+        if (root)
+            root.blur();
+    }
     destroy() {
         this.removeHandlers();
         super.destroy();
@@ -6485,7 +6490,7 @@ class Line extends TemplateEngine {
                 return;
             }
             const { caretPosition } = inputField;
-            if (document.hasFocus() && caretPosition >= 0) {
+            if (inputField.isFocused && caretPosition >= 0) {
                 this.showCaret(caretPosition);
             }
             else {
@@ -6625,6 +6630,14 @@ class Line extends TemplateEngine {
             inputField.focus();
             inputField.moveCaretToEnd();
         }
+    }
+    blur() {
+        const { inputField } = this;
+        if (!inputField)
+            return;
+        const { isFocused } = inputField;
+        if (isFocused)
+            inputField.blur();
     }
     render(params) {
         const { editable, className, secret } = this;
@@ -9331,6 +9344,11 @@ class Term extends TemplateEngine {
         this.params.header = '';
         this.updateTermInfo();
     }
+    blur() {
+        const { editLine } = this;
+        if (editLine)
+            editLine.blur();
+    }
     updateEditLine(data, stopEdit, original) {
         const { editLine } = this;
         if (editLine) {
@@ -9527,6 +9545,7 @@ class Term extends TemplateEngine {
             parameterizedValue: (editLine === null || editLine === void 0 ? void 0 : editLine.value) || '',
             write: this.write,
             focus: () => editLine === null || editLine === void 0 ? void 0 : editLine.focus(),
+            blur: () => editLine === null || editLine === void 0 ? void 0 : editLine.blur(),
             update: (params) => {
                 if (!editLine)
                     return;

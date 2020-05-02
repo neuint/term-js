@@ -22,6 +22,11 @@ if (container) {
   plugin.show({
     overlayHide: true,
     content: 'Test',
+    position: EDIT_CENTER_POSITION,
+  });
+  plugin.show({
+    overlayHide: true,
+    content: 'Test 2',
     position: TERMINAL_CENTER_POSITION,
   });
   (window as unknown as { term: ITerm }).term = term;

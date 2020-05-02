@@ -246,6 +246,11 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     if (root) root.focus();
   }
 
+  public blur() {
+    const root = this.getRef('input') as HTMLElement;
+    if (root) root.blur();
+  }
+
   public destroy() {
     this.removeHandlers();
     super.destroy();
