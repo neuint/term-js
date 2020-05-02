@@ -20,6 +20,7 @@ export default interface ILine extends ITemplateEngine, IVirtualizedItem<ITempla
     };
     stopEdit(): void;
     focus(): void;
+    blur(): void;
     updateViewport(): void;
     setCaret(name: string): void;
     destroy(): void;

@@ -56,6 +56,7 @@ export type TermInfoEditType = {
   update: (params: EditLineParamsType) => void;
   endOffset: { left: number; top: number };
   focus: () => void,
+  blur: () => void,
   write: (
     data: string | FormattedValueFragmentType, duration?: number,
   ) => Promise<boolean> | boolean;

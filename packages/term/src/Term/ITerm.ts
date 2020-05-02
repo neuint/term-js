@@ -7,6 +7,7 @@ export default interface ITerm {
   keyboardShortcutsManager: IKeyboardShortcutsManager;
   pluginManager: IPluginManager;
   write(data: string | FormattedValueFragmentType, duration?: number): Promise<boolean> | boolean;
+  blur(): void;
   setCaret(caret: string): void;
   addEventListener<K extends keyof ITermEventMap>(
     type: K,

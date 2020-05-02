@@ -189,6 +189,11 @@ class Term extends TemplateEngine implements ITerm {
     this.updateTermInfo();
   }
 
+  public blur() {
+    const { editLine } = this;
+    if (editLine) editLine.blur();
+  }
+
   private updateEditLine(
     data: string | FormattedValueFragmentType, stopEdit?: boolean, original?: ValueType,
   ) {
@@ -545,6 +550,7 @@ class Term extends TemplateEngine implements ITerm {
       parameterizedValue: editLine?.value || '',
       write: this.write,
       focus: () => editLine?.focus(),
+      blur: () => editLine?.blur(),
       update: (params: EditLineParamsType) => {
         if (!editLine) return;
         if (isObject(params) && !isArray(params)) {
