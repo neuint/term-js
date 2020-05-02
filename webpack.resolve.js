@@ -6,6 +6,7 @@ module.exports = {
     extensions: ['.ts', '.js', '.json'],
     modules: ['node_modules'],
     alias: {
+      '@TerminalsOrchestrator': path.resolve(__dirname, 'packages/terminals-orchestrator/src/TerminalsOrchestrator'),
       '@Modals': path.resolve(__dirname, 'packages/modals-plugin/src/Modals'),
       '@StatusBar': path.resolve(__dirname, 'packages/status-bar-plugin/src/StatusBar'),
       '@CommandSearch': path.resolve(__dirname, 'packages/command-search-plugin/src/CommandSearch'),

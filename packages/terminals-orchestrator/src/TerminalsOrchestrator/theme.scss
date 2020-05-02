@@ -1,0 +1,13 @@
+@import 'colors';
+
+:root {
+  --terminals-orchestrator-bg-color: #{$bunker};
+  --terminals-orchestrator-tab-border-color: #{lighten($bunker, 10)};
+  --terminals-orchestrator-tab-bg-color: #{darken($bunker, 10)};
+  --terminals-orchestrator-tab-active-bg-color: #{rgba(darken($bunker, 10), 0.2)};
+  --terminals-orchestrator-tab-text-color: #{darken($alabaster, 50)};
+  --terminals-orchestrator-tab-active-text-color: #{darken($alabaster, 30)};
+  --terminals-orchestrator-add-tab-icon-color: #{lighten($bunker, 14)};
+  --terminals-orchestrator-add-tab-icon-color-hover: #{lighten($bunker, 18)};
+  --terminals-orchestrator-add-tab-icon-color-active: #{lighten($bunker, 10)};
+}

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
+      "@TerminalsOrchestrator/*": ["terminals-orchestrator/src/TerminalsOrchestrator/*"],
       "@Modals/*": ["modals-plugin/src/Modals/*"],
       "@StatusBar/*": ["status-bar-plugin/src/StatusBar/*"],
       "@CommandSearch/*": ["command-search-plugin/src/CommandSearch/*"],
