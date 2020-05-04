@@ -1,0 +1,30 @@
+@import '../mixins.scss';
+@import '../constants.scss';
+
+.wrapper {
+  height: 100%;
+  width: 100%;
+
+  @include flex-center;
+  flex-direction: column;
+  background-color: var(--terminals-orchestrator-bg-color);
+}
+
+.root {
+  flex: 1;
+  background: var(--terminals-orchestrator-workspace-bg-color);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  height: $terminals-orchestrator-tabs-height;
+  display: flex;
+  background: var(--terminals-orchestrator-bg-color);
+}
+
+.content {
+  position: relative;
+  flex: 1;
+}

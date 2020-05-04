@@ -15,6 +15,7 @@ module.exports = {
       '@Dropdown': path.resolve(__dirname, 'packages/dropdown-plugin/src/Dropdown'),
       '@ContextMenu': path.resolve(__dirname, 'packages/context-menu-plugin/src/ContextMenu'),
       '@Term': path.resolve(__dirname, 'packages/term/src/Term'),
+      'utils': path.resolve(__dirname, 'general/utils'),
     },
   },
 };

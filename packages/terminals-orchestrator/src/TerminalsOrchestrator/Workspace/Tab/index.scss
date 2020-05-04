@@ -1,0 +1,92 @@
+@import '../../mixins.scss';
+@import '../../constants.scss';
+
+.root {
+  @include clear-button;
+  @include flex-center;
+
+  position: relative;
+  padding-left: $terminals-orchestrator-tab-margin;
+  padding-top: $terminals-orchestrator-tab-offset;
+  transition: padding-top $terminals-orchestrator-tab-animation-duration linear;
+
+  &.reverse {
+    flex-direction: row-reverse;
+  }
+
+  &:before {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: $terminals-orchestrator-tab-margin;
+  }
+
+  &:after {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    left: $terminals-orchestrator-tab-margin;
+    right: 0;
+    top: $terminals-orchestrator-tab-offset;
+    bottom: 0;
+    border-radius: 0.5rem 0.5rem 0 0;
+    transition: top $terminals-orchestrator-tab-animation-duration linear;
+    background: var(--terminals-orchestrator-tab-bg-color);
+  }
+
+  &:hover {
+    padding-top: $terminals-orchestrator-tab-active-offset;
+
+    &:after {
+      top: $terminals-orchestrator-tab-active-offset;
+    }
+  }
+
+  &.active {
+    padding-top: $terminals-orchestrator-tab-active-offset;
+
+    &:after {
+      top: $terminals-orchestrator-tab-active-offset;
+      background: var(--terminals-orchestrator-workspace-bg-color);
+    }
+  }
+}
+
+.close {
+  @include icon-button(2rem, 1rem);
+  z-index: 1;
+  opacity: 1;
+  @include button-transition(opacity);
+
+  .root:not(:hover) & {
+    opacity: 0;
+  }
+}
+
+.title {
+  flex: 1;
+  padding: 0 0.75rem;
+  z-index: 1;
+
+  @include truncate();
+}
+
+.titleText {
+  color: var(--terminals-orchestrator-tab-text-color);
+
+  .active & {
+    color: var(--terminals-orchestrator-tab-active-text-color);
+  }
+}
+
+.shortcut {
+  padding: 0 0.5rem;
+  z-index: 1;
+}
+
+.shortcutText {
+  color: var(--terminals-orchestrator-tab-shortcut-text-color);
+}

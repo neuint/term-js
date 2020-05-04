@@ -7,6 +7,7 @@ module.exports = {
     modules: ['node_modules'],
     alias: {
       '@TerminalsOrchestrator': path.resolve(__dirname, 'src/TerminalsOrchestrator'),
+      'utils': path.resolve(__dirname, '../../general/utils'),
     },
   },
 };

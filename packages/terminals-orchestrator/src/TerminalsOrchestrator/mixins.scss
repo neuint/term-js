@@ -1,3 +1,9 @@
+@import 'constants';
+
+@mixin font-size($scale: 1) {
+  font-size: $terminals-orchestrator-general-font-size * $scale;
+}
+
 @mixin truncate($lines: 1) {
   overflow: hidden;
   @if $lines == 1 {
@@ -16,6 +22,10 @@
   align-items: center;
 }
 
+@mixin button-font-size {
+  @include font-size(0.75);
+}
+
 @mixin clear-button {
   display: inline-block;
   border: none;
@@ -23,4 +33,44 @@
   cursor: pointer;
   padding: 0;
   margin: 0;
+  outline:0;
+
+  @include button-font-size;
+}
+
+@mixin button-transition($properties...) {
+  $transition-value: '';
+  @each $property in $properties {
+    @if $transition-value == '' {
+      $transition-value: #{$property} 0.15s ease;
+    } @else {
+      $transition-value: #{$transition-value}, #{$property} 0.15s ease;
+    }
+  }
+  transition: #{$transition-value};
+}
+
+@mixin icon-button($container-size: 2rem, $icon-size: 1rem) {
+  @include clear-button;
+  @include flex-center;
+
+  min-width: $container-size;
+  min-height: $container-size;
+
+  & svg {
+    pointer-events: none;
+    width: $icon-size;
+    height: $icon-size;
+    @include button-transition(fill, stroke);
+
+    fill: var(--terminals-orchestrator-icon-button-color);
+  }
+
+  &:hover svg {
+    fill: var(--terminals-orchestrator-icon-button-color-hover);
+  }
+
+  &:active svg {
+    fill: var(--terminals-orchestrator-icon-button-color-active);
+  }
 }

@@ -1,0 +1,35 @@
+@import '../../mixins.scss';
+@import '../../constants.scss';
+
+.down {
+  @include icon-button($terminals-orchestrator-tabs-height, $terminals-orchestrator-tabs-height);
+}
+
+.hidden {
+  display: none;
+}
+
+.list {
+  display: flex;
+  max-width: calc(100% - #{$terminals-orchestrator-tabs-height});
+  position: relative;
+  overflow: hidden;
+}
+
+.navigationContainer {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  display: flex;
+  width: $terminals-orchestrator-tabs-height * 1.5;
+}
+
+.addContainer {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.add {
+  @include icon-button($terminals-orchestrator-tabs-height, 1.5rem);
+}
