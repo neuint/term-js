@@ -6,7 +6,86 @@
 }
 
 .hidden {
-  display: none;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.leftAdditional {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 0;
+  width: 1rem;
+  overflow: hidden;
+  height: $terminals-orchestrator-tabs-height;
+  left: $terminals-orchestrator-tabs-height + $terminals-orchestrator-tab-margin - 1rem;
+
+  &:before, &:after {
+    position: relative;
+    border-radius: $terminals-orchestrator-tab-border-radius 0 0 0;
+    width: 0.5rem;
+    background: var(--terminals-orchestrator-tab-bg-color);
+    box-shadow: var(--terminals-orchestrator-tab-shadow);
+  }
+
+  &:after {
+    content: '';
+    height: $terminals-orchestrator-tabs-height - 1.75 * $terminals-orchestrator-tab-offset;
+  }
+
+  &.two {
+    &:after {
+      left: 0.25rem;
+    }
+
+    &:before {
+      content: '';
+      background: var(--terminals-orchestrator-tab-bg-color);
+      height: $terminals-orchestrator-tabs-height - 2.5 * $terminals-orchestrator-tab-offset;
+      left: 0.5rem;
+    }
+  }
+}
+
+.rightAdditional {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 0;
+  width: 1rem;
+  overflow: hidden;
+  height: $terminals-orchestrator-tabs-height;
+  left: 0;
+  flex-direction: row-reverse;
+  z-index: 0;
+
+  &:before, &:after {
+    position: relative;
+    border-radius: 0 $terminals-orchestrator-tab-border-radius 0 0;
+    width: 0.5rem;
+    background: var(--terminals-orchestrator-tab-bg-color);
+    box-shadow: var(--terminals-orchestrator-tab-shadow);
+  }
+
+  &:after {
+    content: '';
+    height: $terminals-orchestrator-tabs-height - 1.75 * $terminals-orchestrator-tab-offset;
+  }
+
+  &.two {
+    &:after {
+      left: -0.25rem;
+    }
+
+    &:before {
+      content: '';
+      background: var(--terminals-orchestrator-tab-bg-color);
+      height: $terminals-orchestrator-tabs-height - 2.5 * $terminals-orchestrator-tab-offset;
+      left: -0.5rem;
+    }
+  }
 }
 
 .list {
@@ -14,6 +93,7 @@
   max-width: calc(100% - #{$terminals-orchestrator-tabs-height});
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .navigationContainer {
@@ -25,6 +105,7 @@
 }
 
 .addContainer {
+  position: relative;
   display: flex;
   justify-content: flex-end;
   flex: 1;

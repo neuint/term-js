@@ -5,6 +5,7 @@
   --terminals-orchestrator-workspace-bg-color: #{$bunker};
 
   --terminals-orchestrator-tab-bg-color: #{$shark};
+  --terminals-orchestrator-tab-shadow: -1px -1px 4px 1px #{$mine-shaft};
   --terminals-orchestrator-tab-active-bg-color: #{$bunker};
 
   --terminals-orchestrator-tab-text-color: #{darken($alabaster, 50)};

@@ -32,9 +32,10 @@
     right: 0;
     top: $terminals-orchestrator-tab-offset;
     bottom: 0;
-    border-radius: 0.5rem 0.5rem 0 0;
+    border-radius: $terminals-orchestrator-tab-border-radius $terminals-orchestrator-tab-border-radius 0 0;
     transition: top $terminals-orchestrator-tab-animation-duration linear;
     background: var(--terminals-orchestrator-tab-bg-color);
+    box-shadow: var(--terminals-orchestrator-tab-shadow);
   }
 
   &:hover {
@@ -70,6 +71,7 @@
   flex: 1;
   padding: 0 0.75rem;
   z-index: 1;
+  max-width: 6rem;
 
   @include truncate();
 }

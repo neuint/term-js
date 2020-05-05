@@ -1,3 +1,6 @@
+import ResizeObserver from 'resize-observer-polyfill';
+import { get } from 'lodash-es';
+
 import template from './template.html';
 import css from './index.scss';
 
@@ -32,13 +35,22 @@ class Tabs extends TemplateEngine implements ITabs {
   }
 
   private tabEntities: ITab[] = [];
+  private readonly ro: ResizeObserver;
+
   constructor(container: HTMLElement) {
     super(template, container);
+    this.ro = new ResizeObserver(this.observeHandler);
     this.render();
   }
 
   public render() {
     super.render({ css });
+    this.ro.observe(this.getRef('list') as HTMLElement);
+  }
+
+  public destroy() {
+    this.ro.unobserve(this.getRef('list') as HTMLElement);
+    super.destroy();
   }
 
   private renderTabs() {
@@ -49,6 +61,30 @@ class Tabs extends TemplateEngine implements ITabs {
         return new Tab(list as HTMLElement, { title, index, active: index === activeTab });
       });
     }
+  }
+
+  private observeHandler = (entries: ResizeObserverEntry[]) => {
+    const { width } = get(entries, '[0].contentRect');
+    const list = this.getRef('list') as  HTMLElement;
+    if (width < list.scrollWidth) {
+      this.hideTabs();
+    } else {
+      this.showTabs();
+    }
+  }
+
+  private hideTabs() {
+    const leftMore = this.getRef('left-more') as HTMLElement;
+    const rightMore = this.getRef('right-more') as HTMLElement;
+    leftMore.classList.remove(css.hidden);
+    rightMore.classList.remove(css.hidden);
+  }
+
+  private showTabs() {
+    const leftMore = this.getRef('left-more') as HTMLElement;
+    const rightMore = this.getRef('right-more') as HTMLElement;
+    leftMore.classList.add(css.hidden);
+    rightMore.classList.add(css.hidden);
   }
 }
 

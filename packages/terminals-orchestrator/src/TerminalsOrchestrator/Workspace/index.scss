@@ -19,6 +19,7 @@
 }
 
 .tabs {
+  position: relative;
   height: $terminals-orchestrator-tabs-height;
   display: flex;
   background: var(--terminals-orchestrator-bg-color);
@@ -27,4 +28,5 @@
 .content {
   position: relative;
   flex: 1;
+  z-index: 1;
 }

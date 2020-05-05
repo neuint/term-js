@@ -9,8 +9,7 @@ const container = document.querySelector('#root') as HTMLElement;
 if (container) {
   const terminalsOrchestrator: ITerminalsOrchestrator = new TerminalsOrchestrator(container, {
     tabs: [
-      { name: 'Welcome', terminals: [] },
-      { name: 'Test', terminals: [] },
+      { name: 'Welcome Welcome Welcome Welcome Welcome Welcome', terminals: [] },
       { name: 'Test', terminals: [] },
       { name: 'Test', terminals: [] },
       { name: 'Test', terminals: [] },

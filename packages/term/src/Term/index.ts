@@ -117,6 +117,7 @@ class Term extends TemplateEngine implements ITerm {
     this.pluginManager.destroy();
     this.keyboardShortcutsManager.destroy();
     getItemSize(this.getRef('root') as HTMLElement);
+    // TODO: add unobserve.
     super.destroy();
   }
 
