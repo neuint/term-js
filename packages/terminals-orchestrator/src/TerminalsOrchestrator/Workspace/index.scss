@@ -23,10 +23,10 @@
   height: $terminals-orchestrator-tabs-height;
   display: flex;
   background: var(--terminals-orchestrator-bg-color);
+  overflow: hidden;
 }
 
 .content {
   position: relative;
   flex: 1;
-  z-index: 1;
 }
