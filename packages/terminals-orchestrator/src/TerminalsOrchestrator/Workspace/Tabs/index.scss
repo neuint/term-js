@@ -1,6 +1,14 @@
 @import '../../mixins.scss';
 @import '../../constants.scss';
 
+.root {
+  position: relative;
+  height: $terminals-orchestrator-tabs-height;
+  display: flex;
+  background: var(--terminals-orchestrator-bg-color);
+  overflow: hidden;
+}
+
 .down {
   @include icon-button($terminals-orchestrator-tabs-height, $terminals-orchestrator-tabs-height);
 }
@@ -34,7 +42,7 @@
     height: $terminals-orchestrator-tabs-height - 1.75 * $terminals-orchestrator-tab-offset;
   }
 
-  &.two {
+  &.leftTwo {
     &:after {
       left: 0.25rem;
     }
@@ -72,9 +80,10 @@
   &:after {
     content: '';
     height: $terminals-orchestrator-tabs-height - 1.75 * $terminals-orchestrator-tab-offset;
+    left: -0.5rem;
   }
 
-  &.two {
+  &.rightTwo {
     &:after {
       left: -0.25rem;
     }

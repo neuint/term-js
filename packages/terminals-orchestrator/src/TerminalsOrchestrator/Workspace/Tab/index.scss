@@ -56,6 +56,15 @@
   }
 }
 
+.invisible {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hidden {
+  display: none;
+}
+
 .close {
   @include icon-button(2rem, 1rem);
   z-index: 1;

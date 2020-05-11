@@ -4927,7 +4927,7 @@ var index = function () {
 
 var css = {"term":"term-term-️0e2edb9a914aa6e9f9eafd6a264c9040","header":"header-term-️0e2edb9a914aa6e9f9eafd6a264c9040","hidden":"hidden-term-️0e2edb9a914aa6e9f9eafd6a264c9040","headerText":"headerText-term-️0e2edb9a914aa6e9f9eafd6a264c9040","content":"content-term-️0e2edb9a914aa6e9f9eafd6a264c9040","linesContainer":"linesContainer-term-️0e2edb9a914aa6e9f9eafd6a264c9040","line":"line-term-️0e2edb9a914aa6e9f9eafd6a264c9040","editLine":"editLine-term-️0e2edb9a914aa6e9f9eafd6a264c9040"};
 
-var template$1 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header hidden\">\n    <span ref=\"headerText\" class=\"headerText\">{header}</span>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
+var template$1 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header>\n    <span ref=\"headerText\" class=\"headerText\">{header}</span>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
 
 class Animation {
     constructor() {
@@ -5735,7 +5735,7 @@ CaretFactory.caretMap = {
 
 const LOCK_TIMEOUT = 600;
 
-var template$3 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
+var template$3 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"invisible\"></div>\n</div>\n";
 
 var css$4 = {"root":"root-term-️f48df653df791725509e2a00ded23e06","input":"input-term-️f48df653df791725509e2a00ded23e06","hiddenCaret":"hiddenCaret-term-️f48df653df791725509e2a00ded23e06","hidden":"hidden-term-️f48df653df791725509e2a00ded23e06"};
 

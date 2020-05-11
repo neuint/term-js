@@ -18,13 +18,7 @@
   flex-direction: column;
 }
 
-.tabs {
-  position: relative;
-  height: $terminals-orchestrator-tabs-height;
-  display: flex;
-  background: var(--terminals-orchestrator-bg-color);
-  overflow: hidden;
-}
+.tabs {}
 
 .content {
   position: relative;

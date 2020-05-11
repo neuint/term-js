@@ -13,6 +13,10 @@ if (container) {
       { name: 'Test', terminals: [] },
       { name: 'Test', terminals: [] },
       { name: 'Test', terminals: [] },
+      { name: 'Test', terminals: [] },
+      { name: 'Test', terminals: [] },
+      { name: 'Test', terminals: [], focused: true },
+      { name: 'Test', terminals: [] },
     ],
   });
   (window as unknown as { terminalsOrchestrator: ITerminalsOrchestrator })
