@@ -122,3 +122,23 @@
 .add {
   @include icon-button($terminals-orchestrator-tabs-height, 1.5rem);
 }
+
+.dropMarker {
+  pointer-events: none;
+  position: absolute;
+  top: 0.2rem;
+  left: $terminals-orchestrator-tabs-height;
+  z-index: 3;
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -0.2rem;
+    border-left: 0.3rem solid transparent;
+    border-right: 0.3rem solid transparent;
+    border-top: 0.4rem solid var(--terminals-orchestrator-tabs-drop-marker-color);
+  }
+}
+
+

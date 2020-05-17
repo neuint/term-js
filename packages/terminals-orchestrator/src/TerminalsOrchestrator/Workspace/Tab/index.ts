@@ -5,14 +5,20 @@ import { IS_MAC } from 'utils/browser';
 import { escapeString } from 'utils/string';
 import { TemplateEngine } from '@term-js/term';
 import ITab from '@TerminalsOrchestrator/Workspace/Tab/ITab';
-import { TabOptionsType } from '@TerminalsOrchestrator/Workspace/Tab/types';
+import {
+  EventHandlerType,
+  TabOptionsType,
+  EventType,
+  ClickEventHandlerType, DragEventHandlerType,
+} from '@TerminalsOrchestrator/Workspace/Tab/types';
 
 class Tab extends TemplateEngine implements ITab {
   private indexField: number = -1;
   public set index(val: number) {
-    const shortcutText = this.getRef('shortcutText');
-    if (shortcutText && val !== this.indexField) shortcutText.innerHTML = this.shortcut;
+    const { indexField } = this;
     this.indexField = val;
+    const shortcutText = this.getRef('shortcutText');
+    if (shortcutText && val !== indexField) shortcutText.innerHTML = this.shortcut;
   }
   public get index(): number {
     return this.indexField;
@@ -79,6 +85,13 @@ class Tab extends TemplateEngine implements ITab {
     return IS_MAC ? `⌘${shortcutNumber}` : `alt${shortcutNumber}`;
   }
 
+  private handlers: {
+    click: ClickEventHandlerType[];
+    close: ClickEventHandlerType[];
+    drag: DragEventHandlerType[];
+    dragend: DragEventHandlerType[];
+  } = { click: [], close: [], drag: [], dragend: [] };
+
   constructor(container: HTMLElement, options: TabOptionsType) {
     super(template, container);
     this.isActive = options.active || false;
@@ -100,6 +113,78 @@ class Tab extends TemplateEngine implements ITab {
       invisible: this.isInvisible ? css.invisible : '',
       hidden: this.isHiddenField ? css.hidden : '',
     });
+    this.addListeners();
+  }
+
+  public addEventListener(event: EventType, handler: EventHandlerType) {
+    const list = this.handlers[event];
+    if (list) list.push(handler as ClickEventHandlerType);
+  }
+
+  public removeEventListener(event: EventType, handler: EventHandlerType) {
+    const list = this.handlers[event];
+    if (!list) return;
+    const index = list.indexOf(handler as ClickEventHandlerType);
+    if (index >= 0) list.splice(index, 1);
+  }
+
+  public destroy() {
+    this.removeListeners();
+    super.destroy();
+  }
+
+  private addListeners() {
+    const root = this.getRef('root') as HTMLElement;
+    const close = this.getRef('close') as HTMLElement;
+    root.addEventListener('click', this.clickHandler);
+    root.addEventListener('dragstart', this.dragStartHandler);
+    root.addEventListener('drag', this.dragHandler);
+    document.addEventListener('dragover', this.dragoverHandler);
+    root.addEventListener('dragend', this.dragEndHandler);
+    close.addEventListener('click', this.closeHandler);
+  }
+
+  private removeListeners() {
+    const root = this.getRef('root') as HTMLElement;
+    const close = this.getRef('close') as HTMLElement;
+    root.removeEventListener('click', this.clickHandler);
+    root.removeEventListener('dragstart', this.dragStartHandler);
+    root.removeEventListener('drag', this.dragHandler);
+    document.removeEventListener('dragover', this.dragoverHandler);
+    root.addEventListener('dragend', this.dragEndHandler);
+    close.removeEventListener('click', this.closeHandler);
+  }
+
+  private clickHandler = (e: Event) => {
+    const { index, handlers } = this;
+    handlers.click.forEach(handler => handler(index, e));
+  }
+
+  private closeHandler = (e: Event) => {
+    const { index, handlers } = this;
+    e.stopPropagation();
+    handlers.close.forEach(handler => handler(index, e));
+  }
+
+  private dragStartHandler = () => {
+    const root = this.getRef('root') as HTMLElement;
+    root.classList.add(css.draggable);
+  }
+
+  private dragHandler = (e: DragEvent) => {
+    const { handlers, index } = this;
+    handlers.drag.forEach(handler => handler(index, e));
+  }
+
+  private dragEndHandler = (e: DragEvent) => {
+    const { handlers, index } = this;
+    const root = this.getRef('root') as HTMLElement;
+    root.classList.remove(css.draggable);
+    handlers.dragend.forEach(handler => handler(index, e));
+  }
+
+  private dragoverHandler = (e: DragEvent) => {
+    e.preventDefault();
   }
 }
 

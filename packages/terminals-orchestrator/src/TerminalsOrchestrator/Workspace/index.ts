@@ -26,7 +26,11 @@ class Workspace extends TemplateEngine implements IWorkspace {
   constructor(container: HTMLElement) {
     super(template, container);
     this.render();
-    this.tabsView = new Tabs(this.getRef('tabs') as HTMLElement);
+    const tabsView = new Tabs(this.getRef('tabs') as HTMLElement);
+    tabsView.addEventListener('focus', this.focusTabHandler);
+    tabsView.addEventListener('close', this.closeTabHandler);
+    tabsView.addEventListener('add', this.addTabHandler);
+    this.tabsView = tabsView;
   }
 
   public render() {
@@ -36,6 +40,20 @@ class Workspace extends TemplateEngine implements IWorkspace {
   public declare() {
     this.tabsView.destroy();
     super.destroy();
+  }
+
+  private focusTabHandler = (index: number) => {
+    this.tabsView.activeTab = index;
+  }
+
+  private closeTabHandler = (index: number) => {
+    this.tabsView.tabs = this.tabsView.tabs.filter((_, i) => i !== index);
+  }
+
+  private addTabHandler = () => {
+    const { tabsView } = this;
+    tabsView.tabs = [...tabsView.tabs, 'New tab'];
+    tabsView.activeTab = tabsView.tabs.length - 1;
   }
 }
 

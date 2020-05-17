@@ -54,6 +54,14 @@
       background: var(--terminals-orchestrator-workspace-bg-color);
     }
   }
+
+  &.draggable {
+    opacity: 0.3;
+
+    &:after {
+      box-shadow: none;
+    }
+  }
 }
 
 .invisible {
