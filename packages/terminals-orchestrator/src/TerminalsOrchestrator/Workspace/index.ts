@@ -47,7 +47,12 @@ class Workspace extends TemplateEngine implements IWorkspace {
   }
 
   private closeTabHandler = (index: number) => {
-    this.tabsView.tabs = this.tabsView.tabs.filter((_, i) => i !== index);
+    const { tabsView } = this;
+    const activeTab = tabsView.activeTab;
+    let newActiveTab = index === activeTab ? 0 : activeTab;
+    if (activeTab > index) newActiveTab = activeTab - 1;
+    tabsView.tabs = this.tabsView.tabs.filter((_, i) => i !== index);
+    tabsView.activeTab = newActiveTab;
   }
 
   private addTabHandler = () => {

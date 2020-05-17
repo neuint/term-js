@@ -25,11 +25,11 @@ class Tabs extends TemplateEngine implements ITabs {
     return this.tabsField;
   }
   public set tabs(val: string[]) {
-    const { tabsInfo, activeTabField } = this;
+    const { tabsInfo } = this;
     this.tabsField = val;
     tabsInfo.forEach(item => item.tab.destroy());
     this.tabsInfo = [];
-    this.activeTabField = activeTabField >= val.length ? val.length - 1 : activeTabField;
+    this.activeTabField = 0;
     this.renderTabs();
     this.updateListView();
   }
