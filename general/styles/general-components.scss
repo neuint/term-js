@@ -1,0 +1,57 @@
+@import 'general-mixins';
+@import 'general-theme.scss';
+
+@mixin overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--term-js-overlay-color);
+
+  @include full-size;
+}
+
+@mixin popup {
+  background: var(--term-js-popup-bg-color);
+  border: 1px solid var(--term-js-popup-border-color);
+  border-radius: 0.25rem;
+}
+
+@mixin context-menu-list {
+  width: 10rem;
+  max-height: 15rem;
+  overflow-y: auto;
+
+  @include clear-list;
+  @include popup;
+}
+
+@mixin button {
+  @include clear-button;
+}
+
+@mixin icon-button($container-size: 2rem, $icon-size: 1rem) {
+  @include clear-button;
+  @include flex-center;
+
+  min-width: $container-size;
+  min-height: $container-size;
+
+  & svg {
+    pointer-events: none;
+    width: $icon-size;
+    height: $icon-size;
+    @include button-transition(fill, stroke);
+
+    fill: var(--term-js-icon-button-color);
+  }
+
+  &:hover svg {
+    fill: var(--term-js-icon-button-color-hover);
+  }
+
+  &:active svg {
+    fill: var(--term-js-icon-button-color-active);
+  }
+}

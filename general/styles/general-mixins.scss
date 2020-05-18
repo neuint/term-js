@@ -1,0 +1,83 @@
+@import 'general-constants.scss';
+@import 'general-theme.scss';
+
+@mixin clear-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@mixin font {
+  &, input, textarea, select, button, pre {
+    font-family: 'Ubuntu Mono', sans-serif, monospace;
+    font-weight: 400;
+    font-size: 16px;
+  }
+}
+
+@mixin scroll($color) {
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $color;
+  }
+}
+
+@mixin full-size {
+  width: 100%;
+  height: 100%;
+}
+
+@mixin font-size($scale: 1) {
+  font-size: $font-size * $scale;
+}
+
+@mixin button-font-size {
+  @include font-size(0.75);
+}
+
+@mixin truncate($lines: 1) {
+  overflow: hidden;
+  @if $lines == 1 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin clear-button {
+  display: inline-block;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  outline:0;
+  color: var(--term-js-text-color);
+
+  @include button-font-size;
+}
+
+@mixin button-transition($properties...) {
+  $transition-value: '';
+  @each $property in $properties {
+    @if $transition-value == '' {
+      $transition-value: #{$property} 0.15s ease;
+    } @else {
+      $transition-value: #{$transition-value}, #{$property} 0.15s ease;
+    }
+  }
+  transition: #{$transition-value};
+}

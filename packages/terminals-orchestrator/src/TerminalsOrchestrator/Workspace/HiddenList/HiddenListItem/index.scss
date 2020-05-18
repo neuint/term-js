@@ -1,0 +1,21 @@
+@import 'general-mixins';
+@import 'general-theme';
+
+.root:hover {
+  background: var(--term-js-list-bg-color-hover);
+}
+
+.button {
+  @include clear-button;
+  @include truncate();
+
+  padding: 0.5rem 0.75rem;
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.text {
+  pointer-events: none;
+}
+

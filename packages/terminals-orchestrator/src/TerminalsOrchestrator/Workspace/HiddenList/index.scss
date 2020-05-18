@@ -1,0 +1,14 @@
+@import 'general-mixins.scss';
+@import 'general-components.scss';
+
+.container {
+  z-index: 4;
+  @include overlay;
+}
+
+.list {
+  position: absolute;
+  z-index: 4;
+
+  @include context-menu-list;
+}

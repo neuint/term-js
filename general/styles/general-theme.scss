@@ -1,0 +1,16 @@
+@import 'general-colors.scss';
+
+:root {
+  --term-js-scroll-color: #{lighten($bunker, 20)};
+  --term-js-overlay-color: #{rgba($bunker, 0)};
+  --term-js-text-color: #{$alabaster};
+
+  --term-js-popup-bg-color: #{lighten($bunker, 10)};
+  --term-js-popup-border-color: #{darken($bunker, 10)};
+
+  --term-js-icon-button-color: #{lighten($bunker, 18)};
+  --term-js-icon-button-color-hover: #{lighten($bunker, 30)};
+  --term-js-icon-button-color-active: #{lighten($bunker, 22)};
+
+  --term-js-list-bg-color-hover: #{lighten($bunker, 15)};
+}

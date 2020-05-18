@@ -7,6 +7,7 @@ import ITabs from '@TerminalsOrchestrator/Workspace/Tabs/ITabs';
 import Tabs from '@TerminalsOrchestrator/Workspace/Tabs';
 
 class Workspace extends TemplateEngine implements IWorkspace {
+  public untitledName: string = '';
   public set tabs(val: string[]) {
     this.tabsView.tabs = val;
   }
@@ -49,7 +50,7 @@ class Workspace extends TemplateEngine implements IWorkspace {
   private closeTabHandler = (index: number) => {
     const { tabsView } = this;
     const activeTab = tabsView.activeTab;
-    let newActiveTab = index === activeTab ? 0 : activeTab;
+    let newActiveTab = index === activeTab ? Math.max(0, activeTab - 1) : activeTab;
     if (activeTab > index) newActiveTab = activeTab - 1;
     tabsView.tabs = this.tabsView.tabs.filter((_, i) => i !== index);
     tabsView.activeTab = newActiveTab;
@@ -57,7 +58,7 @@ class Workspace extends TemplateEngine implements IWorkspace {
 
   private addTabHandler = () => {
     const { tabsView } = this;
-    tabsView.tabs = [...tabsView.tabs, 'New tab'];
+    tabsView.tabs = [...tabsView.tabs, this.untitledName];
     tabsView.activeTab = tabsView.tabs.length - 1;
   }
 }

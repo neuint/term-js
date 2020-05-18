@@ -1,4 +1,5 @@
-@import 'colors';
+@import 'general-colors.scss';
+@import 'general-theme.scss';
 
 :root {
   --terminals-orchestrator-bg-color: #{$mine-shaft};
@@ -13,8 +14,4 @@
   --terminals-orchestrator-tab-text-color: #{darken($alabaster, 50)};
   --terminals-orchestrator-tab-shortcut-text-color: #{darken($alabaster, 70)};
   --terminals-orchestrator-tab-active-text-color: #{darken($alabaster, 30)};
-
-  --terminals-orchestrator-icon-button-color: #{lighten($bunker, 18)};
-  --terminals-orchestrator-icon-button-color-hover: #{lighten($bunker, 30)};
-  --terminals-orchestrator-icon-button-color-active: #{lighten($bunker, 22)};
 }

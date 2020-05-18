@@ -9,6 +9,7 @@ class TerminalsOrchestrator implements ITerminalsOrchestrator {
   private workspace: IWorkspace;
   constructor(container: HTMLElement, options: OptionsType) {
     this.workspace = new Workspace(container);
+    this.workspace.untitledName = options.untitledName || 'Untitled';
     let activeIndex = 0;
     this.workspace.tabs = options.tabs.map(({ name, focused }, index: number): string => {
       if (focused) activeIndex = index;

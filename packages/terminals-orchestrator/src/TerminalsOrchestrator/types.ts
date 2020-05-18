@@ -10,5 +10,6 @@ export type TabType = {
 };
 
 export type OptionsType = {
+  untitledName?: string;
   tabs: TabType[];
 };

@@ -18,6 +18,8 @@ import {
   FOCUS_EVENT_TYPE,
   TAB_EVENTS,
 } from '@TerminalsOrchestrator/Workspace/Tabs/constants';
+import HiddenList from '@TerminalsOrchestrator/Workspace/HiddenList';
+import IHiddenList from '@TerminalsOrchestrator/Workspace/HiddenList/IHiddenList';
 
 class Tabs extends TemplateEngine implements ITabs {
   private tabsField: string[] = [];
@@ -50,6 +52,7 @@ class Tabs extends TemplateEngine implements ITabs {
   }
 
   private visibleListWidth: number = 0;
+  private hiddenList?: IHiddenList;
   private tabsInfo: { isVisible: boolean; width: number; tab: ITab }[] = [];
   private readonly ro: ResizeObserver;
   private handlers: {
@@ -74,13 +77,11 @@ class Tabs extends TemplateEngine implements ITabs {
 
   public render() {
     super.render({ css });
-    (this.getRef('add') as HTMLElement).addEventListener('click', this.addClickHandler);
-    this.ro.observe(this.getRef('root') as HTMLElement);
+    this.addListeners();
   }
 
   public destroy() {
-    this.ro.unobserve(this.getRef('root') as HTMLElement);
-    (this.getRef('add') as HTMLElement).removeEventListener('click', this.addClickHandler);
+    this.removeListeners();
     super.destroy();
   }
 
@@ -110,6 +111,21 @@ class Tabs extends TemplateEngine implements ITabs {
         tabInfo.tab.removeEventListener(tabEvent as TabEventType, handler);
       });
     }
+  }
+
+  private addListeners() {
+    (this.getRef('add') as HTMLElement).addEventListener('click', this.addClickHandler);
+    (this.getRef('left-more') as HTMLElement).addEventListener('click', this.showLeftHiddenTabs);
+    (this.getRef('right-more') as HTMLElement).addEventListener('click', this.showRightHiddenTabs);
+    this.ro.observe(this.getRef('root') as HTMLElement);
+  }
+
+  private removeListeners() {
+    this.ro.unobserve(this.getRef('root') as HTMLElement);
+    (this.getRef('add') as HTMLElement).removeEventListener('click', this.addClickHandler);
+    (this.getRef('left-more') as HTMLElement).removeEventListener('click', this.showLeftHiddenTabs);
+    (this.getRef('right-more') as HTMLElement)
+      .removeEventListener('click', this.showRightHiddenTabs);
   }
 
   private renderTabs() {
@@ -372,6 +388,52 @@ class Tabs extends TemplateEngine implements ITabs {
       list.removeChild(root);
       list.appendChild(root);
     });
+  }
+
+  private showLeftHiddenTabs = (e: Event) => {
+    const { tabsInfo } = this;
+    let stop = false;
+    const leftList = tabsInfo.reduce((
+      acc: { text: string; id: number }[], item, index,
+    ): { text: string; id: number }[] => {
+      if (!item.isVisible && !stop) acc.push({ text: item.tab.title, id: index });
+      else stop = true;
+      return acc;
+    }, [] as { text: string; id: number }[]);
+    if (leftList.length) {
+      this.hiddenList = new HiddenList(this.container as HTMLElement, {
+        items: leftList, className: css.leftList, onClose: this.closeHiddenTabsHandler,
+        onSelect: this.selectHiddenTabHandler,
+      });
+    }
+  }
+
+  private showRightHiddenTabs = (e: Event) => {
+    const { tabsInfo } = this;
+    let start = false;
+    const rightList = tabsInfo.reduce((
+      acc: { text: string; id: number }[], item, index,
+    ): { text: string; id: number }[] => {
+      if (item.isVisible && !start) start = true;
+      else if (start && !item.isVisible) acc.push({ text: item.tab.title, id: index });
+      return acc;
+    }, [] as { text: string; id: number }[]);
+    if (rightList.length) {
+      this.hiddenList = new HiddenList(this.container as HTMLElement, {
+        items: rightList, className: css.rightList, onClose: this.closeHiddenTabsHandler,
+        onSelect: this.selectHiddenTabHandler,
+      });
+    }
+  }
+
+  private closeHiddenTabsHandler = () => {
+    this.hiddenList?.destroy();
+    delete this.hiddenList;
+  }
+
+  private selectHiddenTabHandler = (index: number) => {
+    this.closeHiddenTabsHandler();
+    this.activeTab = index;
   }
 }
 

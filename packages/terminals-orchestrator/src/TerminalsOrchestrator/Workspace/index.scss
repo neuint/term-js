@@ -1,13 +1,16 @@
+@import 'general-mixins.scss';
 @import '../mixins.scss';
 @import '../constants.scss';
 
 .wrapper {
   height: 100%;
   width: 100%;
-
-  @include flex-center;
   flex-direction: column;
   background-color: var(--terminals-orchestrator-bg-color);
+
+  @include flex-center;
+  @include font;
+  @include scroll(var(--term-js-scroll-color));
 }
 
 .root {

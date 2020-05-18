@@ -64,7 +64,7 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               sassOptions: {
-                includePaths: ['./src/TerminalsOrchestrator', './'],
+                includePaths: ['./src/TerminalsOrchestrator', '../../general/styles', './'],
               },
             },
           },
