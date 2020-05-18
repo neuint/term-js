@@ -388,9 +388,16 @@ class Tabs extends TemplateEngine implements ITabs {
   private updateTabsViewOrder() {
     const { tabsInfo } = this;
     const list = this.getRef('list') as HTMLElement;
+    let shortcutIndex = 1;
     tabsInfo.forEach((item, index) => {
-      const { tab } = item;
+      const { tab, isVisible } = item;
       tab.index = index;
+      if (isVisible) {
+        tab.shortcutIndex = shortcutIndex < 10 ? shortcutIndex : 0;
+        shortcutIndex += 1;
+      } else {
+        tab.shortcutIndex = 0;
+      }
       const root = item.tab.getRef('root') as HTMLElement;
       list.removeChild(root);
       list.appendChild(root);
