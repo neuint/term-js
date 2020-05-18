@@ -11,7 +11,7 @@
       "@Dropdown/*": ["dropdown-plugin/src/Dropdown/*"],
       "@ContextMenu/*": ["context-menu-plugin/src/ContextMenu/*"],
       "@Term/*": ["term/src/Term/*"],
-      "utils/*": ["../general/utils/*"]
+      "@general/*": ["../general/*"]
     }
   },
   "exclude": ["node_modules", "webpack.*.js"]

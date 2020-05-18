@@ -2,14 +2,18 @@ import template from './template.html';
 import css from './index.scss';
 
 import { ITemplateEngine, TemplateEngine } from '@term-js/term';
+import { Emitter, EMITTER_TOP_LAYER_TYPE } from 'key-layers-js';
+
 import IHiddenList from '@TerminalsOrchestrator/Workspace/HiddenList/IHiddenList';
 import { HiddenListOptionsType } from '@TerminalsOrchestrator/Workspace/HiddenList/types';
 import HiddenListItem from '@TerminalsOrchestrator/Workspace/HiddenList/HiddenListItem';
 import IHiddenListItem from '@TerminalsOrchestrator/Workspace/HiddenList/HiddenListItem/IHiddenListItem';
+import { ESC_KEY_CODE } from '@general/constants/keyCodes';
 
 class HiddenList extends TemplateEngine implements IHiddenList {
   private readonly options: HiddenListOptionsType = { items: [] };
   private items: IHiddenListItem[] = [];
+  private emitter: Emitter = new Emitter(EMITTER_TOP_LAYER_TYPE);
   constructor(container: HTMLElement, options: HiddenListOptionsType = { items: [] }) {
     super(template, container);
     this.options = options;
@@ -26,6 +30,7 @@ class HiddenList extends TemplateEngine implements IHiddenList {
   public destroy() {
     this.removeListeners();
     this.items.forEach(item => item.destroy());
+    this.emitter.destroy();
     super.destroy();
   }
 
@@ -49,17 +54,19 @@ class HiddenList extends TemplateEngine implements IHiddenList {
   private addListeners() {
     const { onClose } = this.options;
     if (onClose) {
+      this.emitter.addListener('keyDown', onClose, { code: ESC_KEY_CODE });
       (this.getRef('root') as HTMLElement).addEventListener('click', onClose);
-      (this.getRef('list') as HTMLElement).addEventListener('click', this.onListClick);
     }
+    (this.getRef('list') as HTMLElement).addEventListener('click', this.onListClick);
   }
 
   private removeListeners() {
     const { onClose } = this.options;
     if (onClose) {
+      this.emitter.removeListener('keyDown', onClose);
       (this.getRef('root') as HTMLElement).removeEventListener('click', onClose);
-      (this.getRef('list') as HTMLElement).removeEventListener('click', this.onListClick);
     }
+    (this.getRef('list') as HTMLElement).removeEventListener('click', this.onListClick);
   }
 
   private onListClick = (e: Event) => {

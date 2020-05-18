@@ -168,11 +168,15 @@ class Tabs extends TemplateEngine implements ITabs {
   private hideTabs() {
     this.updateTabsInfo();
     const { tabsInfo } = this;
+    let shortcutIndex = 1;
     tabsInfo.forEach((item) => {
       if (item.isVisible) {
         item.tab.hidden = false;
         item.tab.invisible = false;
+        item.tab.shortcutIndex = shortcutIndex < 10 ? shortcutIndex : 0;
+        shortcutIndex += 1;
       } else {
+        item.tab.shortcutIndex = 0;
         item.tab.hidden = true;
       }
     });
@@ -233,10 +237,13 @@ class Tabs extends TemplateEngine implements ITabs {
     const { tabsInfo } = this;
     this.hideLeftMore();
     this.hideRightMore();
+    let shortcutIndex = 1;
     tabsInfo.forEach((item) => {
       item.isVisible = true;
       item.tab.hidden = false;
       item.tab.invisible = false;
+      item.tab.shortcutIndex = shortcutIndex < 10 ? shortcutIndex : 0;
+      shortcutIndex += 1;
     });
   }
 
@@ -390,7 +397,7 @@ class Tabs extends TemplateEngine implements ITabs {
     });
   }
 
-  private showLeftHiddenTabs = (e: Event) => {
+  private showLeftHiddenTabs = () => {
     const { tabsInfo } = this;
     let stop = false;
     const leftList = tabsInfo.reduce((
@@ -408,7 +415,7 @@ class Tabs extends TemplateEngine implements ITabs {
     }
   }
 
-  private showRightHiddenTabs = (e: Event) => {
+  private showRightHiddenTabs = () => {
     const { tabsInfo } = this;
     let start = false;
     const rightList = tabsInfo.reduce((

@@ -2,6 +2,7 @@ import { ITemplateEngine } from '@term-js/term';
 import { EventHandlerType, EventType } from '@TerminalsOrchestrator/Workspace/Tab/types';
 
 export default interface ITab extends ITemplateEngine {
+  shortcutIndex: number;
   index: number;
   width: number;
   title: string;

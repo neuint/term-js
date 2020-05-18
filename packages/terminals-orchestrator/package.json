@@ -32,6 +32,7 @@
   "dependencies": {
     "@term-js/term": "file:../term",
     "@types/lodash-es": "^4.17.3",
+    "key-layers-js": "^1.0.0",
     "lodash-es": "^4.17.15"
   },
   "devDependencies": {

@@ -1,9 +1,12 @@
 import template from './template.html';
 import css from './index.scss';
 
-import { IS_MAC } from 'utils/browser';
-import { escapeString } from 'utils/string';
 import { TemplateEngine } from '@term-js/term';
+import { Emitter, EMITTER_FORCE_LAYER_TYPE } from 'key-layers-js';
+
+import { IS_MAC } from '@general/utils/browser';
+import { escapeString } from '@general/utils/string';
+import { ONE_KEY_CODE } from '@general/constants/keyCodes';
 import ITab from '@TerminalsOrchestrator/Workspace/Tab/ITab';
 import {
   EventHandlerType,
@@ -13,12 +16,30 @@ import {
 } from '@TerminalsOrchestrator/Workspace/Tab/types';
 
 class Tab extends TemplateEngine implements ITab {
+  private shortcutIndexField: number = 0;
+  public set shortcutIndex(val: number) {
+    const { shortcutIndexField, emitter } = this;
+    const shortcutText = this.getRef('shortcutText');
+    this.shortcutIndexField = val;
+    if (shortcutText && val !== shortcutIndexField) {
+      shortcutText.innerHTML = this.shortcut;
+      if (val && val < 10) {
+        emitter.removeListener('keyDown', this.keyboardSelectHandler);
+        emitter.addListener('keyDown', this.keyboardSelectHandler, {
+          code: ONE_KEY_CODE + val - 1, ...(IS_MAC ? { metaKey: true } : { altKey: true }),
+        });
+      } else {
+        emitter.removeListener('keyDown', this.keyboardSelectHandler);
+      }
+    }
+  }
+  public get shortcutIndex(): number {
+    return this.shortcutIndexField;
+  }
+
   private indexField: number = -1;
   public set index(val: number) {
-    const { indexField } = this;
     this.indexField = val;
-    const shortcutText = this.getRef('shortcutText');
-    if (shortcutText && val !== indexField) shortcutText.innerHTML = this.shortcut;
   }
   public get index(): number {
     return this.indexField;
@@ -79,10 +100,9 @@ class Tab extends TemplateEngine implements ITab {
   }
 
   private get shortcut(): string {
-    const { index } = this;
-    if (index < 0) return '';
-    const shortcutNumber = index + 1;
-    return IS_MAC ? `⌘${shortcutNumber}` : `alt${shortcutNumber}`;
+    const { shortcutIndexField } = this;
+    if (!shortcutIndexField) return '';
+    return IS_MAC ? `⌘${shortcutIndexField}` : `alt${shortcutIndexField}`;
   }
 
   private handlers: {
@@ -91,6 +111,7 @@ class Tab extends TemplateEngine implements ITab {
     drag: DragEventHandlerType[];
     dragend: DragEventHandlerType[];
   } = { click: [], close: [], drag: [], dragend: [] };
+  private readonly emitter: Emitter = new Emitter(EMITTER_FORCE_LAYER_TYPE);
 
   constructor(container: HTMLElement, options: TabOptionsType) {
     super(template, container);
@@ -129,6 +150,7 @@ class Tab extends TemplateEngine implements ITab {
   }
 
   public destroy() {
+    this.emitter.destroy();
     this.removeListeners();
     super.destroy();
   }
@@ -153,9 +175,16 @@ class Tab extends TemplateEngine implements ITab {
     document.removeEventListener('dragover', this.dragoverHandler);
     root.addEventListener('dragend', this.dragEndHandler);
     close.removeEventListener('click', this.closeHandler);
+    this.emitter.removeListener('keyDown', this.keyboardSelectHandler);
   }
 
   private clickHandler = (e: Event) => {
+    const { index, handlers } = this;
+    handlers.click.forEach(handler => handler(index, e));
+  }
+
+  private keyboardSelectHandler = (e: KeyboardEvent) => {
+    e.preventDefault();
     const { index, handlers } = this;
     handlers.click.forEach(handler => handler(index, e));
   }
