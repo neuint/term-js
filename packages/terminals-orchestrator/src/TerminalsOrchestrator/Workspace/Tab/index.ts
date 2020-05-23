@@ -99,6 +99,29 @@ class Tab extends TemplateEngine implements ITab {
     return this.isHiddenField;
   }
 
+  private leftField: number = 0;
+  public get left(): number {
+    return this.leftField;
+  }
+  public set left(val: number) {
+    if (this.leftField === val) return;
+    const root = this.getRef('root') as HTMLElement;
+    this.leftField = val;
+    root.style.left = `${val}px`;
+  }
+
+  private disabledHoverField: boolean = false;
+  public get disabledHover(): boolean {
+    return this.disabledHoverField;
+  }
+  public set disabledHover(val: boolean) {
+    if (this.disabledHoverField === val) return;
+    this.disabledHoverField = val;
+    const root = this.getRef('root') as HTMLElement;
+    if (val) root.classList.add(css.skipHover);
+    else root.classList.remove(css.skipHover);
+  }
+
   private get shortcut(): string {
     const { shortcutIndexField } = this;
     if (!shortcutIndexField) return '';

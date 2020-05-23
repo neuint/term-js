@@ -52,31 +52,28 @@ class Tabs extends TemplateEngine implements ITabs {
   }
 
   private visibleListWidth: number = 0;
+  private checkWidth: number = 0;
   private hiddenList?: IHiddenList;
   private tabsInfo: { isVisible: boolean; width: number; tab: ITab }[] = [];
   private readonly ro: ResizeObserver;
   private handlers: {
     focus: EventHandlerType[]; close: EventHandlerType[]; add: EventHandlerType[];
   } = { focus: [], close: [], add: [] };
-  private dragInfo?: { left: number; index: number; targetIndex: number; dragTabOffset: number };
-  private get lastVisibleIndex(): number {
-    const { tabsInfo } = this;
-    let isVisibleFound = false;
-    const index = tabsInfo.findIndex((item) => {
-      isVisibleFound = isVisibleFound || item.isVisible;
-      return isVisibleFound && !item.isVisible;
-    });
-    return Math.max(-1, index - 1);
-  }
+  private dragInfo?: {
+    left: number;
+    index: number;
+    replaceIndex: number;
+  };
 
   constructor(container: HTMLElement) {
     super(template, container);
-    this.ro = new ResizeObserver(this.updateListView);
+    this.ro = new ResizeObserver(this.observeHandler);
     this.render();
   }
 
   public render() {
     super.render({ css });
+    this.checkWidth = (this.getRef('checkContainer') as  HTMLElement).offsetWidth;
     this.addListeners();
   }
 
@@ -118,10 +115,12 @@ class Tabs extends TemplateEngine implements ITabs {
     (this.getRef('left-more') as HTMLElement).addEventListener('click', this.showLeftHiddenTabs);
     (this.getRef('right-more') as HTMLElement).addEventListener('click', this.showRightHiddenTabs);
     this.ro.observe(this.getRef('root') as HTMLElement);
+    this.ro.observe(this.getRef('checkContainer') as HTMLElement);
   }
 
   private removeListeners() {
     this.ro.unobserve(this.getRef('root') as HTMLElement);
+    this.ro.unobserve(this.getRef('checkContainer') as HTMLElement);
     (this.getRef('add') as HTMLElement).removeEventListener('click', this.addClickHandler);
     (this.getRef('left-more') as HTMLElement).removeEventListener('click', this.showLeftHiddenTabs);
     (this.getRef('right-more') as HTMLElement)
@@ -143,6 +142,16 @@ class Tabs extends TemplateEngine implements ITabs {
         return { tab, isVisible: true, width: tab.width };
       });
     }
+  }
+
+  private observeHandler = (entries: ResizeObserverEntry[]) => {
+    const checkContainer = this.getRef('checkContainer') as HTMLElement;
+    const checkContainerEntry = entries.find(item => item.target === checkContainer);
+    if (checkContainerEntry && checkContainerEntry?.contentRect.width !== this.checkWidth) {
+      this.updateTabsInfoSizes();
+    }
+    this.closeHiddenTabsHandler();
+    this.updateListView();
   }
 
   private updateListView = () => {
@@ -182,6 +191,12 @@ class Tabs extends TemplateEngine implements ITabs {
     });
     this.updateLeftMoreView();
     this.updateRightMoreView();
+  }
+
+  private updateTabsInfoSizes() {
+    this.tabsInfo.forEach((item) => {
+      item.width = item.tab.width;
+    });
   }
 
   private updateTabsInfo() {
@@ -287,121 +302,163 @@ class Tabs extends TemplateEngine implements ITabs {
     const { dragInfo, tabsInfo } = this;
     if (dragInfo) {
       this.updateDragInfo(e);
-      this.renderDropMarker();
+      this.updateTabsPosition();
     } else {
-      this.dragInfo = {
-        index,
-        targetIndex: index,
-        left: e.offsetX,
-        dragTabOffset: tabsInfo.reduce((acc, item, i) => {
-          if (!item.isVisible) return acc;
-          return i < index ? acc + item.width : acc;
-        }, 0),
-      };
+      tabsInfo.forEach(item => item.tab.disabledHover = true);
+      const root = this.getRef('root') as HTMLElement;
+      root.classList.add(css.draggable);
+      const { left } = (this.getRef('list') as HTMLElement).getBoundingClientRect();
+      const { clientX } = e;
+      this.dragInfo = { index, left: clientX - left, replaceIndex: index };
     }
   }
 
   private tabDragEndHandler = () => {
+    const { tabsInfo } = this;
+    const root = this.getRef('root') as HTMLElement;
+    tabsInfo.forEach(item => item.tab.disabledHover = false);
+    root.classList.remove(css.draggable);
     this.updateOrder();
     delete this.dragInfo;
-    this.hideDropMarker();
   }
 
   private updateDragInfo(e: DragEvent) {
-    const { dragInfo, lastVisibleIndex } = this;
+    const { dragInfo } = this;
     if (!dragInfo) return;
-    const { dragTabOffset } = dragInfo;
-    const maxLeft = (this.getRef('list') as HTMLElement).offsetWidth;
-    const left = dragTabOffset + e.offsetX - dragInfo.left;
-    if (left < 0 || left > maxLeft) return;
-    let index = left > 0 ? this.getPositionIndex(left) : this.getFirstVisibleIndex();
-    if (index < 0) index = left > 0 ? lastVisibleIndex + 1 : 0;
-    dragInfo.targetIndex = index;
+    const { clientX } = e;
+    const { width: maxLeft, left } = (this.getRef('list') as HTMLElement).getBoundingClientRect();
+    const newLeft = clientX - left;
+    if (newLeft < -2) return;
+    dragInfo.left = Math.min(maxLeft, Math.max(0, newLeft));
   }
 
-  private getPositionIndex(left: number): number {
-    const { tabsInfo } = this;
-    let index = 0;
-    let offset = 0;
+  private updateTabsPosition() {
+    const { dragInfo } = this;
+    if (!dragInfo) return;
+    const { replaceIndex } = dragInfo;
+    const dragOverIndex = this.getDragOverIndex();
+    if (dragOverIndex < 0) return;
+    if (dragOverIndex !== replaceIndex) {
+      dragInfo.replaceIndex = dragOverIndex;
+      this.updateTabsViewOrder();
+    }
+  }
+
+  private getDragOverIndex(): number {
+    const { tabsInfo, dragInfo } = this;
+    if (!dragInfo) return -1;
+    const { left } = dragInfo;
+    let index = -1;
+    let startOffset = 0;
     for (let i = 0, ln = tabsInfo.length; i < ln; i += 1) {
       const { width, isVisible } = tabsInfo[i];
       if (!isVisible) continue;
-      const updatedOffset = offset + width;
-      if (left >= offset && left <= updatedOffset) {
+      const endOffset = startOffset + width;
+      if (left >= 0 && left < endOffset) {
         index = i;
-        index = left < updatedOffset - width / 2 ? index : index + 1;
         break;
       }
-      offset = updatedOffset;
+      startOffset = endOffset;
     }
     return index;
   }
 
-  private getFirstVisibleIndex(): number {
-    const { tabsInfo, lastVisibleIndex } = this;
-    return tabsInfo.findIndex((item, i) => item.isVisible || i === lastVisibleIndex);
-  }
-
-  private renderDropMarker() {
-    const { dragInfo, tabsInfo } = this;
-    if (!dragInfo) return;
-    const { targetIndex } = dragInfo;
-    const dropMarker = this.getRef('dropMarker') as HTMLElement;
-    const leftMoreWidth = (this.getRef('left-more') as HTMLElement).offsetWidth;
-    dropMarker.classList.remove(css.hidden);
-    const leftPosition = tabsInfo.reduce((acc, item, i) => {
-      if (!item.isVisible || i >= targetIndex) return acc;
-      return i <= targetIndex ? acc + item.width : acc;
-    }, 0);
-    dropMarker.style.left = `${leftPosition + leftMoreWidth}px`;
-  }
-
-  private hideDropMarker() {
-    const dropMarker = this.getRef('dropMarker') as HTMLElement;
-    dropMarker.classList.add(css.hidden);
-  }
-
   private updateOrder() {
-    if (!this.updateTabsInfoOrder()) return;
-    this.updateTabsViewOrder();
+    this.updateTabsInfoOrder();
+    this.updateTabsOrder();
   }
 
-  private updateTabsInfoOrder(): boolean {
-    const { activeTabField, tabsInfo, dragInfo } = this;
-    if (!dragInfo) return false;
-    const { index, targetIndex } = dragInfo;
-    let invisibleLeftCount = 0;
-    tabsInfo.some((item) => {
-      if (item.isVisible) return true;
-      invisibleLeftCount += 1;
-      return false;
-    });
-    if (targetIndex === index) return false;
-    const activeTabInstance = tabsInfo[activeTabField].tab;
-    const dragTabInfo = tabsInfo[index];
-    tabsInfo.splice(index, 1);
-    tabsInfo.splice(targetIndex > index ? targetIndex - 1 : targetIndex, 0, dragTabInfo);
-    this.activeTabField = tabsInfo.findIndex(item => item.tab === activeTabInstance);
-    return true;
+  private updateTabsInfoOrder() {
+    const { tabsInfo, dragInfo, activeTab } = this;
+    if (!dragInfo) return;
+    const { index, replaceIndex } = dragInfo;
+    const activeTabInfo = tabsInfo[activeTab];
+    const spliced = tabsInfo.splice(index, 1);
+    if (!spliced.length) return;
+    tabsInfo.splice(replaceIndex, 0, spliced[0]);
+    this.activeTab = tabsInfo.indexOf(activeTabInfo) || 0;
+    dragInfo.index = replaceIndex;
   }
 
-  private updateTabsViewOrder() {
+  private updateTabsOrder() {
     const { tabsInfo } = this;
-    const list = this.getRef('list') as HTMLElement;
+    const list = this.getRef('list');
+    if (!list) return;
     let shortcutIndex = 1;
-    tabsInfo.forEach((item, index) => {
-      const { tab, isVisible } = item;
+    tabsInfo.forEach(({ tab, isVisible }, index) => {
+      const tabRoot = tab.getRef('root') as HTMLElement;
+      list.removeChild(tabRoot);
+      tab.left = 0;
+      list.appendChild(tabRoot);
       tab.index = index;
       if (isVisible) {
-        tab.shortcutIndex = shortcutIndex < 10 ? shortcutIndex : 0;
+        tab.shortcutIndex = shortcutIndex;
         shortcutIndex += 1;
       } else {
         tab.shortcutIndex = 0;
       }
-      const root = item.tab.getRef('root') as HTMLElement;
-      list.removeChild(root);
-      list.appendChild(root);
     });
+  }
+
+  private getTabOffset(index: number): number {
+    const { tabsInfo } = this;
+    return tabsInfo.reduce((acc: number, tabInfo, i): number => {
+      if (i >= index || !tabInfo.isVisible) return acc;
+      return acc + tabInfo.width;
+    }, 0);
+  }
+
+  private updateTabsViewOrder() {
+    const { dragInfo } = this;
+    if (!dragInfo) return;
+    const { index, replaceIndex } = dragInfo;
+    if (replaceIndex <= index) {
+      this.updateLeftDraggableTabPosition();
+      this.updateLeftTabsViewOrder();
+    } else {
+      this.updateRightDraggableTabPosition();
+      this.updateRightTabsViewOrder();
+    }
+  }
+
+  private updateLeftDraggableTabPosition() {
+    const { dragInfo, tabsInfo } = this;
+    const { index, replaceIndex } = dragInfo as { index: number; replaceIndex: number };
+    const targetLeft = this.getTabOffset(index) - tabsInfo.reduce((
+      acc: number, tabInfo, i,
+    ): number => {
+      return !tabInfo.isVisible || i >= replaceIndex ? acc : acc + tabInfo.width;
+    }, 0);
+    tabsInfo[index].tab.left = -1 * targetLeft;
+  }
+
+  private updateRightDraggableTabPosition() {
+    const { dragInfo, tabsInfo } = this;
+    const { index, replaceIndex } = dragInfo as { index: number; replaceIndex: number };
+    tabsInfo[index].tab.left = tabsInfo.reduce((acc: number, tabInfo, i): number => {
+      return !tabInfo.isVisible || i < index || i > replaceIndex ? acc : acc + tabInfo.width;
+    }, 0) - tabsInfo[index].width;
+  }
+
+  private updateLeftTabsViewOrder() {
+    const { dragInfo, tabsInfo } = this;
+    const { index, replaceIndex } = dragInfo as { index: number; replaceIndex: number };
+    const offsetWidth = tabsInfo[index].width;
+    for (let i = 0, ln = tabsInfo.length; i < ln; i += 1) {
+      if (i === index) continue;
+      tabsInfo[i].tab.left = i < replaceIndex || i > index ? 0 : offsetWidth;
+    }
+  }
+
+  private updateRightTabsViewOrder() {
+    const { dragInfo, tabsInfo } = this;
+    const { index, replaceIndex } = dragInfo as { index: number; replaceIndex: number };
+    const offsetWidth = tabsInfo[index].width;
+    for (let i = 0, ln = tabsInfo.length; i < ln; i += 1) {
+      if (i === index) continue;
+      if (i > index && i <= replaceIndex) tabsInfo[i].tab.left = -1 * offsetWidth;
+      else tabsInfo[i].tab.left = 0;
+    }
   }
 
   private showLeftHiddenTabs = () => {

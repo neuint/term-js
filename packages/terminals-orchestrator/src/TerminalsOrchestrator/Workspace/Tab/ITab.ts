@@ -9,6 +9,8 @@ export default interface ITab extends ITemplateEngine {
   active: boolean;
   invisible: boolean;
   hidden: boolean;
+  left: number;
+  disabledHover: boolean;
   addEventListener(event: EventType, handler: EventHandlerType): void;
   removeEventListener(event: EventType, handler: EventHandlerType): void;
 }

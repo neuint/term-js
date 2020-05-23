@@ -16,7 +16,7 @@ if (container) {
       { name: 'Test 3', terminals: [] },
       { name: 'Test 4', terminals: [] },
       { name: 'Test 5', terminals: [] },
-      { name: 'Test 6', terminals: [], focused: true },
+      { name: 'Test 6', terminals: [] },
       { name: 'Test 7', terminals: [] },
     ],
   });

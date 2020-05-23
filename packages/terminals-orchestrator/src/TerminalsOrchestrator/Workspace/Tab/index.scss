@@ -7,10 +7,13 @@
   @include flex-center;
 
   position: relative;
+  left: 0;
   padding-left: $terminals-orchestrator-tab-margin;
   padding-top: $terminals-orchestrator-tab-offset;
-  transition: padding-top $terminals-orchestrator-tab-animation-duration linear;
+  transition: padding-top $terminals-orchestrator-tab-animation-duration linear,
+    left $terminals-orchestrator-tab-animation-duration ease;
   color: var(--terminals-orchestrator-tab-text-color);
+  z-index: 1;
 
   &.reverse {
     flex-direction: row-reverse;
@@ -40,7 +43,7 @@
     box-shadow: var(--terminals-orchestrator-tab-shadow);
   }
 
-  &:hover {
+  &:hover:not(.skipHover) {
     padding-top: $terminals-orchestrator-tab-active-offset;
 
     &:after {
@@ -60,6 +63,7 @@
 
   &.draggable {
     opacity: 0.3;
+    z-index: 2;
 
     &:after {
       box-shadow: none;
