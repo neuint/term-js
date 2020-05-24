@@ -10,7 +10,7 @@ import Tab from '@TerminalsOrchestrator/Workspace/Tab';
 import {
   EventType,
   EventHandlerType,
-  TabEventType,
+  TabEventType, TabEventHandlerType, DragEndEventHandlerType,
 } from '@TerminalsOrchestrator/Workspace/Tabs/types';
 import {
   ADD_EVENT_TYPE,
@@ -57,8 +57,11 @@ class Tabs extends TemplateEngine implements ITabs {
   private tabsInfo: { isVisible: boolean; width: number; tab: ITab }[] = [];
   private readonly ro: ResizeObserver;
   private handlers: {
-    focus: EventHandlerType[]; close: EventHandlerType[]; add: EventHandlerType[];
-  } = { focus: [], close: [], add: [] };
+    focus: EventHandlerType[];
+    close: EventHandlerType[];
+    add: EventHandlerType[];
+    dragend: EventHandlerType[];
+  } = { focus: [], close: [], add: [], dragend: [] };
   private dragInfo?: {
     left: number;
     index: number;
@@ -90,7 +93,7 @@ class Tabs extends TemplateEngine implements ITabs {
     if (TAB_EVENTS.includes(event)) {
       tabsInfo.forEach((tabInfo) => {
         const tabEvent = event === FOCUS_EVENT_TYPE ? CLICK_EVENT_TYPE : event;
-        tabInfo.tab.addEventListener(tabEvent as TabEventType, handler);
+        tabInfo.tab.addEventListener(tabEvent as TabEventType, handler as TabEventHandlerType);
       });
     }
   }
@@ -105,7 +108,7 @@ class Tabs extends TemplateEngine implements ITabs {
     if (TAB_EVENTS.includes(event)) {
       tabsInfo.forEach((tabInfo) => {
         const tabEvent = event === FOCUS_EVENT_TYPE ? CLICK_EVENT_TYPE : event;
-        tabInfo.tab.removeEventListener(tabEvent as TabEventType, handler);
+        tabInfo.tab.removeEventListener(tabEvent as TabEventType, handler as TabEventHandlerType);
       });
     }
   }
@@ -135,8 +138,16 @@ class Tabs extends TemplateEngine implements ITabs {
         const tab = new Tab(list as HTMLElement, {
           title, index, active: index === activeTab, invisible: true,
         });
-        if (close.length) close.forEach(handler => tab.addEventListener(CLOSE_EVENT_TYPE, handler));
-        if (focus.length) focus.forEach(handler => tab.addEventListener(CLICK_EVENT_TYPE, handler));
+        if (close.length) {
+          close.forEach(handler => tab.addEventListener(
+            CLOSE_EVENT_TYPE, handler as TabEventHandlerType,
+          ));
+        }
+        if (focus.length) {
+          focus.forEach(handler => tab.addEventListener(
+            CLICK_EVENT_TYPE, handler as TabEventHandlerType,
+          ));
+        }
         tab.addEventListener(DRAG_EVENT_TYPE, this.tabDragHandler);
         tab.addEventListener(DRAG_END_EVENT_TYPE, this.tabDragEndHandler);
         return { tab, isVisible: true, width: tab.width };
@@ -314,12 +325,13 @@ class Tabs extends TemplateEngine implements ITabs {
   }
 
   private tabDragEndHandler = () => {
-    const { tabsInfo } = this;
+    const { tabsInfo, handlers, tabs } = this;
     const root = this.getRef('root') as HTMLElement;
     tabsInfo.forEach(item => item.tab.disabledHover = false);
     root.classList.remove(css.draggable);
     this.updateOrder();
     delete this.dragInfo;
+    handlers.dragend.forEach(callback => (callback as DragEndEventHandlerType)(tabs));
   }
 
   private updateDragInfo(e: DragEvent) {
@@ -369,13 +381,15 @@ class Tabs extends TemplateEngine implements ITabs {
   }
 
   private updateTabsInfoOrder() {
-    const { tabsInfo, dragInfo, activeTab } = this;
+    const { tabsInfo, dragInfo, activeTab, tabsField } = this;
     if (!dragInfo) return;
     const { index, replaceIndex } = dragInfo;
     const activeTabInfo = tabsInfo[activeTab];
     const spliced = tabsInfo.splice(index, 1);
+    const splicedTab = tabsField.splice(index, 1);
     if (!spliced.length) return;
     tabsInfo.splice(replaceIndex, 0, spliced[0]);
+    tabsField.splice(replaceIndex, 0, splicedTab[0]);
     this.activeTab = tabsInfo.indexOf(activeTabInfo) || 0;
     dragInfo.index = replaceIndex;
   }
