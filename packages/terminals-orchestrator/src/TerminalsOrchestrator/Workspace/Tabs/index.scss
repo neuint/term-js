@@ -115,7 +115,6 @@
   display: flex;
   max-width: calc(100% - #{$terminals-orchestrator-tabs-height});
   position: relative;
-  overflow: hidden;
   z-index: 1;
 }
 
