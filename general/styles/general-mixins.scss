@@ -15,6 +15,11 @@
   }
 }
 
+@mixin size($value) {
+  width: $value;
+  height: $value;
+}
+
 @mixin scroll($color) {
   ::-webkit-scrollbar {
     width: 0.5rem;
@@ -80,4 +85,24 @@
     }
   }
   transition: #{$transition-value};
+}
+
+@mixin border-right-radius($value) {
+  border-top-right-radius: $value;
+  border-bottom-right-radius: $value;
+}
+
+@mixin border-left-radius($value) {
+  border-top-left-radius: $value;
+  border-bottom-left-radius: $value;
+}
+
+@mixin border-top-radius($value) {
+  border-top-left-radius: $value;
+  border-top-right-radius: $value;
+}
+
+@mixin border-bottom-radius($value) {
+  border-bottom-left-radius: $value;
+  border-bottom-right-radius: $value;
 }

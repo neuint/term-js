@@ -5,6 +5,8 @@ import { TemplateEngine } from '@term-js/term';
 import { IWorkspace } from '@TerminalsOrchestrator/Workspace/IWorkspace';
 import ITabs from '@TerminalsOrchestrator/Workspace/Tabs/ITabs';
 import Tabs from '@TerminalsOrchestrator/Workspace/Tabs';
+import IContent from '@TerminalsOrchestrator/Workspace/Content/IContent';
+import Content from '@TerminalsOrchestrator/Workspace/Content';
 
 class Workspace extends TemplateEngine implements IWorkspace {
   public untitledName: string = '';
@@ -24,6 +26,7 @@ class Workspace extends TemplateEngine implements IWorkspace {
   }
 
   private tabsView: ITabs;
+  private readonly contentList: IContent[] = [];
   constructor(container: HTMLElement) {
     super(template, container);
     this.render();
@@ -32,6 +35,9 @@ class Workspace extends TemplateEngine implements IWorkspace {
     tabsView.addEventListener('close', this.closeTabHandler);
     tabsView.addEventListener('add', this.addTabHandler);
     this.tabsView = tabsView;
+    this.contentList.push(new Content(this.getRef('content') as HTMLElement, {
+      className: css.contentItem,
+    }));
   }
 
   public render() {
@@ -40,6 +46,12 @@ class Workspace extends TemplateEngine implements IWorkspace {
 
   public declare() {
     this.tabsView.destroy();
+    super.destroy();
+  }
+
+  public destroy() {
+    this.tabsView.destroy();
+    this.contentList.forEach(item => item.destroy());
     super.destroy();
   }
 

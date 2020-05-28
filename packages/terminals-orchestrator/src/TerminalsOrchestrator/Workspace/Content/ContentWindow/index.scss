@@ -1,0 +1,101 @@
+@import 'general-mixins.scss';
+@import './constants.scss';
+@import '../../../theme.scss';
+
+.root {
+  position: absolute;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 1px 1px 10px var(--terminals-orchestrator-window-shadow-color);
+}
+
+.content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.resize {
+  position: absolute;
+  background: var(--terminals-orchestrator-window-resize-element-bg-color);
+  opacity: 0;
+  transition: opacity 0.1s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.corner {
+  @include size($resize-element-size);
+}
+
+.leftTop {
+  left: 0;
+  top: 0;
+  cursor: nwse-resize;
+  border-bottom-right-radius: $corner-border-radius;
+}
+
+.rightBottom {
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+  border-top-left-radius: $corner-border-radius;
+}
+
+.rightTop {
+  right: 0;
+  top: 0;
+  cursor: nesw-resize;
+  border-bottom-left-radius: $corner-border-radius;
+}
+
+.leftBottom {
+  left: 0;
+  bottom: 0;
+  cursor: nesw-resize;
+  border-top-right-radius: $corner-border-radius;
+}
+
+.left {
+  width: $resize-element-size / 2;
+  top: $resize-element-size;
+  bottom: $resize-element-size;
+  left: 0;
+  cursor: ew-resize;
+
+  @include border-right-radius($resize-element-size / 2);
+}
+
+.right {
+  width: $resize-element-size / 2;
+  top: $resize-element-size;
+  bottom: $resize-element-size;
+  right: 0;
+  cursor: ew-resize;
+
+  @include border-left-radius($resize-element-size / 2);
+}
+
+.top {
+  height: $resize-element-size / 2;
+  left: $resize-element-size;
+  right: $resize-element-size;
+  top: 0;
+  cursor: ns-resize;
+
+  @include border-bottom-radius($resize-element-size / 2);
+}
+
+.bottom {
+  height: $resize-element-size / 2;
+  left: $resize-element-size;
+  right: $resize-element-size;
+  bottom: 0;
+  cursor: ns-resize;
+
+  @include border-top-radius($resize-element-size / 2);
+}

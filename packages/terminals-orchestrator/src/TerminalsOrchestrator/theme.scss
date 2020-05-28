@@ -2,16 +2,20 @@
 @import 'general-theme.scss';
 
 :root {
-  --terminals-orchestrator-bg-color: #{$mine-shaft};
-  --terminals-orchestrator-workspace-bg-color: #{$bunker};
+  --terminals-orchestrator-bg-color: #{lighten($mine-shaft, 3)};
+  --terminals-orchestrator-workspace-bg-color: #{darken($mine-shaft, 7)};
 
   --terminals-orchestrator-tabs-drop-marker-color: #{darken($alabaster, 20)};
 
   --terminals-orchestrator-tab-bg-color: #{$shark};
   --terminals-orchestrator-tab-shadow: 0 0 4px 1px #{$mine-shaft};
-  --terminals-orchestrator-tab-active-bg-color: #{$bunker};
+  --terminals-orchestrator-tab-active-bg-color: #{darken($mine-shaft, 7)};
 
   --terminals-orchestrator-tab-text-color: #{darken($alabaster, 50)};
   --terminals-orchestrator-tab-shortcut-text-color: #{darken($alabaster, 70)};
   --terminals-orchestrator-tab-active-text-color: #{darken($alabaster, 30)};
+
+  --terminals-orchestrator-window-shadow-color: #{rgba($mine-shaft, 0.5)};
+
+  --terminals-orchestrator-window-resize-element-bg-color: #{rgba($alabaster, 0.3)};
 }
