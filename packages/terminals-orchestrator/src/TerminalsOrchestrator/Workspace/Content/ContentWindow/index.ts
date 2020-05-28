@@ -4,10 +4,24 @@ import css from './index.scss';
 import { TemplateEngine, Term, ITerm } from '@term-js/term';
 import '@term-js/term/dist/index.css';
 
-import { OptionsType } from './types';
-import IContentWindow from '@TerminalsOrchestrator/Workspace/Content/ContentWindow/IContentWindow';
+import { MoveType, OptionsType } from './types';
+import IContentWindow from './IContentWindow';
+import { MOVE_TYPES } from '../constants';
 
 class ContentWindow extends TemplateEngine implements IContentWindow {
+  private lockSelectionField: boolean = false;
+  public get lockSelection(): boolean {
+    return this.lockSelectionField;
+  }
+  public set lockSelection(val: boolean) {
+    const { lockSelectionField } = this;
+    this.lockSelectionField = val;
+    const root = this.getRef('root') as HTMLElement;
+    if (!root || lockSelectionField === val) return;
+    if (val) root.classList.add(css.lockSelection);
+    else root.classList.remove(css.lockSelection);
+  }
+
   public get position(): { left: number; right: number; top: number; bottom: number } {
     const { left, right, top, bottom } = this.options.position;
     return { left, right, top, bottom };
@@ -48,6 +62,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
 
   private readonly options: OptionsType;
   private term: ITerm;
+  private moveType?: MoveType;
   constructor(container: HTMLElement, options: OptionsType) {
     super(template, container);
     this.options = options;
@@ -82,6 +97,10 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     right.addEventListener('mousedown', this.onMouseDown);
     top.addEventListener('mousedown', this.onMouseDown);
     bottom.addEventListener('mousedown', this.onMouseDown);
+
+    window.addEventListener('mouseup', this.onEndMove);
+    window.addEventListener('mouseleave', this.onEndMove);
+    window.addEventListener('mousemove', this.onMove);
   }
 
   private removeListeners() {
@@ -98,10 +117,33 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     right.removeEventListener('mousedown', this.onMouseDown);
     top.removeEventListener('mousedown', this.onMouseDown);
     bottom.removeEventListener('mousedown', this.onMouseDown);
+
+    window.removeEventListener('mouseup', this.onEndMove);
+    window.removeEventListener('mouseleave', this.onEndMove);
+    window.removeEventListener('mousemove', this.onMove);
   }
 
-  onMouseDown = (e: Event) => {
+  private onMouseDown = (e: MouseEvent) => {
+    const { onStartMove } = this.options;
+    const { target } = e;
+    if (!target || !onStartMove) return;
+    const dataType = (target as HTMLElement).getAttribute('data-type');
+    if (dataType && MOVE_TYPES.includes(dataType)) {
+      this.moveType = dataType as MoveType;
+      onStartMove(dataType as MoveType, this, e);
+    }
+  }
 
+  private onEndMove = (e: MouseEvent) => {
+    const { moveType, options: { onEndMove } } = this;
+    if (!moveType) return;
+    delete this.moveType;
+    if (onEndMove) onEndMove(moveType, this, e);
+  }
+
+  private onMove = (e: MouseEvent) => {
+    const { moveType, options: { onMove } } = this;
+    if (moveType && onMove) onMove(moveType, this, e);
   }
 }
 

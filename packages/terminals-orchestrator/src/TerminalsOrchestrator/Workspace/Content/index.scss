@@ -1,1 +1,29 @@
-.root {}
+.root {
+  &.horizontalResize:after,
+  &.verticalResize:after,
+  &.leftBottomResize:after,
+  &.rightBottomResize:after {
+    position: absolute;
+    content: '';
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+
+  &.horizontalResize:after {
+    cursor: ew-resize;
+  }
+
+  &.verticalResize:after {
+    cursor: ns-resize;
+  }
+
+  &.leftBottomResize:after {
+    cursor: nesw-resize;
+  }
+
+  &.rightBottomResize:after {
+    cursor: nwse-resize;
+  }
+}
