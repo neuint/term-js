@@ -2,6 +2,8 @@
 @import 'general-theme.scss';
 
 :root {
+  --terminals-orchestrator-start-z-index: 0;
+
   --terminals-orchestrator-bg-color: #{lighten($mine-shaft, 3)};
   --terminals-orchestrator-workspace-bg-color: #{darken($mine-shaft, 7)};
 

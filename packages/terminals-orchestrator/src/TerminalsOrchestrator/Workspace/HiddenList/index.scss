@@ -1,14 +1,16 @@
 @import 'general-mixins.scss';
 @import 'general-components.scss';
+@import '../../theme.scss';
 
 .container {
-  z-index: 4;
   @include overlay;
+
+  z-index: calc(var(--terminals-orchestrator-start-z-index) + 4);
 }
 
 .list {
+  @include context-menu-list;
+
   position: absolute;
   z-index: 4;
-
-  @include context-menu-list;
 }

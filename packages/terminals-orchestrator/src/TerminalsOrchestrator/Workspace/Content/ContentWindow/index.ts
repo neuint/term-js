@@ -7,6 +7,8 @@ import '@term-js/term/dist/index.css';
 import { MoveType, OptionsType } from './types';
 import IContentWindow from './IContentWindow';
 import { MOVE_TYPES } from '../constants';
+import TermHeaderPlugin from './TermHeaderPlugin';
+import ITermHeaderPlugin from './TermHeaderPlugin/ITermHeaderPlugin';
 
 class ContentWindow extends TemplateEngine implements IContentWindow {
   private lockSelectionField: boolean = false;
@@ -61,6 +63,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
   }
 
   private readonly options: OptionsType;
+  private readonly termHeaderPlugin: ITermHeaderPlugin;
   private term: ITerm;
   private moveType?: MoveType;
   constructor(container: HTMLElement, options: OptionsType) {
@@ -69,7 +72,10 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     this.render();
     this.term = new Term(this.getRef('content') as HTMLElement, {
       lines: [],
+      header: 'Untitled',
     });
+    this.termHeaderPlugin = new TermHeaderPlugin({ onStartMove: this.onMouseDown });
+    this.term.pluginManager.register(this.termHeaderPlugin);
   }
 
   public render() {
@@ -78,6 +84,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
   }
 
   public destroy() {
+    this.termHeaderPlugin.destroy();
     this.term.destroy();
     this.removeListeners();
     super.destroy();

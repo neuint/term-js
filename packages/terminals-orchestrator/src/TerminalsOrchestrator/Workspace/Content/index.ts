@@ -7,7 +7,7 @@ import ContentWindow from '@TerminalsOrchestrator/Workspace/Content/ContentWindo
 import IContentWindow from '@TerminalsOrchestrator/Workspace/Content/ContentWindow/IContentWindow';
 import { MoveType } from '@TerminalsOrchestrator/Workspace/Content/ContentWindow/types';
 import {
-  BOTTOM_MOVE_TYPE,
+  BOTTOM_MOVE_TYPE, HEADER_MOVE_TYPE,
   LEFT_BOTTOM_MOVE_TYPE,
   LEFT_MOVE_TYPE,
   LEFT_TOP_MOVE_TYPE,
@@ -33,6 +33,12 @@ class Content extends TemplateEngine implements ITemplateEngine {
   public render() {
     const { className = '' } = this.options;
     super.render({ css, className });
+    this.contentWindows.push(new ContentWindow(this.getRef('root') as HTMLElement, {
+      position: { left: 20, right: 20, top: 20, bottom: 20 },
+      onStartMove: this.onStartMove,
+      onEndMove: this.onEndMove,
+      onMove: this.onMove,
+    }));
     this.contentWindows.push(new ContentWindow(this.getRef('root') as HTMLElement, {
       position: { left: 20, right: 20, top: 20, bottom: 20 },
       onStartMove: this.onStartMove,
@@ -72,6 +78,8 @@ class Content extends TemplateEngine implements ITemplateEngine {
     if ([BOTTOM_MOVE_TYPE, LEFT_BOTTOM_MOVE_TYPE, RIGHT_BOTTOM_MOVE_TYPE].includes(type)) {
       this.onBottomSideMove(e);
     }
+
+    if (HEADER_MOVE_TYPE === type) this.onWindowMove(e);
   }
 
   private updateGlobalCursor() {
@@ -153,6 +161,34 @@ class Content extends TemplateEngine implements ITemplateEngine {
     contentWindow.position = {
       ...contentWindow.position, bottom: Math.max(0, Math.min(newBottom, maxBottom)),
     };
+  }
+
+  private onWindowMove(e: MouseEvent) {
+    const {
+      contentWindow, startPosition, startOffsets: { left, right, top, bottom },
+    } = this.moveInfo as MoveInfoType;
+    const root = this.getRef('root') as HTMLElement;
+    const verticalOffset = e.clientY - startPosition.top;
+    const horizontalOffset = e.clientX - startPosition.left;
+    const { offsetHeight: rootHeight, offsetWidth: rootWidth } = root;
+    const relativeVerticalOffset = verticalOffset / rootHeight * 100;
+    const relativeHorizontalOffset = horizontalOffset / rootWidth * 100;
+    const relativeWidth = 100 - left - right;
+    const relativeHeight = 100 - top - bottom;
+
+    let newLeft = Math.max(left + relativeHorizontalOffset, 0);
+    let newRight = 100 - relativeWidth - newLeft;
+    let newTop = Math.max(top + relativeVerticalOffset, 0);
+    let newBottom = 100 - relativeHeight - newTop;
+    if (newRight < 0) {
+      newRight = 0;
+      newLeft = 100 - relativeWidth;
+    }
+    if (newBottom < 0) {
+      newBottom = 0;
+      newTop = 100 - relativeHeight;
+    }
+    contentWindow.position = { left: newLeft, right: newRight, top: newTop, bottom: newBottom };
   }
 }
 

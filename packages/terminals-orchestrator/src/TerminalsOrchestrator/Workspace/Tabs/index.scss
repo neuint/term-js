@@ -1,7 +1,9 @@
 @import 'general-mixins.scss';
 @import 'general-components.scss';
 @import 'general-theme.scss';
+
 @import '../../constants.scss';
+@import '../../theme.scss';
 
 .root {
   position: relative;
@@ -81,7 +83,7 @@
   height: $terminals-orchestrator-tabs-height;
   left: 0;
   flex-direction: row-reverse;
-  z-index: 0;
+  z-index: calc(var(--terminals-orchestrator-start-z-index) + 0);
 
   &:before, &:after {
     position: relative;
@@ -115,12 +117,12 @@
   display: flex;
   max-width: calc(100% - #{$terminals-orchestrator-tabs-height});
   position: relative;
-  z-index: 1;
+  z-index: calc(var(--terminals-orchestrator-start-z-index) + 1);
 }
 
 .navigationContainer {
   position: absolute;
-  z-index: 2;
+  z-index: calc(var(--terminals-orchestrator-start-z-index) + 2);
   top: 0;
   display: flex;
   width: $terminals-orchestrator-tabs-height * 1.5;
