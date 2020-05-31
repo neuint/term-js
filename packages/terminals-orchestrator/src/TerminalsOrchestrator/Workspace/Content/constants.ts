@@ -1,5 +1,6 @@
 export const MIN_CONTENT_WINDOW_WIDTH = 50;
 export const MIN_CONTENT_WINDOW_HEIGHT = 50;
+export const ANCHOR_SIZE = 6;
 
 export const LEFT_MOVE_TYPE = 'left';
 export const RIGHT_MOVE_TYPE = 'right';

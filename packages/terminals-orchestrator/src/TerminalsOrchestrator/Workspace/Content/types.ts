@@ -5,6 +5,8 @@ export type OptionsType = {
   className?: string;
 };
 
+export type AnchorPointType = { position: number; startOffset: number; endOffset: number };
+
 export type MoveInfoType = {
   contentWindow: IContentWindow;
   type: MoveType;

@@ -11,6 +11,19 @@ import TermHeaderPlugin from './TermHeaderPlugin';
 import ITermHeaderPlugin from './TermHeaderPlugin/ITermHeaderPlugin';
 
 class ContentWindow extends TemplateEngine implements IContentWindow {
+  private zIndexField: number = 0;
+  public get zIndex(): number {
+    return this.zIndexField;
+  }
+  public set zIndex(val: number) {
+    const { zIndexField } = this;
+    this.zIndexField = val;
+    if (zIndexField !== val) {
+      const root = this.getRef('root') as HTMLElement;
+      root.style.setProperty('--z-index', String(val));
+    }
+  }
+
   private lockSelectionField: boolean = false;
   public get lockSelection(): boolean {
     return this.lockSelectionField;
@@ -66,9 +79,11 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
   private readonly termHeaderPlugin: ITermHeaderPlugin;
   private term: ITerm;
   private moveType?: MoveType;
+
   constructor(container: HTMLElement, options: OptionsType) {
     super(template, container);
     this.options = options;
+    this.zIndexField = options.zIndex || 0;
     this.render();
     this.term = new Term(this.getRef('content') as HTMLElement, {
       lines: [],
@@ -79,7 +94,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
   }
 
   public render() {
-    super.render({ css, ...this.options.position });
+    super.render({ css, ...this.options.position, zIndex: this.zIndex });
     this.addListeners();
   }
 
@@ -94,6 +109,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     const {
       leftTop, rightTop, leftBottom, rightBottom, left, right, top, bottom,
     } = this.dragElements;
+    const root = this.getRef('root') as HTMLElement;
 
     leftTop.addEventListener('mousedown', this.onMouseDown);
     rightTop.addEventListener('mousedown', this.onMouseDown);
@@ -105,6 +121,8 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     top.addEventListener('mousedown', this.onMouseDown);
     bottom.addEventListener('mousedown', this.onMouseDown);
 
+    root.addEventListener('focus', this.onFocus);
+
     window.addEventListener('mouseup', this.onEndMove);
     window.addEventListener('mouseleave', this.onEndMove);
     window.addEventListener('mousemove', this.onMove);
@@ -114,6 +132,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     const {
       leftTop, rightTop, leftBottom, rightBottom, left, right, top, bottom,
     } = this.dragElements;
+    const root = this.getRef('root') as HTMLElement;
 
     leftTop.removeEventListener('mousedown', this.onMouseDown);
     rightTop.removeEventListener('mousedown', this.onMouseDown);
@@ -124,6 +143,8 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     right.removeEventListener('mousedown', this.onMouseDown);
     top.removeEventListener('mousedown', this.onMouseDown);
     bottom.removeEventListener('mousedown', this.onMouseDown);
+
+    root.removeEventListener('focus', this.onFocus);
 
     window.removeEventListener('mouseup', this.onEndMove);
     window.removeEventListener('mouseleave', this.onEndMove);
@@ -151,6 +172,11 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
   private onMove = (e: MouseEvent) => {
     const { moveType, options: { onMove } } = this;
     if (moveType && onMove) onMove(moveType, this, e);
+  }
+
+  private onFocus = (e: Event) => {
+    const { onFocus } = this.options;
+    if (onFocus) onFocus(this, e);
   }
 }
 

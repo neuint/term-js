@@ -3,10 +3,14 @@
 @import '../../../theme.scss';
 
 .root {
+  --z-index: 0;
+
   position: absolute;
   border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 1px 1px 10px var(--terminals-orchestrator-window-shadow-color);
+  z-index: calc(var(--terminals-orchestrator-start-z-index) + var(--z-index));
+  outline: none;
 }
 
 .lockSelection {

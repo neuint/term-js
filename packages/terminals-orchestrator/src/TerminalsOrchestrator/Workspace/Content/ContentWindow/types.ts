@@ -8,4 +8,6 @@ export type OptionsType = {
   onStartMove?: (type: MoveType, contentWindow: IContentWindow, e: MouseEvent) => void;
   onEndMove?: (type: MoveType, contentWindow: IContentWindow, e: MouseEvent) => void;
   onMove?: (type: MoveType, contentWindow: IContentWindow, e: MouseEvent) => void;
+  onFocus?: (contentWindow: IContentWindow, e: Event) => void;
+  zIndex?: number;
 };
