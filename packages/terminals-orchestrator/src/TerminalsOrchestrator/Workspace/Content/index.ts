@@ -67,6 +67,7 @@ class Content extends TemplateEngine implements IContent {
       title: this.options?.localization?.untitledTerm,
     });
     this.contentWindows.push(cn);
+    this.onFocus(cn);
     return cn;
   }
 

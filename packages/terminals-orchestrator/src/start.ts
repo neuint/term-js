@@ -14,7 +14,7 @@ if (container) {
     ],
     localization: {
       untitledTab: 'New tab',
-      untitledTerm: 'New Terminal',
+      untitledTerm: ' ',
     },
   });
   (window as unknown as { terminalsOrchestrator: ITerminalsOrchestrator })
