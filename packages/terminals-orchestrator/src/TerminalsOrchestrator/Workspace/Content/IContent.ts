@@ -1,4 +1,6 @@
 import { ITemplateEngine } from '@term-js/term';
+import IContentWindow from './ContentWindow/IContentWindow';
 
-// tslint:disable-next-line:no-empty-interface
-export default interface IContent extends ITemplateEngine {}
+export default interface IContent extends ITemplateEngine {
+  addContentWindow(): IContentWindow;
+}

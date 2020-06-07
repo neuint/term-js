@@ -62,6 +62,11 @@
   align-items: center;
 }
 
+@mixin flex-vertical {
+  display: flex;
+  align-items: center;
+}
+
 @mixin clear-button {
   display: inline-block;
   border: none;

@@ -1,4 +1,4 @@
-import { min, uniq } from 'lodash-es';
+import { uniq } from 'lodash-es';
 
 import template from './template.html';
 import css from './index.scss';
@@ -21,6 +21,7 @@ import {
   RIGHT_TOP_MOVE_TYPE,
   TOP_MOVE_TYPE,
 } from '@TerminalsOrchestrator/Workspace/Content/constants';
+import { IS_MAC } from '@general/utils/browser';
 
 class Content extends TemplateEngine implements ITemplateEngine {
   private readonly options: OptionsType = {};
@@ -39,25 +40,38 @@ class Content extends TemplateEngine implements ITemplateEngine {
     this.render();
   }
 
+  public addContentWindow = () => {
+    const cn = new ContentWindow(this.getRef('root') as HTMLElement, {
+      position: { left: 20, right: 20, top: 20, bottom: 20 },
+      onStartMove: this.onStartMove,
+      onEndMove: this.onEndMove,
+      onMove: this.onMove,
+    });
+    this.contentWindows.push(cn);
+    return cn;
+  }
+
   public render() {
     const { className = '' } = this.options;
     super.render({ css, className });
-    this.contentWindows.push(new ContentWindow(this.getRef('root') as HTMLElement, {
-      position: { left: 20, right: 20, top: 20, bottom: 20 },
-      onStartMove: this.onStartMove,
-      onEndMove: this.onEndMove,
-      onMove: this.onMove,
-      onFocus: this.onFocus,
-      zIndex: 0,
-    }));
-    this.contentWindows.push(new ContentWindow(this.getRef('root') as HTMLElement, {
-      position: { left: 20, right: 20, top: 20, bottom: 20 },
-      onStartMove: this.onStartMove,
-      onEndMove: this.onEndMove,
-      onMove: this.onMove,
-      onFocus: this.onFocus,
-      zIndex: 1,
-    }));
+    const addWindowShortcutText = this.getRef('addWindowShortcutText') as HTMLElement;
+    addWindowShortcutText.innerHTML = IS_MAC ? '⌘E' : 'ctrl E';
+    this.addListeners();
+  }
+
+  public destroy() {
+    this.removeListeners();
+    super.destroy();
+  }
+
+  private addListeners() {
+    const addWindowButton = this.getRef('addWindowButton') as HTMLElement;
+    addWindowButton.addEventListener('click', this.addContentWindow);
+  }
+
+  private removeListeners() {
+    const addWindowButton = this.getRef('addWindowButton') as HTMLElement;
+    addWindowButton.removeEventListener('click', this.addContentWindow);
   }
 
   private onStartMove = (type: MoveType, contentWindow: IContentWindow, e: MouseEvent) => {

@@ -20,6 +20,7 @@ import {
 } from '@TerminalsOrchestrator/Workspace/Tabs/constants';
 import HiddenList from '@TerminalsOrchestrator/Workspace/HiddenList';
 import IHiddenList from '@TerminalsOrchestrator/Workspace/HiddenList/IHiddenList';
+import { IS_MAC } from '@general/utils/browser';
 
 class Tabs extends TemplateEngine implements ITabs {
   private tabsField: string[] = [];
@@ -78,6 +79,8 @@ class Tabs extends TemplateEngine implements ITabs {
     super.render({ css });
     this.checkWidth = (this.getRef('checkContainer') as  HTMLElement).offsetWidth;
     this.addListeners();
+    const addButton = this.getRef('add') as HTMLElement;
+    addButton.setAttribute('title', IS_MAC ? '⌘ + shift + E' : 'ctrl + shift + E');
   }
 
   public destroy() {

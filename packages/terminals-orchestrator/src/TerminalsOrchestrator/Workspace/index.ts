@@ -1,12 +1,15 @@
 import template from './template.html';
 import css from './index.scss';
 
+import { Emitter, EMITTER_FORCE_LAYER_TYPE } from 'key-layers-js';
 import { TemplateEngine } from '@term-js/term';
 import { IWorkspace } from '@TerminalsOrchestrator/Workspace/IWorkspace';
 import ITabs from '@TerminalsOrchestrator/Workspace/Tabs/ITabs';
 import Tabs from '@TerminalsOrchestrator/Workspace/Tabs';
 import IContent from '@TerminalsOrchestrator/Workspace/Content/IContent';
 import Content from '@TerminalsOrchestrator/Workspace/Content';
+import { E_KEY_CODE } from '@general/constants/keyCodes';
+import { IS_MAC } from '@general/utils/browser';
 
 class Workspace extends TemplateEngine implements IWorkspace {
   public untitledName: string = '';
@@ -27,6 +30,11 @@ class Workspace extends TemplateEngine implements IWorkspace {
 
   private tabsView: ITabs;
   private readonly contentList: IContent[] = [];
+  private readonly emitter: Emitter = new Emitter(EMITTER_FORCE_LAYER_TYPE);
+  private get activeContent(): IContent | null {
+    return this.contentList[0] || null;
+  }
+
   constructor(container: HTMLElement) {
     super(template, container);
     this.render();
@@ -34,6 +42,12 @@ class Workspace extends TemplateEngine implements IWorkspace {
     tabsView.addEventListener('focus', this.focusTabHandler);
     tabsView.addEventListener('close', this.closeTabHandler);
     tabsView.addEventListener('add', this.addTabHandler);
+    this.emitter.addListener('keyDown', this.newContentWindowHandler, {
+      code: E_KEY_CODE, ...(IS_MAC ? { metaKey: true } : { ctrlKey: true }),
+    });
+    this.emitter.addListener('keyDown', this.addTabHandler, {
+      code: E_KEY_CODE, shiftKey: true, ...(IS_MAC ? { metaKey: true } : { ctrlKey: true }),
+    });
     this.tabsView = tabsView;
     this.contentList.push(new Content(this.getRef('content') as HTMLElement, {
       className: css.contentItem,
@@ -50,9 +64,21 @@ class Workspace extends TemplateEngine implements IWorkspace {
   }
 
   public destroy() {
-    this.tabsView.destroy();
-    this.contentList.forEach(item => item.destroy());
+    const { tabsView, contentList, emitter } = this;
+    emitter.removeListener('keyDown', this.newContentWindowHandler);
+    emitter.removeListener('keyDown', this.addTabHandler);
+    emitter.destroy();
+    contentList.forEach(item => item.destroy());
+    tabsView.destroy();
     super.destroy();
+  }
+
+  private newContentWindowHandler = (e: KeyboardEvent) => {
+    const { activeContent } = this;
+    e.preventDefault();
+    if (activeContent) {
+      activeContent.addContentWindow();
+    }
   }
 
   private focusTabHandler = (index: number) => {

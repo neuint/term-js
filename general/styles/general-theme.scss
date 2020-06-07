@@ -8,9 +8,9 @@
   --term-js-popup-bg-color: #{lighten($bunker, 10)};
   --term-js-popup-border-color: #{darken($bunker, 10)};
 
-  --term-js-icon-button-color: #{lighten($bunker, 18)};
-  --term-js-icon-button-color-hover: #{lighten($bunker, 30)};
-  --term-js-icon-button-color-active: #{lighten($bunker, 22)};
+  --term-js-icon-button-color: #{lighten($bunker, 30)};
+  --term-js-icon-button-color-hover: #{lighten($bunker, 40)};
+  --term-js-icon-button-color-active: #{lighten($bunker, 32)};
 
   --term-js-list-bg-color-hover: #{lighten($bunker, 15)};
 }
