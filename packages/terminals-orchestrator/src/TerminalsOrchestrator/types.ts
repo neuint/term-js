@@ -10,6 +10,6 @@ export type TabType = {
 };
 
 export type OptionsType = {
-  untitledName?: string;
+  localization?: { [key: string]: string };
   tabs: TabType[];
 };

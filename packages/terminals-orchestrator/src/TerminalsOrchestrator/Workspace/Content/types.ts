@@ -4,6 +4,7 @@ import { MoveType } from './ContentWindow/types';
 export type OptionsType = {
   className?: string;
   hidden?: boolean;
+  localization?: { [key: string]: string };
   id: number;
 };
 

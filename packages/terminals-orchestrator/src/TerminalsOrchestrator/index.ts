@@ -8,8 +8,7 @@ import Workspace from '@TerminalsOrchestrator/Workspace';
 class TerminalsOrchestrator implements ITerminalsOrchestrator {
   private workspace: IWorkspace;
   constructor(container: HTMLElement, options: OptionsType) {
-    this.workspace = new Workspace(container);
-    this.workspace.untitledName = options.untitledName || 'Untitled';
+    this.workspace = new Workspace(container, { localization: options.localization });
     let activeIndex = 0;
     this.workspace.tabs = options.tabs.map(({ name, focused }, index: number): string => {
       if (focused) activeIndex = index;

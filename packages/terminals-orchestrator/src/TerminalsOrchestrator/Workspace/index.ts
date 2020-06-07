@@ -11,9 +11,9 @@ import Content from '@TerminalsOrchestrator/Workspace/Content';
 import { E_KEY_CODE } from '@general/constants/keyCodes';
 import { IS_MAC } from '@general/utils/browser';
 import { TabInfoType } from '@TerminalsOrchestrator/Workspace/Tabs/types';
+import { OptionsType } from '@TerminalsOrchestrator/Workspace/types';
 
 class Workspace extends TemplateEngine implements IWorkspace {
-  public untitledName: string = '';
   public set tabs(val: (string | TabInfoType)[]) {
     const { tabsView } = this;
     tabsView.tabs = val.map((item: string | TabInfoType): TabInfoType => {
@@ -41,6 +41,7 @@ class Workspace extends TemplateEngine implements IWorkspace {
   }
 
   private nextTabId: number = 1;
+  private options: OptionsType;
   private readonly tabsView: ITabs;
   private readonly contentList: IContent[] = [];
   private readonly emitter: Emitter = new Emitter(EMITTER_FORCE_LAYER_TYPE);
@@ -55,8 +56,9 @@ class Workspace extends TemplateEngine implements IWorkspace {
     return this.contentList.find(item => item.id === id) || null;
   }
 
-  constructor(container: HTMLElement) {
+  constructor(container: HTMLElement, options: OptionsType = {}) {
     super(template, container);
+    this.options = options;
     this.render();
     const tabsView = new Tabs(this.getRef('tabs') as HTMLElement);
     tabsView.addEventListener('focus', this.focusTabHandler);
@@ -89,8 +91,9 @@ class Workspace extends TemplateEngine implements IWorkspace {
   }
 
   private addContentWindow(id: number, hidden: boolean = true) {
-    this.contentList.push(new Content(this.getRef('content') as HTMLElement, {
-      id, hidden, className: css.contentItem,
+    const { contentList, options } = this;
+    contentList.push(new Content(this.getRef('content') as HTMLElement, {
+      id, hidden, className: css.contentItem, localization: options.localization,
     }));
   }
 
@@ -128,8 +131,10 @@ class Workspace extends TemplateEngine implements IWorkspace {
   }
 
   private addTabHandler = () => {
-    const { tabsView } = this;
-    const tabInfo = { title: this.untitledName, id: this.nextTabId };
+    const { tabsView, options } = this;
+    const tabInfo = {
+      title: options?.localization?.untitledTab || 'Untitled', id: this.nextTabId,
+    };
     tabsView.tabs = [...tabsView.tabs, tabInfo];
     this.nextTabId += 1;
     this.addContentWindow(tabInfo.id);

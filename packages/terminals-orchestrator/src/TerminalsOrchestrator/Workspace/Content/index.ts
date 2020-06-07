@@ -64,6 +64,7 @@ class Content extends TemplateEngine implements IContent {
       onEndMove: this.onEndMove,
       onMove: this.onMove,
       onFocus: this.onFocus,
+      title: this.options?.localization?.untitledTerm,
     });
     this.contentWindows.push(cn);
     return cn;

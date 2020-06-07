@@ -87,7 +87,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     this.render();
     this.term = new Term(this.getRef('content') as HTMLElement, {
       lines: [],
-      header: 'Untitled',
+      header: options.title || 'Untitled',
     });
     this.termHeaderPlugin = new TermHeaderPlugin({ onStartMove: this.onMouseDown });
     this.term.pluginManager.register(this.termHeaderPlugin);

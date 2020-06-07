@@ -10,7 +10,11 @@ import Tab from '@TerminalsOrchestrator/Workspace/Tab';
 import {
   EventType,
   EventHandlerType,
-  TabEventType, TabEventHandlerType, DragEndEventHandlerType, TabInfoType,
+  TabEventType,
+  TabEventHandlerType,
+  DragEndEventHandlerType,
+  TabInfoType,
+  OptionsType,
 } from '@TerminalsOrchestrator/Workspace/Tabs/types';
 import {
   ADD_EVENT_TYPE,
@@ -57,6 +61,7 @@ class Tabs extends TemplateEngine implements ITabs {
   private visibleListWidth: number = 0;
   private checkWidth: number = 0;
   private hiddenList?: IHiddenList;
+  private options: OptionsType;
   private tabsInfo: { isVisible: boolean; width: number; tab: ITab }[] = [];
   private readonly ro: ResizeObserver;
   private handlers: {
@@ -71,8 +76,9 @@ class Tabs extends TemplateEngine implements ITabs {
     replaceIndex: number;
   };
 
-  constructor(container: HTMLElement) {
+  constructor(container: HTMLElement, options: OptionsType = {}) {
     super(template, container);
+    this.options = options;
     this.ro = new ResizeObserver(this.observeHandler);
     this.render();
   }

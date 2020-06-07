@@ -4,3 +4,6 @@ export type EventHandlerType = TabEventHandlerType | DragEndEventHandlerType | (
 export type EventType = 'focus' | 'close' | 'add' | 'dragend';
 export type TabEventType = 'click' | 'close' | 'drag' | 'dragend';
 export type TabInfoType = { title: string; id: number };
+export type OptionsType = {
+  localizations?: { [key: string]: string };
+};
