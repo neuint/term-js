@@ -3,11 +3,12 @@ import { uniq } from 'lodash-es';
 import template from './template.html';
 import css from './index.scss';
 
-import { ITemplateEngine, TemplateEngine } from '@term-js/term';
+import { TemplateEngine } from '@term-js/term';
 import { MoveInfoType, OptionsType, AnchorPointType } from '@TerminalsOrchestrator/Workspace/Content/types';
 import ContentWindow from '@TerminalsOrchestrator/Workspace/Content/ContentWindow';
 import IContentWindow from '@TerminalsOrchestrator/Workspace/Content/ContentWindow/IContentWindow';
 import { MoveType } from '@TerminalsOrchestrator/Workspace/Content/ContentWindow/types';
+import IContent from '@TerminalsOrchestrator/Workspace/Content/IContent';
 import {
   ANCHOR_SIZE,
   BOTTOM_MOVE_TYPE, HEADER_MOVE_TYPE,
@@ -23,8 +24,22 @@ import {
 } from '@TerminalsOrchestrator/Workspace/Content/constants';
 import { IS_MAC } from '@general/utils/browser';
 
-class Content extends TemplateEngine implements ITemplateEngine {
-  private readonly options: OptionsType = {};
+class Content extends TemplateEngine implements IContent {
+  public readonly id: number;
+
+  private hiddenField: boolean = false;
+  public get hidden(): boolean {
+    return this.hiddenField;
+  }
+  public set hidden(val: boolean) {
+    const { hiddenField } = this;
+    this.hiddenField = val;
+    if (hiddenField === val) return;
+    if (val) (this.getRef('root') as HTMLElement).classList.add(css.hidden);
+    else (this.getRef('root') as HTMLElement).classList.remove(css.hidden);
+  }
+
+  private readonly options: OptionsType;
   private contentWindows: IContentWindow[] = [];
   private moveInfo?: MoveInfoType;
 
@@ -34,9 +49,11 @@ class Content extends TemplateEngine implements ITemplateEngine {
     return ANCHOR_SIZE / offsetWidth * 100;
   }
 
-  constructor(container: HTMLElement, options: OptionsType = {}) {
+  constructor(container: HTMLElement, options: OptionsType = { id: -1 }) {
     super(template, container);
     this.options = options;
+    this.id = options.id;
+    this.hiddenField = options.hidden || false;
     this.render();
   }
 
@@ -52,8 +69,8 @@ class Content extends TemplateEngine implements ITemplateEngine {
   }
 
   public render() {
-    const { className = '' } = this.options;
-    super.render({ css, className });
+    const { className = '', hidden } = this.options;
+    super.render({ css, className, hidden: hidden ? css.hidden : '' });
     const addWindowShortcutText = this.getRef('addWindowShortcutText') as HTMLElement;
     addWindowShortcutText.innerHTML = IS_MAC ? '⌘E' : 'ctrl E';
     this.addListeners();

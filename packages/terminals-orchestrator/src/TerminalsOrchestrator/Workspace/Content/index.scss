@@ -30,6 +30,10 @@
   &.rightBottomResize:after {
     cursor: nwse-resize;
   }
+
+  &.hidden {
+    display: none;
+  }
 }
 
 .addWindowContainer {

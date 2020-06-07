@@ -10,11 +10,14 @@ import Tab from '@TerminalsOrchestrator/Workspace/Tab';
 import {
   EventType,
   EventHandlerType,
-  TabEventType, TabEventHandlerType, DragEndEventHandlerType,
+  TabEventType, TabEventHandlerType, DragEndEventHandlerType, TabInfoType,
 } from '@TerminalsOrchestrator/Workspace/Tabs/types';
 import {
   ADD_EVENT_TYPE,
-  CLICK_EVENT_TYPE, CLOSE_EVENT_TYPE, DRAG_END_EVENT_TYPE, DRAG_EVENT_TYPE,
+  CLICK_EVENT_TYPE,
+  CLOSE_EVENT_TYPE,
+  DRAG_END_EVENT_TYPE,
+  DRAG_EVENT_TYPE,
   FOCUS_EVENT_TYPE,
   TAB_EVENTS,
 } from '@TerminalsOrchestrator/Workspace/Tabs/constants';
@@ -23,11 +26,11 @@ import IHiddenList from '@TerminalsOrchestrator/Workspace/HiddenList/IHiddenList
 import { IS_MAC } from '@general/utils/browser';
 
 class Tabs extends TemplateEngine implements ITabs {
-  private tabsField: string[] = [];
-  public get tabs(): string[] {
+  private tabsField: TabInfoType[] = [];
+  public get tabs(): TabInfoType[] {
     return this.tabsField;
   }
-  public set tabs(val: string[]) {
+  public set tabs(val: TabInfoType[]) {
     const { tabsInfo } = this;
     this.tabsField = val;
     tabsInfo.forEach(item => item.tab.destroy());
@@ -137,7 +140,7 @@ class Tabs extends TemplateEngine implements ITabs {
     const { activeTab, tabs, handlers: { close, focus } } = this;
     const list = this.getRef('list');
     if (list) {
-      this.tabsInfo = tabs.map((title: string, index: number) => {
+      this.tabsInfo = tabs.map(({ title }, index: number) => {
         const tab = new Tab(list as HTMLElement, {
           title, index, active: index === activeTab, invisible: true,
         });

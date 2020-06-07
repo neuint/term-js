@@ -3,6 +3,8 @@ import { MoveType } from './ContentWindow/types';
 
 export type OptionsType = {
   className?: string;
+  hidden?: boolean;
+  id: number;
 };
 
 export type AnchorPointType = { position: number; startOffset: number; endOffset: number };

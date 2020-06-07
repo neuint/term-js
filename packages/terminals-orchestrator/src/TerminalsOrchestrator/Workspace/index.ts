@@ -10,13 +10,25 @@ import IContent from '@TerminalsOrchestrator/Workspace/Content/IContent';
 import Content from '@TerminalsOrchestrator/Workspace/Content';
 import { E_KEY_CODE } from '@general/constants/keyCodes';
 import { IS_MAC } from '@general/utils/browser';
+import { TabInfoType } from '@TerminalsOrchestrator/Workspace/Tabs/types';
 
 class Workspace extends TemplateEngine implements IWorkspace {
   public untitledName: string = '';
-  public set tabs(val: string[]) {
-    this.tabsView.tabs = val;
+  public set tabs(val: (string | TabInfoType)[]) {
+    const { tabsView } = this;
+    tabsView.tabs = val.map((item: string | TabInfoType): TabInfoType => {
+      if (typeof item === 'string') {
+        const tabInfo = { title: item, id: this.nextTabId };
+        this.nextTabId += 1;
+        this.addContentWindow(tabInfo.id);
+        return tabInfo;
+      }
+      return  item;
+    });
+    this.focusTabHandler(tabsView.activeTab);
   }
-  public get tabs(): string[] {
+
+  public get tabs(): (string | TabInfoType)[] {
     return this.tabsView.tabs;
   }
 
@@ -28,11 +40,19 @@ class Workspace extends TemplateEngine implements IWorkspace {
     return this.tabsView.activeTab;
   }
 
-  private tabsView: ITabs;
+  private nextTabId: number = 1;
+  private readonly tabsView: ITabs;
   private readonly contentList: IContent[] = [];
   private readonly emitter: Emitter = new Emitter(EMITTER_FORCE_LAYER_TYPE);
   private get activeContent(): IContent | null {
-    return this.contentList[0] || null;
+    const { activeTab } = this.tabsView;
+    return this.getTabContent(activeTab);
+  }
+  private getTabContent(index: number): IContent | null {
+    const tabInfo = this.tabsView.tabs[index];
+    if (!tabInfo) return null;
+    const { id } = tabInfo;
+    return this.contentList.find(item => item.id === id) || null;
   }
 
   constructor(container: HTMLElement) {
@@ -42,16 +62,13 @@ class Workspace extends TemplateEngine implements IWorkspace {
     tabsView.addEventListener('focus', this.focusTabHandler);
     tabsView.addEventListener('close', this.closeTabHandler);
     tabsView.addEventListener('add', this.addTabHandler);
-    this.emitter.addListener('keyDown', this.newContentWindowHandler, {
-      code: E_KEY_CODE, ...(IS_MAC ? { metaKey: true } : { ctrlKey: true }),
-    });
     this.emitter.addListener('keyDown', this.addTabHandler, {
       code: E_KEY_CODE, shiftKey: true, ...(IS_MAC ? { metaKey: true } : { ctrlKey: true }),
     });
+    this.emitter.addListener('keyDown', this.newContentWindowHandler, {
+      code: E_KEY_CODE, shiftKey: false, ...(IS_MAC ? { metaKey: true } : { ctrlKey: true }),
+    });
     this.tabsView = tabsView;
-    this.contentList.push(new Content(this.getRef('content') as HTMLElement, {
-      className: css.contentItem,
-    }));
   }
 
   public render() {
@@ -73,6 +90,12 @@ class Workspace extends TemplateEngine implements IWorkspace {
     super.destroy();
   }
 
+  private addContentWindow(id: number, hidden: boolean = true) {
+    this.contentList.push(new Content(this.getRef('content') as HTMLElement, {
+      id, hidden, className: css.contentItem,
+    }));
+  }
+
   private newContentWindowHandler = (e: KeyboardEvent) => {
     const { activeContent } = this;
     e.preventDefault();
@@ -82,7 +105,13 @@ class Workspace extends TemplateEngine implements IWorkspace {
   }
 
   private focusTabHandler = (index: number) => {
-    this.tabsView.activeTab = index;
+    const content = this.getTabContent(index);
+    if (content) {
+      this.tabsView.activeTab = index;
+      this.contentList.forEach((item) => {
+        item.hidden = item !== content;
+      });
+    }
   }
 
   private closeTabHandler = (index: number) => {
@@ -96,8 +125,11 @@ class Workspace extends TemplateEngine implements IWorkspace {
 
   private addTabHandler = () => {
     const { tabsView } = this;
-    tabsView.tabs = [...tabsView.tabs, this.untitledName];
-    tabsView.activeTab = tabsView.tabs.length - 1;
+    const tabInfo = { title: this.untitledName, id: this.nextTabId };
+    tabsView.tabs = [...tabsView.tabs, tabInfo];
+    this.nextTabId += 1;
+    this.addContentWindow(tabInfo.id);
+    this.focusTabHandler(tabsView.tabs.length - 1);
   }
 }
 
