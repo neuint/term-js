@@ -229,7 +229,6 @@ class Content extends TemplateEngine implements IContent {
       contentWindow, startPosition, startOffsets: { left, right },
     } = this.moveInfo as MoveInfoType;
     const horizontalAnchorPoints = this.getHorizontalAnchorPoints(contentWindow);
-    console.log('horizontalAnchorPoints', horizontalAnchorPoints);
     const root = this.getRef('root') as HTMLElement;
     const rootWidth = root.offsetWidth;
     const offset = e.clientX - startPosition.left;
