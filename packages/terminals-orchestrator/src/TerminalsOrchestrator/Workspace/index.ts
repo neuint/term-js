@@ -62,11 +62,9 @@ class Workspace extends TemplateEngine implements IWorkspace {
     tabsView.addEventListener('focus', this.focusTabHandler);
     tabsView.addEventListener('close', this.closeTabHandler);
     tabsView.addEventListener('add', this.addTabHandler);
-    this.emitter.addListener('keyDown', this.addTabHandler, {
-      code: E_KEY_CODE, shiftKey: true, ...(IS_MAC ? { metaKey: true } : { ctrlKey: true }),
-    });
+    this.emitter.addListener('keyDown', this.addTabHandler, { code: E_KEY_CODE, altKey: true });
     this.emitter.addListener('keyDown', this.newContentWindowHandler, {
-      code: E_KEY_CODE, shiftKey: false, ...(IS_MAC ? { metaKey: true } : { ctrlKey: true }),
+      code: E_KEY_CODE, ...(IS_MAC ? { metaKey: true } : { ctrlKey: true }),
     });
     this.tabsView = tabsView;
   }

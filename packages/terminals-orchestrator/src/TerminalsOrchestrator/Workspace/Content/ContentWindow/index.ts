@@ -91,17 +91,17 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     });
     this.termHeaderPlugin = new TermHeaderPlugin({ onStartMove: this.onMouseDown });
     this.term.pluginManager.register(this.termHeaderPlugin);
+    this.addListeners();
   }
 
   public render() {
     super.render({ css, ...this.options.position, zIndex: this.zIndex });
-    this.addListeners();
   }
 
   public destroy() {
+    this.removeListeners();
     this.termHeaderPlugin.destroy();
     this.term.destroy();
-    this.removeListeners();
     super.destroy();
   }
 
@@ -122,6 +122,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     bottom.addEventListener('mousedown', this.onMouseDown);
 
     root.addEventListener('focus', this.onFocus);
+    this.term.addEventListener('focus', this.onFocus);
 
     window.addEventListener('mouseup', this.onEndMove);
     window.addEventListener('mouseleave', this.onEndMove);
@@ -145,6 +146,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     bottom.removeEventListener('mousedown', this.onMouseDown);
 
     root.removeEventListener('focus', this.onFocus);
+    this.term.removeEventListener('focus', this.onFocus);
 
     window.removeEventListener('mouseup', this.onEndMove);
     window.removeEventListener('mouseleave', this.onEndMove);

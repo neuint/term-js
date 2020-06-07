@@ -63,6 +63,7 @@ class Content extends TemplateEngine implements IContent {
       onStartMove: this.onStartMove,
       onEndMove: this.onEndMove,
       onMove: this.onMove,
+      onFocus: this.onFocus,
     });
     this.contentWindows.push(cn);
     return cn;
@@ -172,7 +173,11 @@ class Content extends TemplateEngine implements IContent {
       acc.push(left);
       acc.push(100 - right);
       return acc;
-    }, [] as number[])).filter((item: number): boolean => 0 !== item && 100 !== item).reduce((
+    }, [] as number[])).filter((item: number): boolean => 0 !== item && 100 !== item).sort((
+      first, second,
+    ): number => {
+      return first - second;
+    }).reduce((
       acc: AnchorPointType[], position: number, index: number, arr: number[],
     ): AnchorPointType[] => {
       const prevPosition = arr[index - 1] || -1;
@@ -198,7 +203,11 @@ class Content extends TemplateEngine implements IContent {
       acc.push(top);
       acc.push(100 - bottom);
       return acc;
-    }, [] as number[])).filter((item: number): boolean => 0 !== item && 100 !== item).reduce((
+    }, [] as number[])).filter((item: number): boolean => 0 !== item && 100 !== item).sort((
+      first, second,
+    ): number => {
+      return first - second;
+    }).reduce((
       acc: AnchorPointType[], position: number, index: number, arr: number[],
     ): AnchorPointType[] => {
       const prevPosition = arr[index - 1] || -1;
@@ -220,6 +229,7 @@ class Content extends TemplateEngine implements IContent {
       contentWindow, startPosition, startOffsets: { left, right },
     } = this.moveInfo as MoveInfoType;
     const horizontalAnchorPoints = this.getHorizontalAnchorPoints(contentWindow);
+    console.log('horizontalAnchorPoints', horizontalAnchorPoints);
     const root = this.getRef('root') as HTMLElement;
     const rootWidth = root.offsetWidth;
     const offset = e.clientX - startPosition.left;
