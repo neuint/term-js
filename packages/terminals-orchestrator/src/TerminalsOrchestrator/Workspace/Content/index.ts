@@ -58,7 +58,7 @@ class Content extends TemplateEngine implements IContent {
   }
 
   public addContentWindow = () => {
-    const cn = new ContentWindow(this.getRef('root') as HTMLElement, {
+    const cn = new ContentWindow(this.getRef('contentContainer') as HTMLElement, {
       position: { left: 20, right: 20, top: 20, bottom: 20 },
       onStartMove: this.onStartMove,
       onEndMove: this.onEndMove,

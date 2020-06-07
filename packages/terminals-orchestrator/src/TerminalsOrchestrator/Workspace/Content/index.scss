@@ -3,6 +3,9 @@
 @import '../../theme.scss';
 
 .root {
+  display: flex;
+  flex-direction: column;
+
   &.horizontalResize:after,
   &.verticalResize:after,
   &.leftBottomResize:after,
@@ -51,4 +54,10 @@
   @include font-size(0.8);
 
   color: var(--terminals-orchestrator-new-window-shortcut-text-color);
+}
+
+.contentContainer {
+  flex: 1;
+  display: flex;
+  position: relative;
 }

@@ -11,6 +11,7 @@
   box-shadow: 1px 1px 10px var(--terminals-orchestrator-window-shadow-color);
   z-index: calc(var(--terminals-orchestrator-start-z-index) + var(--z-index));
   outline: none;
+  background: var(--main-bg-color);
 }
 
 .lockSelection {
@@ -19,10 +20,10 @@
 
 .content {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  left: 0.5rem;
+  right: 0.5rem;
+  top: 0.5rem;
+  bottom: 0.5rem;
 }
 
 .resize {
