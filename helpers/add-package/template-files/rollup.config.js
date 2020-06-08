@@ -41,7 +41,8 @@ export default {
       minimize: true,
       sourceMap: true,
       modules: {
-        generateScopedName: (name, filename) => {
+        generateScopedName: (name, fullFilename) => {
+          const filename = fullFilename.split('packages')[1];
           if (CSS_MODULES_BLACK_LIST.some((item) => filename.includes(item)
             || name.includes(item))) {
             return name;
