@@ -12,10 +12,7 @@ if (container) {
     tabs: [
       { name: 'Welcome', terminals: [] },
     ],
-    localization: {
-      untitledTab: 'New tab',
-      untitledTerm: ' ',
-    },
+    localization: {},
   });
   (window as unknown as { terminalsOrchestrator: ITerminalsOrchestrator })
     .terminalsOrchestrator = terminalsOrchestrator;

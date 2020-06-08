@@ -209,8 +209,9 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private init(container: Element, params: TermConstructorParamsType) {
+    const { header = '' } = params;
     this.setParams(container, params);
-    this.render({ css, header: this.params.header });
+    this.render({ css, header, hidden: header ? '' : css.hidden });
     this.params.scrollbarSize = getScrollbarSize(this.getRef('root') as HTMLElement);
     this.itemSize = getItemSize(this.getRef('root') as HTMLElement, true);
     this.addListeners();
