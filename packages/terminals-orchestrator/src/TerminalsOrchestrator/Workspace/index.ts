@@ -75,11 +75,6 @@ class Workspace extends TemplateEngine implements IWorkspace {
     super.render({ css });
   }
 
-  public declare() {
-    this.tabsView.destroy();
-    super.destroy();
-  }
-
   public destroy() {
     const { tabsView, contentList, emitter } = this;
     emitter.removeListener('keyDown', this.newContentWindowHandler);

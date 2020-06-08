@@ -49,6 +49,13 @@ class Content extends TemplateEngine implements IContent {
     return ANCHOR_SIZE / offsetWidth * 100;
   }
 
+  private get nextZIndex(): number {
+    const { contentWindows } = this;
+    return contentWindows.length
+      ? contentWindows.sort((f, s) => s.zIndex - f.zIndex)[0].zIndex + 1
+      : 0;
+  }
+
   constructor(container: HTMLElement, options: OptionsType = { id: -1 }) {
     super(template, container);
     this.options = options;
@@ -65,6 +72,7 @@ class Content extends TemplateEngine implements IContent {
       onMove: this.onMove,
       onFocus: this.onFocus,
       title: this.options?.localization?.untitledTerm,
+      zIndex: this.nextZIndex,
     });
     this.contentWindows.push(cn);
     this.onFocus(cn);
