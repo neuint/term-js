@@ -5,6 +5,7 @@ body,
   height: 100%;
   padding: 0;
   margin: 0;
+  position: relative;
 }
 
 .test {
@@ -27,4 +28,12 @@ body,
     color: rgb(136, 137, 133);
     font-weight: 600;
   }
+}
+
+.content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }

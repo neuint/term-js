@@ -5399,6 +5399,7 @@ class VirtualizedList extends TemplateEngine {
     updateViewport() {
         this.removeAllItems();
         this.updateHeight();
+        this.renderItems();
     }
     clearCache() {
         this.itemsCache = {};

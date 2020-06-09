@@ -4,7 +4,7 @@ import ITerm from '@Term/ITerm';
 import css from './index.scss';
 import { ValueType } from '@Term/types';
 
-const container = document.querySelector('#root');
+const container = document.querySelector('.content');
 if (container) {
   const term = new Term(container, {
     header: 'Test',

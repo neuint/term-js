@@ -123,6 +123,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
   public updateViewport() {
     this.removeAllItems();
     this.updateHeight();
+    this.renderItems();
   }
 
   public clearCache() {
