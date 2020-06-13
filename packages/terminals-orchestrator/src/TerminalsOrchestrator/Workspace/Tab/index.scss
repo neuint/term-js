@@ -1,5 +1,6 @@
 @import 'general-mixins.scss';
 @import 'general-components.scss';
+@import 'general-theme.scss';
 @import '../../constants.scss';
 @import '../../theme.scss';
 
@@ -135,6 +136,8 @@
   width: 100%;
   padding: 0;
   text-align: center;
+
+  color: var(--term-js-text-color);
 }
 
 .rightAction {

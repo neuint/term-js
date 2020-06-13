@@ -90,7 +90,9 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
       lines: [],
       header: options.title || strings.untitledTerm,
     });
-    this.termHeaderPlugin = new TermHeaderPlugin({ onStartMove: this.onMouseDown });
+    this.termHeaderPlugin = new TermHeaderPlugin({
+      onStartMove: this.onMouseDown, onRename: this.onRename,
+    });
     this.term.pluginManager.register(this.termHeaderPlugin);
     this.addListeners();
   }
@@ -180,6 +182,10 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
   private onFocus = (e: Event) => {
     const { onFocus } = this.options;
     if (onFocus) onFocus(this, e);
+  }
+
+  private onRename = (name: string) => {
+    this.term.header = name;
   }
 }
 

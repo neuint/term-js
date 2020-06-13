@@ -5,6 +5,7 @@ import { FormattedValueFragmentType } from '@Term/types';
 export default interface ITerm {
     keyboardShortcutsManager: IKeyboardShortcutsManager;
     pluginManager: IPluginManager;
+    header: string;
     write(data: string | FormattedValueFragmentType, duration?: number): Promise<boolean> | boolean;
     blur(): void;
     setCaret(caret: string): void;

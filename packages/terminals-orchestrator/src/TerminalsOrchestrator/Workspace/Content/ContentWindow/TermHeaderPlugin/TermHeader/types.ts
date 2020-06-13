@@ -1,6 +1,6 @@
-
 export type OptionsType = {
-  onStartMove?: (e: MouseEvent) => void;
-  onClose?: () => void;
+  title: string;
   onRename?: (name: string) => void;
+  onClose?: () => void;
+  onRenaming?: () => void;
 };

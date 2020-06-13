@@ -1,0 +1,12 @@
+@import 'general-mixins';
+
+.header {
+  @include padding-horizontal(2.5rem);
+
+  position: relative;
+
+  &.editable > span {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}

@@ -111,3 +111,23 @@
   border-bottom-left-radius: $value;
   border-bottom-right-radius: $value;
 }
+
+@mixin margin-vertical($value) {
+  margin-top: $value;
+  margin-bottom: $value;
+}
+
+@mixin margin-horizontal($value) {
+  margin-left: $value;
+  margin-right: $value;
+}
+
+@mixin padding-vertical($value) {
+  padding-top: $value;
+  padding-bottom: $value;
+}
+
+@mixin padding-horizontal($value) {
+  padding-left: $value;
+  padding-right: $value;
+}

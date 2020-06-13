@@ -5554,6 +5554,30 @@ class VirtualizedList extends TemplateEngine {
 
 const getKeyCode = (e) => e ? e.which || e.keyCode : null;
 
+const getStartIntersectionString = (main, target) => {
+    if (target.indexOf(main) === 0)
+        return { str: main, isFull: true };
+    if (main[0] !== target[0])
+        return { str: '', isFull: false };
+    let startIntersectionString = main[0];
+    for (let i = 1, ln = main.length; i < ln; i += 1) {
+        const character = main[i];
+        if (character === target[i]) {
+            startIntersectionString += character;
+        }
+        else {
+            break;
+        }
+    }
+    return { str: startIntersectionString, isFull: false };
+};
+const escapeString = (str) => str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
 const ENTER_CODE = 13;
 const LEFT_CODE = 37;
 const RIGHT_CODE = 39;
@@ -5829,24 +5853,6 @@ function escapeHtml(string) {
 
   return lastIndex !== index ? html + str.substring(lastIndex, index) : html;
 }
-
-const getStartIntersectionString = (main, target) => {
-    if (target.indexOf(main) === 0)
-        return { str: main, isFull: true };
-    if (main[0] !== target[0])
-        return { str: '', isFull: false };
-    let startIntersectionString = main[0];
-    for (let i = 1, ln = main.length; i < ln; i += 1) {
-        const character = main[i];
-        if (character === target[i]) {
-            startIntersectionString += character;
-        }
-        else {
-            break;
-        }
-    }
-    return { str: startIntersectionString, isFull: false };
-};
 
 const DATA_INDEX_ATTRIBUTE_NAME = 'data-index';
 const SECRET_CHARACTER = '•';
@@ -9097,6 +9103,7 @@ const IS_MAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 class Term extends TemplateEngine {
     constructor(container, params = { lines: [], editLine: '' }) {
         super(template$1, container);
+        this.headerField = '';
         this.history = {
             list: [], index: -1, stopHistory: false,
         };
@@ -9307,7 +9314,8 @@ class Term extends TemplateEngine {
         this.updateTermInfo = () => {
             this.pluginManager.updateTermInfo(this.getTermInfo());
         };
-        const { virtualizedTopOffset, virtualizedBottomOffset } = params;
+        const { virtualizedTopOffset, virtualizedBottomOffset, header } = params;
+        this.headerField = header || '';
         this.init(container, params);
         this.ro = new index(this.observeHandler);
         this.keyboardShortcutsManager = new KeyboardShortcutsManager({ onAction: this.actionHandler });
@@ -9317,6 +9325,17 @@ class Term extends TemplateEngine {
         });
         this.preStart(container, params);
         this.pluginManager = new PluginManager(this.getTermInfo(), this.keyboardShortcutsManager);
+    }
+    get header() {
+        return this.headerField;
+    }
+    set header(val) {
+        const { headerField } = this;
+        if (headerField !== val) {
+            const headerText = this.getRef('headerText');
+            headerText.innerHTML = escapeString(val);
+        }
+        this.headerField = val;
     }
     destroy() {
         var _a;

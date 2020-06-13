@@ -7,6 +7,9 @@ import ITermEventMap from './ITermEventMap';
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
 import IPluginManager from '@Term/PluginManager/IPluginManager';
 declare class Term extends TemplateEngine implements ITerm {
+    private headerField;
+    get header(): string;
+    set header(val: string);
     private readonly ro;
     private readonly vl;
     readonly keyboardShortcutsManager: IKeyboardShortcutsManager;

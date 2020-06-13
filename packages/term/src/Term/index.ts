@@ -10,6 +10,7 @@ import VirtualizedList from '@Term/VirtualizedList';
 import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import TemplateEngine from '@Term/TemplateEngine';
 import { getKeyCode } from '@Term/utils/event';
+import { escapeString } from '@Term/utils/string';
 import { DOWN_CODE, K_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { compareItemSize, getItemSize, getScrollbarSize } from '@Term/utils/viewport';
 import {
@@ -51,6 +52,19 @@ import { DEFAULT_DELIMITER } from '@Term/constants/strings';
 import { IS_MAC } from '@Term/constants/browser';
 
 class Term extends TemplateEngine implements ITerm {
+  private headerField: string = '';
+  public get header(): string {
+    return this.headerField;
+  }
+  public set header(val: string) {
+    const { headerField } = this;
+    if (headerField !== val) {
+      const headerText = this.getRef('headerText') as HTMLElement;
+      headerText.innerHTML = escapeString(val);
+    }
+    this.headerField = val;
+  }
+
   private readonly ro: ResizeObserver;
   private readonly vl: IVirtualizedList<ILine>;
   public readonly keyboardShortcutsManager: IKeyboardShortcutsManager;
@@ -76,7 +90,8 @@ class Term extends TemplateEngine implements ITerm {
 
   constructor(container: Element, params: TermConstructorParamsType = { lines: [], editLine: '' }) {
     super(template, container);
-    const { virtualizedTopOffset, virtualizedBottomOffset } = params;
+    const { virtualizedTopOffset, virtualizedBottomOffset, header } = params;
+    this.headerField = header || '';
     this.init(container, params);
     this.ro = new ResizeObserver(this.observeHandler);
     this.keyboardShortcutsManager = new KeyboardShortcutsManager({ onAction: this.actionHandler });

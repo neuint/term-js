@@ -1,0 +1,36 @@
+@import 'general-mixins.scss';
+@import 'general-components.scss';
+@import 'general-theme.scss';
+
+.root {
+  @include flex-vertical;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  &.reverse {
+    flex-direction: row-reverse;
+  }
+}
+
+.close, .rename {
+  @include icon-button(2.5rem, 1rem)
+}
+
+.inputContainer {
+  @include flex-vertical;
+
+  flex: 1;
+  height: 100%;
+}
+
+.input {
+  @include font-size(0.875);
+
+  width: 100%;
+  text-align: center;
+  color: var(--term-js-text-color);
+}
