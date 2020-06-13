@@ -37,7 +37,7 @@
 }
 
 @mixin font-size($scale: 1) {
-  font-size: $font-size * $scale;
+  font-size: $font-size * $scale !important;
 }
 
 @mixin button-font-size {

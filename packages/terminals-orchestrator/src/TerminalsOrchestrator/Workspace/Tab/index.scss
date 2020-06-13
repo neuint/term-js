@@ -15,6 +15,7 @@
     left $terminals-orchestrator-tab-animation-duration ease;
   color: var(--terminals-orchestrator-tab-text-color);
   z-index: calc(var(--terminals-orchestrator-start-z-index) + 1);
+  min-width: 8rem;
 
   &.reverse {
     flex-direction: row-reverse;
@@ -94,14 +95,16 @@
 
 .title {
   flex: 1;
-  padding: 0 0.75rem;
   z-index: calc(var(--terminals-orchestrator-start-z-index) + 1);
   max-width: 6rem;
+  position: relative;
 
-  @include truncate();
+  &:not(.editable) {
+    @include truncate();
+  }
 }
 
-.titleText {
+.titleText, .input {
   color: var(--terminals-orchestrator-tab-text-color);
 
   .active & {
@@ -110,15 +113,70 @@
   @include font-size(0.85);
 }
 
-.shortcut {
-  padding: 0 0.5rem;
+.titleText {
+  .editable & {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.inputContainer {
+  @include flex-center;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.input {
+  outline: none;
+  width: 100%;
+  padding: 0;
+  text-align: center;
+}
+
+.rightAction {
+  @include size(2rem);
+
+  position: relative;
   z-index: calc(var(--terminals-orchestrator-start-z-index) + 1);
-  width: 1.25rem;
-  text-align: right;
-  overflow: hidden;
+}
+
+.shortcut {
+  @include flex-center;
+  @include button-transition(opacity);
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  opacity: 0;
+
+  .root:not(:hover) & {
+    opacity: 1;
+  }
 }
 
 .shortcutText {
   @include font-size(0.8);
   color: var(--terminals-orchestrator-tab-shortcut-text-color);
+}
+
+.rename {
+  @include icon-button(2rem, 1rem);
+  @include button-transition(opacity);
+
+  opacity: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  .root:not(:hover) & {
+    opacity: 0;
+  }
 }

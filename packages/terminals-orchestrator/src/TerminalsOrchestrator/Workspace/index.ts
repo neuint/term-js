@@ -12,6 +12,7 @@ import { E_KEY_CODE } from '@general/constants/keyCodes';
 import { IS_MAC } from '@general/utils/browser';
 import { TabInfoType } from '@TerminalsOrchestrator/Workspace/Tabs/types';
 import { OptionsType } from '@TerminalsOrchestrator/Workspace/types';
+import strings from '@TerminalsOrchestrator/strings';
 
 class Workspace extends TemplateEngine implements IWorkspace {
   public set tabs(val: (string | TabInfoType)[]) {
@@ -128,7 +129,7 @@ class Workspace extends TemplateEngine implements IWorkspace {
   private addTabHandler = () => {
     const { tabsView, options } = this;
     const tabInfo = {
-      title: options?.localization?.untitledTab || 'Untitled', id: this.nextTabId,
+      title: options?.localization?.untitledTab || strings.untitledTab, id: this.nextTabId,
     };
     tabsView.tabs = [...tabsView.tabs, tabInfo];
     this.nextTabId += 1;

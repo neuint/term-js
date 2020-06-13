@@ -22,4 +22,6 @@
   --terminals-orchestrator-window-shadow-color: #{rgba($mine-shaft, 0.5)};
 
   --terminals-orchestrator-window-resize-element-bg-color: #{rgba($alabaster, 0.3)};
+
+  --terminals-orchestrator-window-border-color: #{lighten($bunker, 3)};
 }

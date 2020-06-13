@@ -9,6 +9,7 @@ import IContentWindow from './IContentWindow';
 import { MOVE_TYPES } from '../constants';
 import TermHeaderPlugin from './TermHeaderPlugin';
 import ITermHeaderPlugin from './TermHeaderPlugin/ITermHeaderPlugin';
+import strings from '@TerminalsOrchestrator/strings';
 
 class ContentWindow extends TemplateEngine implements IContentWindow {
   private zIndexField: number = 0;
@@ -87,7 +88,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     this.render();
     this.term = new Term(this.getRef('content') as HTMLElement, {
       lines: [],
-      header: options.title || 'Untitled',
+      header: options.title || strings.untitledTerm,
     });
     this.termHeaderPlugin = new TermHeaderPlugin({ onStartMove: this.onMouseDown });
     this.term.pluginManager.register(this.termHeaderPlugin);

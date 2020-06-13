@@ -11,7 +11,7 @@
   box-shadow: 1px 1px 10px var(--terminals-orchestrator-window-shadow-color);
   z-index: calc(var(--terminals-orchestrator-start-z-index) + var(--z-index));
   outline: none;
-  background: var(--main-bg-color);
+  border: 1px solid var(--terminals-orchestrator-window-border-color);
 }
 
 .lockSelection {

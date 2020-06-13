@@ -4925,7 +4925,7 @@ var index = function () {
   return ResizeObserver;
 }();
 
-var css = {"term":"term-term-️0e2edb9a914aa6e9f9eafd6a264c9040","header":"header-term-️0e2edb9a914aa6e9f9eafd6a264c9040","hidden":"hidden-term-️0e2edb9a914aa6e9f9eafd6a264c9040","headerText":"headerText-term-️0e2edb9a914aa6e9f9eafd6a264c9040","content":"content-term-️0e2edb9a914aa6e9f9eafd6a264c9040","linesContainer":"linesContainer-term-️0e2edb9a914aa6e9f9eafd6a264c9040","line":"line-term-️0e2edb9a914aa6e9f9eafd6a264c9040","editLine":"editLine-term-️0e2edb9a914aa6e9f9eafd6a264c9040"};
+var css = {"term":"term-term-️src-Term-index","header":"header-term-️src-Term-index","hidden":"hidden-term-️src-Term-index","headerText":"headerText-term-️src-Term-index","content":"content-term-️src-Term-index","linesContainer":"linesContainer-term-️src-Term-index","line":"line-term-️src-Term-index","editLine":"editLine-term-️src-Term-index"};
 
 var template$1 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header {hidden}\">\n    <span ref=\"headerText\" class=\"headerText\">{header}</span>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
 
@@ -5270,7 +5270,7 @@ class TemplateEngine extends Animation {
 
 var template$2 = "<div ref=\"root\" class=\"root className\">\n  <div ref=\"virtualizedList\" class=\"virtualizedList\">\n    <div ref=\"itemsContainer\" class=\"itemsContainer\"></div>\n  </div>\n  <div ref=\"generalList\" class=\"generalList\"></div>\n</div>\n";
 
-var css$1 = {"root":"root-term-️cb1d06823d821bc83bbb35855a5f1808","virtualizedList":"virtualizedList-term-️cb1d06823d821bc83bbb35855a5f1808","itemsContainer":"itemsContainer-term-️cb1d06823d821bc83bbb35855a5f1808"};
+var css$1 = {"root":"root-term-️src-Term-VirtualizedList-index","virtualizedList":"virtualizedList-term-️src-Term-VirtualizedList-index","itemsContainer":"itemsContainer-term-️src-Term-VirtualizedList-index"};
 
 class VirtualizedList extends TemplateEngine {
     constructor(container, params) {
@@ -5611,7 +5611,7 @@ const compareItemSize = (first, second) => {
     return first.width === second.width && first.height === second.height;
 };
 
-var css$2 = {"root":"root-term-️cab119304dc90a90f699151e7c15d7ee","visible":"visible-term-️cab119304dc90a90f699151e7c15d7ee","content":"content-term-️cab119304dc90a90f699151e7c15d7ee","helpContainer":"helpContainer-term-️cab119304dc90a90f699151e7c15d7ee","inputContainer":"inputContainer-term-️cab119304dc90a90f699151e7c15d7ee"};
+var css$2 = {"root":"root-term-️src-Term-Line-index","visible":"visible-term-️src-Term-Line-index","content":"content-term-️src-Term-Line-index","helpContainer":"helpContainer-term-️src-Term-Line-index","inputContainer":"inputContainer-term-️src-Term-Line-index"};
 
 var lineTemplate = "<div ref=\"root\" class=\"root visible {className}\">\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"helpContainer\" class=\"labelText helpContainer\">{nbs}</div>\n    <div ref=\"labelContainer\"></div>\n    <div ref=\"inputContainer\" class=\"inputContainer\"></div>\n  </div>\n</div>\n";
 
@@ -5678,7 +5678,7 @@ class BaseCaret extends TemplateEngine {
 
 var SimpleCaretTemplate = "<span ref=\"root\" class=\"root\">\n  <span ref=\"character\" class=\"character\"></span>\n</span>\n";
 
-var css$3 = {"root":"root-term-️e70267db75c0341d98d4d4a58c7a4fe6","carriage-return-blink":"carriage-return-blink-term-️e70267db75c0341d98d4d4a58c7a4fe6","lock":"lock-term-️e70267db75c0341d98d4d4a58c7a4fe6","busy":"busy-term-️e70267db75c0341d98d4d4a58c7a4fe6","none":"none-term-️e70267db75c0341d98d4d4a58c7a4fe6","carriage-return-busy":"carriage-return-busy-term-️e70267db75c0341d98d4d4a58c7a4fe6","hidden":"hidden-term-️e70267db75c0341d98d4d4a58c7a4fe6"};
+var css$3 = {"root":"root-term-️src-Term-SimpleCaret-index","carriage-return-blink":"carriage-return-blink-term-️src-Term-SimpleCaret-index","lock":"lock-term-️src-Term-SimpleCaret-index","busy":"busy-term-️src-Term-SimpleCaret-index","none":"none-term-️src-Term-SimpleCaret-index","carriage-return-busy":"carriage-return-busy-term-️src-Term-SimpleCaret-index","hidden":"hidden-term-️src-Term-SimpleCaret-index"};
 
 class SimpleCaret extends BaseCaret {
     constructor(container) {
@@ -5738,9 +5738,9 @@ const LOCK_TIMEOUT = 600;
 
 var template$3 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
 
-var css$4 = {"root":"root-term-️f48df653df791725509e2a00ded23e06","input":"input-term-️f48df653df791725509e2a00ded23e06","hiddenCaret":"hiddenCaret-term-️f48df653df791725509e2a00ded23e06","hidden":"hidden-term-️f48df653df791725509e2a00ded23e06"};
+var css$4 = {"root":"root-term-️src-Term-Line-Input-ContentEditableInput-index","input":"input-term-️src-Term-Line-Input-ContentEditableInput-index","hiddenCaret":"hiddenCaret-term-️src-Term-Line-Input-ContentEditableInput-index","hidden":"hidden-term-️src-Term-Line-Input-ContentEditableInput-index"};
 
-var css$5 = {"secret":"secret-term-️d139f1b48647dd08a4d620b7f948a15f"};
+var css$5 = {"secret":"secret-term-️src-Term-Line-Input-BaseInput-index"};
 
 /*!
  * escape-html
@@ -6361,7 +6361,7 @@ class ContentEditableInput extends BaseInput {
 
 var template$4 = "<div ref=\"root\">\n  <div ref=\"input\" class=\"root\">{value}</div>\n</div>\n";
 
-var css$6 = {"root":"root-term-️457efebe90f812d594ffccb8790b07ab"};
+var css$6 = {"root":"root-term-️src-Term-Line-Input-ViewableInput-index"};
 
 class ViewableInput extends BaseInput {
     set value(val) {
@@ -6381,7 +6381,7 @@ class ViewableInput extends BaseInput {
     }
 }
 
-var css$7 = {"label":"label-term-️679afd4849096768cfa38bb85a2048b8","labelTextContainer":"labelTextContainer-term-️679afd4849096768cfa38bb85a2048b8","labelText":"labelText-term-️679afd4849096768cfa38bb85a2048b8"};
+var css$7 = {"label":"label-term-️src-Term-Line-Label-index","labelTextContainer":"labelTextContainer-term-️src-Term-Line-Label-index","labelText":"labelText-term-️src-Term-Line-Label-index"};
 
 var template$5 = "<if condition=\"{label || delimiter}\">\n  <div class=\"label\">\n    <if condition=\"{label}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"label\">{label}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </if>\n    <if condition=\"{delimiter}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"delimiter\">{delimiter}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </if>\n  </div>\n</if>\n\n";
 

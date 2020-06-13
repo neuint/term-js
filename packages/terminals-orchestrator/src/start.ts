@@ -10,9 +10,8 @@ const container = document.querySelector('#root') as HTMLElement;
 if (container) {
   const terminalsOrchestrator: ITerminalsOrchestrator = new TerminalsOrchestrator(container, {
     tabs: [
-      { name: 'Welcome', terminals: [] },
+      { name: 'Welcome Welcome Welcome  Welcome', terminals: [] },
     ],
-    localization: {},
   });
   (window as unknown as { terminalsOrchestrator: ITerminalsOrchestrator })
     .terminalsOrchestrator = terminalsOrchestrator;

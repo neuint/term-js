@@ -12,10 +12,32 @@ import {
   EventHandlerType,
   TabOptionsType,
   EventType,
-  ClickEventHandlerType, DragEventHandlerType,
+  ClickEventHandlerType, DragEventHandlerType, RenameEventHandlerType,
 } from '@TerminalsOrchestrator/Workspace/Tab/types';
+import SelectInput from '@TerminalsOrchestrator/Workspace/SelectInput';
+import ISelectInput from '@TerminalsOrchestrator/Workspace/SelectInput/ISelectInput';
 
 class Tab extends TemplateEngine implements ITab {
+  public get editableTitle(): boolean {
+    return !this.titleInput.disabled;
+  }
+
+  public set editableTitle(val: boolean) {
+    const { titleInput } = this;
+    if (titleInput.disabled !== val) return;
+    const title = this.getRef('title') as HTMLElement;
+    if (val) {
+      titleInput.disabled = false;
+      titleInput.focus();
+      titleInput.select();
+      title.classList.add(css.editable);
+    } else {
+      titleInput.blur();
+      titleInput.disabled = true;
+      title.classList.remove(css.editable);
+    }
+  }
+
   private shortcutIndexField: number = 0;
   public set shortcutIndex(val: number) {
     const { shortcutIndexField, emitter } = this;
@@ -52,8 +74,8 @@ class Tab extends TemplateEngine implements ITab {
 
   private titleField: string = '';
   public set title(val: string) {
-    const title = this.getRef('title');
-    if (title && val !== this.titleField) title.innerHTML = escapeString(val);
+    const titleText = this.getRef('titleText');
+    if (titleText && val !== this.titleField) titleText.innerHTML = escapeString(val);
     this.titleField = val;
   }
   public get title(): string {
@@ -133,8 +155,11 @@ class Tab extends TemplateEngine implements ITab {
     close: ClickEventHandlerType[];
     drag: DragEventHandlerType[];
     dragend: DragEventHandlerType[];
-  } = { click: [], close: [], drag: [], dragend: [] };
+    rename: RenameEventHandlerType[];
+  } = { click: [], close: [], drag: [], dragend: [], rename: [] };
   private readonly emitter: Emitter = new Emitter(EMITTER_FORCE_LAYER_TYPE);
+  private options: TabOptionsType;
+  private titleInput: ISelectInput;
 
   constructor(container: HTMLElement, options: TabOptionsType) {
     super(template, container);
@@ -142,7 +167,13 @@ class Tab extends TemplateEngine implements ITab {
     this.isInvisible = options.invisible || false;
     this.titleField = options.title || '';
     this.indexField = options.index === undefined ? -1 : options.index;
+    this.options = options;
     this.render();
+    this.titleInput = new SelectInput(this.getRef('inputContainer') as HTMLElement, {
+      className: css.input, value: this.titleField, disabled: true,
+      onSubmit: this.submitTitleHandler, onBlur: this.submitTitleHandler,
+    });
+    this.addListeners();
   }
 
   public render() {
@@ -157,16 +188,15 @@ class Tab extends TemplateEngine implements ITab {
       invisible: this.isInvisible ? css.invisible : '',
       hidden: this.isHiddenField ? css.hidden : '',
     });
-    this.addListeners();
   }
 
   public addEventListener(event: EventType, handler: EventHandlerType) {
-    const list = this.handlers[event];
+    const list = this.handlers[event] as ClickEventHandlerType[];
     if (list) list.push(handler as ClickEventHandlerType);
   }
 
   public removeEventListener(event: EventType, handler: EventHandlerType) {
-    const list = this.handlers[event];
+    const list = this.handlers[event] as ClickEventHandlerType[];
     if (!list) return;
     const index = list.indexOf(handler as ClickEventHandlerType);
     if (index >= 0) list.splice(index, 1);
@@ -181,24 +211,32 @@ class Tab extends TemplateEngine implements ITab {
   private addListeners() {
     const root = this.getRef('root') as HTMLElement;
     const close = this.getRef('close') as HTMLElement;
+    const rename = this.getRef('rename') as HTMLElement;
     root.addEventListener('click', this.clickHandler);
     root.addEventListener('dragstart', this.dragStartHandler);
     root.addEventListener('drag', this.dragHandler);
     document.addEventListener('dragover', this.dragoverHandler);
     root.addEventListener('dragend', this.dragEndHandler);
     close.addEventListener('click', this.closeHandler);
+    rename.addEventListener('click', this.rename);
   }
 
   private removeListeners() {
     const root = this.getRef('root') as HTMLElement;
     const close = this.getRef('close') as HTMLElement;
+    const rename = this.getRef('rename') as HTMLElement;
     root.removeEventListener('click', this.clickHandler);
     root.removeEventListener('dragstart', this.dragStartHandler);
     root.removeEventListener('drag', this.dragHandler);
     document.removeEventListener('dragover', this.dragoverHandler);
     root.addEventListener('dragend', this.dragEndHandler);
     close.removeEventListener('click', this.closeHandler);
+    rename.removeEventListener('click', this.rename);
     this.emitter.removeListener('keyDown', this.keyboardSelectHandler);
+  }
+
+  private rename = () => {
+    this.editableTitle = true;
   }
 
   private clickHandler = (e: Event) => {
@@ -237,6 +275,15 @@ class Tab extends TemplateEngine implements ITab {
 
   private dragoverHandler = (e: DragEvent) => {
     e.preventDefault();
+  }
+
+  private submitTitleHandler = () => {
+    const { titleInput, index, handlers } = this;
+    this.title = titleInput.value;
+    this.editableTitle = false;
+    handlers.rename.forEach((handler: RenameEventHandlerType) => {
+      handler(index, this.title);
+    });
   }
 }
 

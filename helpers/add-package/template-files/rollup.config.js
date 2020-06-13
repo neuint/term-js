@@ -7,7 +7,6 @@ import url from 'rollup-plugin-url';
 import html from "rollup-plugin-html";
 import babel from 'rollup-plugin-babel';
 import copy from 'rollup-plugin-copy';
-import md5 from 'md5';
 
 import { CSS_MODULES_BLACK_LIST } from './rollup.const';
 import pkg from './package.json';
@@ -47,7 +46,9 @@ export default {
             || name.includes(item))) {
             return name;
           }
-          return `${name}-${PACKAGE_NAME}-️${md5(filename.split(SPLIT_PATTERN)[1])}`
+          const suffix = filename.split(SPLIT_PATTERN)[1]
+            .replace(/[\/\\]/g, '-').replace(/\\?\.s?css$/, '');
+          return `${name}-${PACKAGE_NAME}-️${suffix}`
         },
       },
       use: ['sass'],

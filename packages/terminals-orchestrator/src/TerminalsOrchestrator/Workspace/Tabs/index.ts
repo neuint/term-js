@@ -22,7 +22,7 @@ import {
   CLOSE_EVENT_TYPE,
   DRAG_END_EVENT_TYPE,
   DRAG_EVENT_TYPE,
-  FOCUS_EVENT_TYPE,
+  FOCUS_EVENT_TYPE, RENAME_EVENT_TYPE,
   TAB_EVENTS,
 } from '@TerminalsOrchestrator/Workspace/Tabs/constants';
 import HiddenList from '@TerminalsOrchestrator/Workspace/HiddenList';
@@ -142,12 +142,12 @@ class Tabs extends TemplateEngine implements ITabs {
   }
 
   private renderTabs() {
-    const { activeTab, tabs, handlers: { close, focus } } = this;
+    const { activeTab, tabs, options: { localizations }, handlers: { close, focus } } = this;
     const list = this.getRef('list');
     if (list) {
       this.tabsInfo = tabs.map(({ title }, index: number) => {
         const tab = new Tab(list as HTMLElement, {
-          title, index, active: index === activeTab, invisible: true,
+          title, index, localizations, active: index === activeTab, invisible: true,
         });
         if (close.length) {
           close.forEach(handler => tab.addEventListener(
@@ -161,6 +161,7 @@ class Tabs extends TemplateEngine implements ITabs {
         }
         tab.addEventListener(DRAG_EVENT_TYPE, this.tabDragHandler);
         tab.addEventListener(DRAG_END_EVENT_TYPE, this.tabDragEndHandler);
+        tab.addEventListener(RENAME_EVENT_TYPE, this.renameTabHandler);
         return { tab, isVisible: true, width: tab.width };
       });
     }
@@ -530,6 +531,11 @@ class Tabs extends TemplateEngine implements ITabs {
   private selectHiddenTabHandler = (index: number) => {
     this.closeHiddenTabsHandler();
     this.activeTab = index;
+  }
+
+  private renameTabHandler = (index: number, title: string) => {
+    const tabField = this.tabsField[index];
+    if (tabField) tabField.title = title;
   }
 }
 

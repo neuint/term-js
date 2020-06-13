@@ -11,6 +11,7 @@ export default interface ITab extends ITemplateEngine {
   hidden: boolean;
   left: number;
   disabledHover: boolean;
+  editableTitle: boolean;
   addEventListener(event: EventType, handler: EventHandlerType): void;
   removeEventListener(event: EventType, handler: EventHandlerType): void;
 }
