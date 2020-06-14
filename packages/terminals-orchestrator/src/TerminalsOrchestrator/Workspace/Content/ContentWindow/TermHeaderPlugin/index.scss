@@ -5,7 +5,11 @@
 
   position: relative;
 
-  &.editable > span {
+  > div:first-of-type {
+    @include padding-horizontal(1.5rem);
+  }
+
+  &.editable > div:first-of-type {
     visibility: hidden;
     pointer-events: none;
   }

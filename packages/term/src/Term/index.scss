@@ -46,11 +46,17 @@
 
   @include flex-center;
   @include padding-horizontal(1rem);
-  @include truncated;
 
   &.hidden {
     display: none;
   }
+}
+
+.headerTextContainer {
+  @include truncated;
+
+  flex: 1;
+  text-align: center;
 }
 
 .headerText {

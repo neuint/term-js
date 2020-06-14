@@ -4931,9 +4931,9 @@ var index = function () {
   return ResizeObserver;
 }();
 
-var css = {"term":"term-term-️src-Term-index","header":"header-term-️src-Term-index","hidden":"hidden-term-️src-Term-index","headerText":"headerText-term-️src-Term-index","content":"content-term-️src-Term-index","linesContainer":"linesContainer-term-️src-Term-index","line":"line-term-️src-Term-index","editLine":"editLine-term-️src-Term-index"};
+var css = {"term":"term-term-️src-Term-index","header":"header-term-️src-Term-index","hidden":"hidden-term-️src-Term-index","headerTextContainer":"headerTextContainer-term-️src-Term-index","headerText":"headerText-term-️src-Term-index","content":"content-term-️src-Term-index","linesContainer":"linesContainer-term-️src-Term-index","line":"line-term-️src-Term-index","editLine":"editLine-term-️src-Term-index"};
 
-var template$1 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header {hidden}\">\n    <span ref=\"headerText\" class=\"headerText\">{header}</span>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
+var template$1 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header {hidden}\">\n    <div ref=\"headerTextContainer\" class=\"headerTextContainer\">\n      <span ref=\"headerText\" class=\"headerText\">{header}</span>\n    </div>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
 
 class Animation {
     constructor() {
