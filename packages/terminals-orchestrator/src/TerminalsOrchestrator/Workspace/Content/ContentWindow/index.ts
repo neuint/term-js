@@ -91,7 +91,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
       header: options.title || strings.untitledTerm,
     });
     this.termHeaderPlugin = new TermHeaderPlugin({
-      onStartMove: this.onMouseDown, onRename: this.onRename,
+      onStartMove: this.onMouseDown, onRename: this.onRename, onClose: this.onClose,
     });
     this.term.pluginManager.register(this.termHeaderPlugin);
     this.addListeners();
@@ -103,7 +103,6 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
 
   public destroy() {
     this.removeListeners();
-    this.termHeaderPlugin.destroy();
     this.term.destroy();
     super.destroy();
   }
@@ -186,6 +185,11 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
 
   private onRename = (name: string) => {
     this.term.header = name;
+  }
+
+  private onClose = () => {
+    const { options: { onClose } } = this;
+    if (onClose) onClose(this);
   }
 }
 

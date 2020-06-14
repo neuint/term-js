@@ -71,6 +71,7 @@ class Content extends TemplateEngine implements IContent {
       onEndMove: this.onEndMove,
       onMove: this.onMove,
       onFocus: this.onFocus,
+      onClose: this.onClose,
       title: this.options?.localization?.untitledTerm,
       zIndex: this.nextZIndex,
     });
@@ -146,6 +147,15 @@ class Content extends TemplateEngine implements IContent {
       if (isUpdating) item.zIndex -= 1;
       if (item === contentWindow) isUpdating = true;
     });
+  }
+
+  private onClose = (contentWindow: IContentWindow) => {
+    const { contentWindows } = this;
+    const index = contentWindows.indexOf(contentWindow);
+    if (index >= 0) {
+      contentWindows.splice(index, 1);
+      contentWindow.destroy();
+    }
   }
 
   private updateGlobalCursor() {

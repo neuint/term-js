@@ -46,13 +46,13 @@ class TermHeaderPlugin extends Plugin implements ITermHeaderPlugin {
   }
 
   private addTermHeader() {
-    const { termInfo } = this;
+    const { termInfo, options: { onClose } } = this;
     if (!termInfo) return;
     const title = (termInfo as ITermInfo).elements.title as HTMLElement;
     const titleText = termInfo.title;
     title.classList.add(css.header);
     this.termHeader = new TermHeader(title, {
-      title: titleText, onRenaming: this.onStartRenaming, onRename: this.onRename,
+      onClose, title: titleText, onRenaming: this.onStartRenaming, onRename: this.onRename,
     });
     this.termHeader.draggableElement.setAttribute('data-type', 'header');
   }

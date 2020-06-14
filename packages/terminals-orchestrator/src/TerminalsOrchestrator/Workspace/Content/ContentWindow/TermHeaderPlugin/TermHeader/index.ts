@@ -41,7 +41,7 @@ class TermHeader extends TemplateEngine implements ITermHeader {
   private addListeners() {
     const { onClose } = this.options;
     const rename = this.getRef('rename') as HTMLElement;
-    const close = this.getRef('rename') as HTMLElement;
+    const close = this.getRef('close') as HTMLElement;
     if (onClose) close.addEventListener('click', onClose);
     rename.addEventListener('click', this.onRename);
   }
@@ -49,7 +49,7 @@ class TermHeader extends TemplateEngine implements ITermHeader {
   private removeListeners() {
     const { onClose } = this.options;
     const rename = this.getRef('rename') as HTMLElement;
-    const close = this.getRef('rename') as HTMLElement;
+    const close = this.getRef('close') as HTMLElement;
     if (onClose) close.removeEventListener('click', onClose);
     rename.removeEventListener('click', this.onRename);
   }
