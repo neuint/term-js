@@ -1,4 +1,5 @@
 import { Term, ITerm } from '@term-js/term';
+import { noop } from 'lodash-es';
 import '@term-js/term/dist/index.css';
 
 import Modals from '@Modals/index';
@@ -28,6 +29,10 @@ if (container) {
     overlayHide: true,
     content: 'Test 2',
     position: TERMINAL_CENTER_POSITION,
+    actions: [[
+      { text: 'Submit', type: 'submit' },
+      { text: 'Cancel' },
+    ]],
   });
   (window as unknown as { term: ITerm }).term = term;
   (window as unknown as { plugin: IModals }).plugin = plugin;

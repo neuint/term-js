@@ -27,6 +27,17 @@ import { IS_MAC } from '@general/utils/browser';
 class Content extends TemplateEngine implements IContent {
   public readonly id: number;
 
+  private isDisabled: boolean = false;
+  public get disabled(): boolean {
+    return this.isDisabled;
+  }
+  public set disabled(val: boolean) {
+    const { isDisabled, contentWindows } = this;
+    if (isDisabled === val) return;
+    this.isDisabled = val;
+    contentWindows.forEach(cn => cn.disabled = val);
+  }
+
   private hiddenField: boolean = false;
   public get hidden(): boolean {
     return this.hiddenField;

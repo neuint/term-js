@@ -7,6 +7,9 @@ import ITermEventMap from './ITermEventMap';
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
 import IPluginManager from '@Term/PluginManager/IPluginManager';
 declare class Term extends TemplateEngine implements ITerm {
+    private isDisabled;
+    get disabled(): boolean;
+    set disabled(val: boolean);
     private headerField;
     get header(): string;
     set header(val: string);
@@ -32,7 +35,10 @@ declare class Term extends TemplateEngine implements ITerm {
         label?: string | undefined;
         delimiter?: string | undefined;
     }) => void;
-    write: (data: string | FormattedValueFragmentType, duration?: number | undefined) => boolean | Promise<boolean>;
+    write: (data: string | FormattedValueFragmentType, options?: {
+        withSubmit?: boolean | undefined;
+        duration?: number | undefined;
+    }) => boolean | Promise<boolean>;
     setCaret(caret: string): void;
     setHeader(text: string): void;
     blur(): void;

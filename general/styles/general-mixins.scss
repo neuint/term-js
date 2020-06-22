@@ -1,6 +1,22 @@
 @import 'general-constants.scss';
 @import 'general-theme.scss';
 
+@mixin touch-scrolling {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
+}
+
+@mixin overflow-y($value) {
+  overflow-y: #{$value};
+  @include touch-scrolling;
+}
+
+@mixin overflow-x($value) {
+  overflow-x: #{$value};
+  @include touch-scrolling;
+}
+
 @mixin clear-list {
   list-style: none;
   padding: 0;
@@ -76,6 +92,7 @@
   margin: 0;
   outline:0;
   color: var(--term-js-text-color);
+  user-select: none;
 
   @include button-font-size;
 }

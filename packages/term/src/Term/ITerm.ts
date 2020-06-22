@@ -7,7 +7,11 @@ export default interface ITerm {
   keyboardShortcutsManager: IKeyboardShortcutsManager;
   pluginManager: IPluginManager;
   header: string;
-  write(data: string | FormattedValueFragmentType, duration?: number): Promise<boolean> | boolean;
+  disabled: boolean;
+  write(
+    data: string | FormattedValueFragmentType,
+    options?: { withSubmit?: boolean; duration?: number },
+  ): Promise<boolean> | boolean;
   blur(): void;
   setCaret(caret: string): void;
   addEventListener<K extends keyof ITermEventMap>(

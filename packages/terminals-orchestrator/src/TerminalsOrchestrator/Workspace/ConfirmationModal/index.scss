@@ -1,0 +1,66 @@
+@import 'general-theme.scss';
+@import 'general-mixins.scss';
+@import 'general-components.scss';
+@import '../../theme.scss';
+
+.overlay {
+  @include overlay(absolute);
+  @include flex-center;
+
+  z-index: calc(var(--terminals-orchestrator-start-z-index) + 100);
+}
+
+.modal {
+  @include popup;
+
+  max-width: 20rem;
+  max-height: 15rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  @include popup-header;
+}
+
+.titleTextContainer {
+  @include truncate();
+
+  text-align: center;
+  width: 100%;
+}
+
+.content {
+  @include overflow-y(auto);
+  @include padding-vertical(1rem);
+  @include padding-horizontal(0.5rem);
+
+  flex: 1;
+}
+
+.contentTextContainer {
+  width: 100%;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.contentText span {
+  color: var(--term-js-text-color);
+}
+
+.controls {
+  @include flex-center;
+
+  padding-bottom: 1rem;
+}
+
+.submit {
+  @include button-primary;
+  @include margin-horizontal(0.5rem);
+}
+
+.cancel {
+  @include button-default;
+  @include margin-horizontal(0.5rem);
+}

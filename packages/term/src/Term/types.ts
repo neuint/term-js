@@ -58,7 +58,8 @@ export type TermInfoEditType = {
   focus: () => void,
   blur: () => void,
   write: (
-    data: string | FormattedValueFragmentType, duration?: number,
+    data: string | FormattedValueFragmentType,
+    options?: { withSubmit?: boolean; duration?: number },
   ) => Promise<boolean> | boolean;
 };
 export type TermInfoLinesTypes = {

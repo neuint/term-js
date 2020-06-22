@@ -3,11 +3,14 @@ import css from './index.scss';
 
 import { Emitter, EMITTER_FORCE_LAYER_TYPE } from 'key-layers-js';
 import { TemplateEngine } from '@term-js/term';
+
 import { IWorkspace } from '@TerminalsOrchestrator/Workspace/IWorkspace';
 import ITabs from '@TerminalsOrchestrator/Workspace/Tabs/ITabs';
 import Tabs from '@TerminalsOrchestrator/Workspace/Tabs';
 import IContent from '@TerminalsOrchestrator/Workspace/Content/IContent';
 import Content from '@TerminalsOrchestrator/Workspace/Content';
+import ConfirmationModal from '@TerminalsOrchestrator/Workspace/ConfirmationModal';
+import IConfirmationModal from '@TerminalsOrchestrator/Workspace/ConfirmationModal/IConfirmationModal';
 import { E_KEY_CODE } from '@general/constants/keyCodes';
 import { IS_MAC } from '@general/utils/browser';
 import { TabInfoType } from '@TerminalsOrchestrator/Workspace/Tabs/types';
@@ -41,6 +44,7 @@ class Workspace extends TemplateEngine implements IWorkspace {
     return this.tabsView.activeTab;
   }
 
+  private cm?: IConfirmationModal;
   private nextTabId: number = 1;
   private options: OptionsType;
   private readonly tabsView: ITabs;
@@ -77,12 +81,13 @@ class Workspace extends TemplateEngine implements IWorkspace {
   }
 
   public destroy() {
-    const { tabsView, contentList, emitter } = this;
+    const { tabsView, contentList, emitter, cm } = this;
     emitter.removeListener('keyDown', this.newContentWindowHandler);
     emitter.removeListener('keyDown', this.addTabHandler);
     emitter.destroy();
     contentList.forEach(item => item.destroy());
     tabsView.destroy();
+    cm?.destroy();
     super.destroy();
   }
 
@@ -112,18 +117,35 @@ class Workspace extends TemplateEngine implements IWorkspace {
   }
 
   private closeTabHandler = (index: number) => {
-    const { tabsView, contentList } = this;
-    const content = this.getTabContent(index);
-    const activeTab = tabsView.activeTab;
-    let newActiveTab = index === activeTab ? Math.max(0, activeTab - 1) : activeTab;
-    if (activeTab > index) newActiveTab = activeTab - 1;
-    tabsView.tabs = this.tabsView.tabs.filter((_, i) => i !== index);
-    if (content) {
-      const contentIndex = contentList.indexOf(content);
-      content.destroy();
-      if (contentIndex >= 0) contentList.splice(contentIndex, 1);
-    }
-    this.focusTabHandler(newActiveTab);
+    const { tabsView, contentList, options: { localization } } = this;
+    contentList.forEach(c => c.disabled = true);
+
+    this.cm  = new ConfirmationModal(this.getRef('root') as HTMLElement, {
+      submit: localization?.tabConfirmationModalSubmit || strings.tabConfirmationModalSubmit,
+      cancel: localization?.tabConfirmationModalCancel || strings.tabConfirmationModalCancel,
+      title: localization?.tabConfirmationModalTitle || strings.tabConfirmationModalTitle,
+      text: (localization?.tabConfirmationModalText || strings.tabConfirmationModalText)
+        .replace('{name}', tabsView.tabs[index].title),
+      onCancel: () => {
+        this.cm?.destroy();
+        contentList.forEach(c => c.disabled = false);
+      },
+      onSubmit: () => {
+        this.cm?.destroy();
+        contentList.forEach(c => c.disabled = false);
+        const content = this.getTabContent(index);
+        const activeTab = tabsView.activeTab;
+        let newActiveTab = index === activeTab ? Math.max(0, activeTab - 1) : activeTab;
+        if (activeTab > index) newActiveTab = activeTab - 1;
+        tabsView.tabs = this.tabsView.tabs.filter((_, i) => i !== index);
+        if (content) {
+          const contentIndex = contentList.indexOf(content);
+          content.destroy();
+          if (contentIndex >= 0) contentList.splice(contentIndex, 1);
+        }
+        this.focusTabHandler(newActiveTab);
+      },
+    });
   }
 
   private addTabHandler = () => {

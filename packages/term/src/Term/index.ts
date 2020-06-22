@@ -52,6 +52,19 @@ import { DEFAULT_DELIMITER } from '@Term/constants/strings';
 import { IS_MAC } from '@Term/constants/browser';
 
 class Term extends TemplateEngine implements ITerm {
+  private isDisabled: boolean = false;
+  public get disabled(): boolean {
+    return this.isDisabled;
+  }
+  public set disabled(val: boolean) {
+    const { isDisabled, editLine, keyboardShortcutsManager } = this;
+    if (isDisabled === val) return;
+    this.isDisabled = val;
+    if (editLine) editLine.disabled = val;
+    if (val) keyboardShortcutsManager.deactivate();
+    else keyboardShortcutsManager.activate();
+  }
+
   private headerField: string = '';
   public get header(): string {
     return this.headerField;
@@ -153,13 +166,15 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   public write = (
-    data: string | FormattedValueFragmentType, duration?: number,
+    data: string | FormattedValueFragmentType,
+    options: { withSubmit?: boolean; duration?: number } = {},
   ): Promise<boolean> | boolean => {
     const { editLine, isEditing } = this;
+    const { withSubmit, duration = 0 } = options;
     if (!editLine || isEditing) return duration ? Promise.resolve(false) : false;
     this.isEditing = true;
     editLine.disabled = true;
-    if (duration && duration >= 0) {
+    if (duration >= 0) {
       const { value: original } = editLine;
       const str = isString(data) ? data : data.str;
       const millisecondCharactersCount = str.length / duration;
@@ -172,6 +187,7 @@ class Term extends TemplateEngine implements ITerm {
           if (substr === str) {
             clearInterval(this.writingInterval as unknown as number);
             this.updateEditLine(data, true, original);
+            if (withSubmit) editLine.submit();
             return res(true);
           }
           if (updatingValue.str !== substr) {
@@ -182,6 +198,7 @@ class Term extends TemplateEngine implements ITerm {
       });
     }
     this.updateEditLine(data, true);
+    if (withSubmit) editLine.submit();
     return true;
   }
 

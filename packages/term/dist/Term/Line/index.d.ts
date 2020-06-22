@@ -58,6 +58,7 @@ declare class Line extends TemplateEngine implements ILine {
     stopEdit(): void;
     focus(): void;
     blur(): void;
+    submit(): void;
     render(params: {
         label?: string;
         delimiter?: string;

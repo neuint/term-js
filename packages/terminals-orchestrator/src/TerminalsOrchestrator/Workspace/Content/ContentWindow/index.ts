@@ -12,6 +12,18 @@ import ITermHeaderPlugin from './TermHeaderPlugin/ITermHeaderPlugin';
 import strings from '@TerminalsOrchestrator/strings';
 
 class ContentWindow extends TemplateEngine implements IContentWindow {
+  private isDisabled: boolean = false;
+  public get disabled(): boolean {
+    return this.isDisabled;
+  }
+  public set disabled(val: boolean) {
+    const { isDisabled, term } = this;
+    if (isDisabled === val) return;
+    this.isDisabled = val;
+    if (val) term.blur();
+    term.disabled = val;
+  }
+
   private zIndexField: number = 0;
   public get zIndex(): number {
     return this.zIndexField;

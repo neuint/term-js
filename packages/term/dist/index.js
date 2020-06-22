@@ -6463,7 +6463,7 @@ class Line extends TemplateEngine {
             else if (isArray(value)) {
                 formattedValue = secret ? value.filter(item => get(item, 'lock')) : value;
             }
-            e.preventDefault();
+            e === null || e === void 0 ? void 0 : e.preventDefault();
             if (inputField && onSubmit) {
                 onSubmit({
                     formattedValue,
@@ -6651,6 +6651,9 @@ class Line extends TemplateEngine {
         const { isFocused } = inputField;
         if (isFocused)
             inputField.blur();
+    }
+    submit() {
+        this.submitHandler();
     }
     render(params) {
         const { editable, className, secret } = this;
@@ -9103,6 +9106,7 @@ const IS_MAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 class Term extends TemplateEngine {
     constructor(container, params = { lines: [], editLine: '' }) {
         super(template$1, container);
+        this.isDisabled = false;
         this.headerField = '';
         this.history = {
             list: [], index: -1, stopHistory: false,
@@ -9149,13 +9153,14 @@ class Term extends TemplateEngine {
             if (isUpdated)
                 this.updateTermInfo();
         };
-        this.write = (data, duration) => {
+        this.write = (data, options = {}) => {
             const { editLine, isEditing } = this;
+            const { withSubmit, duration = 0 } = options;
             if (!editLine || isEditing)
                 return duration ? Promise.resolve(false) : false;
             this.isEditing = true;
             editLine.disabled = true;
-            if (duration && duration >= 0) {
+            if (duration >= 0) {
                 const { value: original } = editLine;
                 const str = isString(data) ? data : data.str;
                 const millisecondCharactersCount = str.length / duration;
@@ -9168,6 +9173,8 @@ class Term extends TemplateEngine {
                         if (substr === str) {
                             clearInterval(this.writingInterval);
                             this.updateEditLine(data, true, original);
+                            if (withSubmit)
+                                editLine.submit();
                             return res(true);
                         }
                         if (updatingValue.str !== substr) {
@@ -9178,6 +9185,8 @@ class Term extends TemplateEngine {
                 });
             }
             this.updateEditLine(data, true);
+            if (withSubmit)
+                editLine.submit();
             return true;
         };
         this.characterUpdater = () => {
@@ -9325,6 +9334,21 @@ class Term extends TemplateEngine {
         });
         this.preStart(container, params);
         this.pluginManager = new PluginManager(this.getTermInfo(), this.keyboardShortcutsManager);
+    }
+    get disabled() {
+        return this.isDisabled;
+    }
+    set disabled(val) {
+        const { isDisabled, editLine, keyboardShortcutsManager } = this;
+        if (isDisabled === val)
+            return;
+        this.isDisabled = val;
+        if (editLine)
+            editLine.disabled = val;
+        if (val)
+            keyboardShortcutsManager.deactivate();
+        else
+            keyboardShortcutsManager.activate();
     }
     get header() {
         return this.headerField;
