@@ -16,6 +16,7 @@ import { IS_MAC } from '@general/utils/browser';
 import { TabInfoType } from '@TerminalsOrchestrator/Workspace/Tabs/types';
 import { OptionsType } from '@TerminalsOrchestrator/Workspace/types';
 import strings from '@TerminalsOrchestrator/strings';
+import { safeTemplate } from '@general/utils/string';
 
 class Workspace extends TemplateEngine implements IWorkspace {
   public set tabs(val: (string | TabInfoType)[]) {
@@ -124,8 +125,10 @@ class Workspace extends TemplateEngine implements IWorkspace {
       submit: localization?.tabConfirmationModalSubmit || strings.tabConfirmationModalSubmit,
       cancel: localization?.tabConfirmationModalCancel || strings.tabConfirmationModalCancel,
       title: localization?.tabConfirmationModalTitle || strings.tabConfirmationModalTitle,
-      text: (localization?.tabConfirmationModalText || strings.tabConfirmationModalText)
-        .replace('{name}', tabsView.tabs[index].title),
+      text: safeTemplate(
+        localization?.tabConfirmationModalText || strings.tabConfirmationModalText,
+        { name: tabsView.tabs[index].title },
+      ),
       onCancel: () => {
         this.cm?.destroy();
         contentList.forEach(c => c.disabled = false);

@@ -9,6 +9,8 @@ import ContentWindow from '@TerminalsOrchestrator/Workspace/Content/ContentWindo
 import IContentWindow from '@TerminalsOrchestrator/Workspace/Content/ContentWindow/IContentWindow';
 import { MoveType } from '@TerminalsOrchestrator/Workspace/Content/ContentWindow/types';
 import IContent from '@TerminalsOrchestrator/Workspace/Content/IContent';
+import ConfirmationModal from '@TerminalsOrchestrator/Workspace/ConfirmationModal';
+import IConfirmationModal from '@TerminalsOrchestrator/Workspace/ConfirmationModal/IConfirmationModal';
 import {
   ANCHOR_SIZE,
   BOTTOM_MOVE_TYPE, HEADER_MOVE_TYPE,
@@ -23,6 +25,8 @@ import {
   TOP_MOVE_TYPE,
 } from '@TerminalsOrchestrator/Workspace/Content/constants';
 import { IS_MAC } from '@general/utils/browser';
+import strings from '@TerminalsOrchestrator/strings';
+import { safeTemplate } from '@general/utils/string';
 
 class Content extends TemplateEngine implements IContent {
   public readonly id: number;
@@ -66,6 +70,7 @@ class Content extends TemplateEngine implements IContent {
       ? contentWindows.sort((f, s) => s.zIndex - f.zIndex)[0].zIndex + 1
       : 0;
   }
+  private cm?: IConfirmationModal;
 
   constructor(container: HTMLElement, options: OptionsType = { id: -1 }) {
     super(template, container);
@@ -101,6 +106,7 @@ class Content extends TemplateEngine implements IContent {
 
   public destroy() {
     this.removeListeners();
+    this.cm?.destroy();
     super.destroy();
   }
 
@@ -161,12 +167,29 @@ class Content extends TemplateEngine implements IContent {
   }
 
   private onClose = (contentWindow: IContentWindow) => {
-    const { contentWindows } = this;
+    const { contentWindows, options: { localization } } = this;
     const index = contentWindows.indexOf(contentWindow);
-    if (index >= 0) {
-      contentWindows.splice(index, 1);
-      contentWindow.destroy();
-    }
+    if (index < 0 || this.disabled) return;
+    this.disabled = true;
+    this.cm = new ConfirmationModal(this.getRef('root') as HTMLElement, {
+      submit: localization?.termConfirmationModalSubmit || strings.termConfirmationModalSubmit,
+      cancel: localization?.termConfirmationModalCancel || strings.termConfirmationModalCancel,
+      title: localization?.termConfirmationModalTitle || strings.termConfirmationModalTitle,
+      text: safeTemplate(
+        localization?.termConfirmationModalText || strings.termConfirmationModalText,
+        { name: contentWindows[index]?.title || '' },
+      ),
+      onCancel: () => {
+        this.cm?.destroy();
+        this.disabled = false;
+      },
+      onSubmit: () => {
+        this.cm?.destroy();
+        this.disabled = false;
+        contentWindows.splice(index, 1);
+        contentWindow.destroy();
+      },
+    });
   }
 
   private updateGlobalCursor() {

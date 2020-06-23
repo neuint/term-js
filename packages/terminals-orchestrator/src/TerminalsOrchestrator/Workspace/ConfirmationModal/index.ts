@@ -2,15 +2,22 @@ import template from './template.html';
 import css from './index.scss';
 
 import { TemplateEngine } from '@term-js/term';
+import { ENTER_KEY_CODE, ESC_KEY_CODE } from '@general/constants/keyCodes';
+import { stopPropagation } from '@general/utils/event';
+import { Emitter, EMITTER_TOP_LAYER_TYPE } from 'key-layers-js';
 import IConfirmationModal from './IConfirmationModal';
 import { OptionsType } from './types';
 
 class ConfirmationModal extends TemplateEngine implements IConfirmationModal {
   private readonly options: OptionsType;
+  private readonly emitter: Emitter;
+
   constructor(container: HTMLElement, options: OptionsType) {
     super(template, container);
     this.options = options;
     this.render();
+    this.emitter = new Emitter(EMITTER_TOP_LAYER_TYPE);
+    this.addListeners();
   }
 
   public render() {
@@ -18,28 +25,46 @@ class ConfirmationModal extends TemplateEngine implements IConfirmationModal {
     super.render({
       css, title, text, submit: onSubmit ? submit : '', cancel: onCancel ? cancel : '',
     });
-    this.addListeners();
   }
 
   public destroy() {
     this.removeListeners();
+    this.emitter.destroy();
     super.destroy();
   }
 
   private addListeners() {
-    const { onSubmit, onCancel } = this.options;
-    const submit = this.getRef('submit');
-    const cancel = this.getRef('cancel');
-    if (submit && onSubmit) submit.addEventListener('click', onSubmit);
-    if (cancel && onCancel) cancel.addEventListener('click', onCancel);
+    const { emitter, options: { onSubmit, onCancel } } = this;
+    const root = this.getRef('root') as HTMLElement;
+    root.addEventListener('click', stopPropagation);
+    if (onSubmit) {
+      const submit = this.getRef('submit');
+      if (submit) submit.addEventListener('click', onSubmit);
+      emitter.addListener('keyDown', onSubmit, { code: ENTER_KEY_CODE });
+    }
+    if (onCancel) {
+      const cancel = this.getRef('cancel');
+      const overlay = this.getRef('overlay') as HTMLElement;
+      overlay.addEventListener('click', onCancel);
+      if (cancel) cancel.addEventListener('click', onCancel);
+      emitter.addListener('keyDown', onCancel, { code: ESC_KEY_CODE });
+    }
   }
 
   private removeListeners() {
-    const { onSubmit, onCancel } = this.options;
-    const submit = this.getRef('submit');
-    const cancel = this.getRef('cancel');
-    if (submit && onSubmit) submit.removeEventListener('click', onSubmit);
-    if (cancel && onCancel) cancel.removeEventListener('click', onCancel);
+    const { emitter, options: { onSubmit, onCancel } } = this;
+    if (onSubmit) {
+      const submit = this.getRef('submit');
+      if (submit) submit.removeEventListener('click', onSubmit);
+      emitter.removeListener('keyDown', onSubmit);
+    }
+    if (onCancel) {
+      const cancel = this.getRef('cancel');
+      const overlay = this.getRef('overlay') as HTMLElement;
+      overlay.removeEventListener('click', onCancel);
+      if (cancel) cancel.removeEventListener('click', onCancel);
+      emitter.removeListener('keyDown', onCancel);
+    }
   }
 }
 

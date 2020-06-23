@@ -5,4 +5,5 @@ export default interface IContentWindow extends ITemplateEngine {
   lockSelection: boolean;
   disabled: boolean;
   zIndex: number;
+  title: string;
 }
