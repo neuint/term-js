@@ -38,6 +38,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
     if (zIndexField !== val) {
       const root = this.getRef('root') as HTMLElement;
       root.style.setProperty('--z-index', String(val));
+      this.term.keyboardShortcutsManager.layer = val;
     }
   }
 
@@ -106,6 +107,7 @@ class ContentWindow extends TemplateEngine implements IContentWindow {
       lines: [],
       header: options.title || strings.untitledTerm,
     });
+    this.term.keyboardShortcutsManager.layer = this.zIndexField;
     this.termHeaderPlugin = new TermHeaderPlugin({
       onStartMove: this.onMouseDown, onRename: this.onRename, onClose: this.onClose,
     });

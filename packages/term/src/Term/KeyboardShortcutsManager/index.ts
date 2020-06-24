@@ -1,4 +1,4 @@
-import { Emitter, EMITTER_TOP_LAYER_TYPE } from 'key-layers-js';
+import { Emitter } from 'key-layers-js';
 import { v1 as guid } from 'uuid';
 
 import IKeyboardShortcutsManager from '@Term/KeyboardShortcutsManager/IKeyboardShortcutsManager';
@@ -46,10 +46,19 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
     return normalizedShortcut;
   }
 
+  private layerField: number = 1;
+  public get layer(): number {
+    return this.layerField;
+  }
+  public set layer(val: number) {
+    const { layerField, emitter } = this;
+    if (layerField === val) return;
+    this.layerField = val;
+    if (emitter) emitter.updateLayerType(val);
+  }
+
   private emitter?: Emitter;
-
   private shortcutsMapField: { [action: string]: ShortcutMapItemType[] } = {};
-
   private listeners: {
     [actions: string]: {
       callback: (action: string, e: Event, info?: CallbackInfoType) => void | boolean;
@@ -116,7 +125,7 @@ class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
 
   public activate() {
     if (!this.emitter) {
-      this.emitter = new Emitter(EMITTER_TOP_LAYER_TYPE);
+      this.emitter = new Emitter(this.layerField);
       this.addListeners();
     }
   }

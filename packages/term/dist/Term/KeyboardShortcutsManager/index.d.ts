@@ -4,6 +4,9 @@ import { InfoType } from '@Term/types';
 declare class KeyboardShortcutsManager implements IKeyboardShortcutsManager {
     private static checkShortcutsEqual;
     private static getNormalizedShortcut;
+    private layerField;
+    get layer(): number;
+    set layer(val: number);
     private emitter?;
     private shortcutsMapField;
     private listeners;

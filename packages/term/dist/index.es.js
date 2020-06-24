@@ -8585,6 +8585,12 @@ function () {
     this.removeListeners();
   };
 
+  Emitter.prototype.updateLayerType = function (subscribeType) {
+    this.removeListeners();
+    this.subscribeType = subscribeType;
+    this.addListeners();
+  };
+
   Emitter.prototype.addListeners = function () {
     var subscribeType = this.subscribeType;
     var listenersTarget = Emitter.getListenersTarget(subscribeType);
@@ -8863,6 +8869,7 @@ const checkArraysEqual = (first, second) => first.length === second.length && fi
 
 class KeyboardShortcutsManager {
     constructor(params = {}, unlockKey) {
+        this.layerField = 1;
         this.shortcutsMapField = {};
         this.listeners = {};
         this.isLock = false;
@@ -8901,6 +8908,17 @@ class KeyboardShortcutsManager {
                 || normalizedShortcut.shiftKey;
         }
         return normalizedShortcut;
+    }
+    get layer() {
+        return this.layerField;
+    }
+    set layer(val) {
+        const { layerField, emitter } = this;
+        if (layerField === val)
+            return;
+        this.layerField = val;
+        if (emitter)
+            emitter.updateLayerType(val);
     }
     addListener(action, callback, info) {
         const { listeners } = this;
@@ -8947,7 +8965,7 @@ class KeyboardShortcutsManager {
     }
     activate() {
         if (!this.emitter) {
-            this.emitter = new Emitter(EMITTER_TOP_LAYER_TYPE);
+            this.emitter = new Emitter(this.layerField);
             this.addListeners();
         }
     }
