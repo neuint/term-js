@@ -4,9 +4,10 @@ import ITerm from '@Term/ITerm';
 import css from './index.scss';
 import { ValueType } from '@Term/types';
 
-const container = document.querySelector('#root');
+const container = document.querySelector('.content');
 if (container) {
   const term = new Term(container, {
+    header: 'Test',
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
     label: 'guest',
@@ -19,6 +20,5 @@ if (container) {
       (new Array(40).fill(null)).map((): string => 's').join(''),
     ])),
   });
-  term.setHeader('Test');
   (window as unknown as { term: ITerm }).term = term;
 }

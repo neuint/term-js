@@ -6405,7 +6405,7 @@ CaretFactory.caretMap = {
 
 const LOCK_TIMEOUT = 600;
 
-var template$3 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
+var template$3 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"invisible\"></div>\n</div>\n";
 
 var css$4 = {"root":"root-term-️f48df653df791725509e2a00ded23e06","input":"input-term-️f48df653df791725509e2a00ded23e06","hiddenCaret":"hiddenCaret-term-️f48df653df791725509e2a00ded23e06","hidden":"hidden-term-️f48df653df791725509e2a00ded23e06"};
 
@@ -14883,7 +14883,7 @@ CaretFactory$1.caretMap = {
 
 const LOCK_TIMEOUT$1 = 600;
 
-var template$3$1 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
+var template$3$1 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"invisible\"></div>\n</div>\n";
 
 var css$4$1 = {"root":"root-term-️f48df653df791725509e2a00ded23e06","input":"input-term-️f48df653df791725509e2a00ded23e06","hiddenCaret":"hiddenCaret-term-️f48df653df791725509e2a00ded23e06","hidden":"hidden-term-️f48df653df791725509e2a00ded23e06"};
 
@@ -23246,7 +23246,7 @@ CaretFactory$1$1.caretMap = {
 
 const LOCK_TIMEOUT$1$1 = 600;
 
-var template$3$1$1 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
+var template$3$1$1 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"invisible\"></div>\n</div>\n";
 
 var css$4$1$1 = {"root":"root-term-️f48df653df791725509e2a00ded23e06","input":"input-term-️f48df653df791725509e2a00ded23e06","hiddenCaret":"hiddenCaret-term-️f48df653df791725509e2a00ded23e06","hidden":"hidden-term-️f48df653df791725509e2a00ded23e06"};
 
@@ -31609,7 +31609,7 @@ CaretFactory$1$1$1.caretMap = {
 
 const LOCK_TIMEOUT$1$1$1 = 600;
 
-var template$3$1$1$1 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
+var template$3$1$1$1 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"invisible\"></div>\n</div>\n";
 
 var css$4$1$1$1 = {"root":"root-term-️f48df653df791725509e2a00ded23e06","input":"input-term-️f48df653df791725509e2a00ded23e06","hiddenCaret":"hiddenCaret-term-️f48df653df791725509e2a00ded23e06","hidden":"hidden-term-️f48df653df791725509e2a00ded23e06"};
 

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
+      "@TerminalsOrchestrator/*": ["terminals-orchestrator/src/TerminalsOrchestrator/*"],
       "@Modals/*": ["modals-plugin/src/Modals/*"],
       "@StatusBar/*": ["status-bar-plugin/src/StatusBar/*"],
       "@CommandSearch/*": ["command-search-plugin/src/CommandSearch/*"],
@@ -9,7 +10,8 @@
       "@Autocomplete/*": ["autocomplete-plugin/src/Autocomplete/*"],
       "@Dropdown/*": ["dropdown-plugin/src/Dropdown/*"],
       "@ContextMenu/*": ["context-menu-plugin/src/ContextMenu/*"],
-      "@Term/*": ["term/src/Term/*"]
+      "@Term/*": ["term/src/Term/*"],
+      "@general/*": ["../general/*"]
     }
   },
   "exclude": ["node_modules", "webpack.*.js"]

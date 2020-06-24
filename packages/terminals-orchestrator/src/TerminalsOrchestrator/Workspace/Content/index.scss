@@ -1,0 +1,63 @@
+@import 'general-mixins';
+@import 'general-components';
+@import '../../theme.scss';
+
+.root {
+  display: flex;
+  flex-direction: column;
+
+  &.horizontalResize:after,
+  &.verticalResize:after,
+  &.leftBottomResize:after,
+  &.rightBottomResize:after {
+    position: absolute;
+    content: '';
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+
+  &.horizontalResize:after {
+    cursor: ew-resize;
+  }
+
+  &.verticalResize:after {
+    cursor: ns-resize;
+  }
+
+  &.leftBottomResize:after {
+    cursor: nesw-resize;
+  }
+
+  &.rightBottomResize:after {
+    cursor: nwse-resize;
+  }
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.addWindowContainer {
+  @include flex-vertical;
+
+  border-radius: 0.25rem;
+  height: 2.5rem;
+}
+
+.addWindowButton {
+  @include icon-button(2.5rem, 1.5rem);
+}
+
+.addWindowShortcutText {
+  @include font-size(0.8);
+
+  color: var(--terminals-orchestrator-new-window-shortcut-text-color);
+}
+
+.contentContainer {
+  flex: 1;
+  display: flex;
+  position: relative;
+}

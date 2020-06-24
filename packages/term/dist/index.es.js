@@ -4925,9 +4925,9 @@ var index = function () {
   return ResizeObserver;
 }();
 
-var css = {"term":"term-term-️0e2edb9a914aa6e9f9eafd6a264c9040","header":"header-term-️0e2edb9a914aa6e9f9eafd6a264c9040","hidden":"hidden-term-️0e2edb9a914aa6e9f9eafd6a264c9040","headerText":"headerText-term-️0e2edb9a914aa6e9f9eafd6a264c9040","content":"content-term-️0e2edb9a914aa6e9f9eafd6a264c9040","linesContainer":"linesContainer-term-️0e2edb9a914aa6e9f9eafd6a264c9040","line":"line-term-️0e2edb9a914aa6e9f9eafd6a264c9040","editLine":"editLine-term-️0e2edb9a914aa6e9f9eafd6a264c9040"};
+var css = {"term":"term-term-️src-Term-index","header":"header-term-️src-Term-index","hidden":"hidden-term-️src-Term-index","headerTextContainer":"headerTextContainer-term-️src-Term-index","headerText":"headerText-term-️src-Term-index","content":"content-term-️src-Term-index","linesContainer":"linesContainer-term-️src-Term-index","line":"line-term-️src-Term-index","editLine":"editLine-term-️src-Term-index"};
 
-var template$1 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header hidden\">\n    <span ref=\"headerText\" class=\"headerText\">{header}</span>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
+var template$1 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header {hidden}\">\n    <div ref=\"headerTextContainer\" class=\"headerTextContainer\">\n      <span ref=\"headerText\" class=\"headerText\">{header}</span>\n    </div>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
 
 class Animation {
     constructor() {
@@ -5270,7 +5270,7 @@ class TemplateEngine extends Animation {
 
 var template$2 = "<div ref=\"root\" class=\"root className\">\n  <div ref=\"virtualizedList\" class=\"virtualizedList\">\n    <div ref=\"itemsContainer\" class=\"itemsContainer\"></div>\n  </div>\n  <div ref=\"generalList\" class=\"generalList\"></div>\n</div>\n";
 
-var css$1 = {"root":"root-term-️cb1d06823d821bc83bbb35855a5f1808","virtualizedList":"virtualizedList-term-️cb1d06823d821bc83bbb35855a5f1808","itemsContainer":"itemsContainer-term-️cb1d06823d821bc83bbb35855a5f1808"};
+var css$1 = {"root":"root-term-️src-Term-VirtualizedList-index","virtualizedList":"virtualizedList-term-️src-Term-VirtualizedList-index","itemsContainer":"itemsContainer-term-️src-Term-VirtualizedList-index"};
 
 class VirtualizedList extends TemplateEngine {
     constructor(container, params) {
@@ -5393,6 +5393,7 @@ class VirtualizedList extends TemplateEngine {
     updateViewport() {
         this.removeAllItems();
         this.updateHeight();
+        this.renderItems();
     }
     clearCache() {
         this.itemsCache = {};
@@ -5547,6 +5548,30 @@ class VirtualizedList extends TemplateEngine {
 
 const getKeyCode = (e) => e ? e.which || e.keyCode : null;
 
+const getStartIntersectionString = (main, target) => {
+    if (target.indexOf(main) === 0)
+        return { str: main, isFull: true };
+    if (main[0] !== target[0])
+        return { str: '', isFull: false };
+    let startIntersectionString = main[0];
+    for (let i = 1, ln = main.length; i < ln; i += 1) {
+        const character = main[i];
+        if (character === target[i]) {
+            startIntersectionString += character;
+        }
+        else {
+            break;
+        }
+    }
+    return { str: startIntersectionString, isFull: false };
+};
+const escapeString = (str) => str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
 const ENTER_CODE = 13;
 const LEFT_CODE = 37;
 const RIGHT_CODE = 39;
@@ -5610,7 +5635,7 @@ const compareItemSize = (first, second) => {
     return first.width === second.width && first.height === second.height;
 };
 
-var css$2 = {"root":"root-term-️cab119304dc90a90f699151e7c15d7ee","visible":"visible-term-️cab119304dc90a90f699151e7c15d7ee","content":"content-term-️cab119304dc90a90f699151e7c15d7ee","helpContainer":"helpContainer-term-️cab119304dc90a90f699151e7c15d7ee","inputContainer":"inputContainer-term-️cab119304dc90a90f699151e7c15d7ee"};
+var css$2 = {"root":"root-term-️src-Term-Line-index","visible":"visible-term-️src-Term-Line-index","content":"content-term-️src-Term-Line-index","helpContainer":"helpContainer-term-️src-Term-Line-index","inputContainer":"inputContainer-term-️src-Term-Line-index"};
 
 var lineTemplate = "<div ref=\"root\" class=\"root visible {className}\">\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"helpContainer\" class=\"labelText helpContainer\">{nbs}</div>\n    <div ref=\"labelContainer\"></div>\n    <div ref=\"inputContainer\" class=\"inputContainer\"></div>\n  </div>\n</div>\n";
 
@@ -5677,7 +5702,7 @@ class BaseCaret extends TemplateEngine {
 
 var SimpleCaretTemplate = "<span ref=\"root\" class=\"root\">\n  <span ref=\"character\" class=\"character\"></span>\n</span>\n";
 
-var css$3 = {"root":"root-term-️e70267db75c0341d98d4d4a58c7a4fe6","carriage-return-blink":"carriage-return-blink-term-️e70267db75c0341d98d4d4a58c7a4fe6","lock":"lock-term-️e70267db75c0341d98d4d4a58c7a4fe6","busy":"busy-term-️e70267db75c0341d98d4d4a58c7a4fe6","none":"none-term-️e70267db75c0341d98d4d4a58c7a4fe6","carriage-return-busy":"carriage-return-busy-term-️e70267db75c0341d98d4d4a58c7a4fe6","hidden":"hidden-term-️e70267db75c0341d98d4d4a58c7a4fe6"};
+var css$3 = {"root":"root-term-️src-Term-SimpleCaret-index","carriage-return-blink":"carriage-return-blink-term-️src-Term-SimpleCaret-index","lock":"lock-term-️src-Term-SimpleCaret-index","busy":"busy-term-️src-Term-SimpleCaret-index","none":"none-term-️src-Term-SimpleCaret-index","carriage-return-busy":"carriage-return-busy-term-️src-Term-SimpleCaret-index","hidden":"hidden-term-️src-Term-SimpleCaret-index"};
 
 class SimpleCaret extends BaseCaret {
     constructor(container) {
@@ -5737,9 +5762,9 @@ const LOCK_TIMEOUT = 600;
 
 var template$3 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
 
-var css$4 = {"root":"root-term-️f48df653df791725509e2a00ded23e06","input":"input-term-️f48df653df791725509e2a00ded23e06","hiddenCaret":"hiddenCaret-term-️f48df653df791725509e2a00ded23e06","hidden":"hidden-term-️f48df653df791725509e2a00ded23e06"};
+var css$4 = {"root":"root-term-️src-Term-Line-Input-ContentEditableInput-index","input":"input-term-️src-Term-Line-Input-ContentEditableInput-index","hiddenCaret":"hiddenCaret-term-️src-Term-Line-Input-ContentEditableInput-index","hidden":"hidden-term-️src-Term-Line-Input-ContentEditableInput-index"};
 
-var css$5 = {"secret":"secret-term-️d139f1b48647dd08a4d620b7f948a15f"};
+var css$5 = {"secret":"secret-term-️src-Term-Line-Input-BaseInput-index"};
 
 /*!
  * escape-html
@@ -5822,24 +5847,6 @@ function escapeHtml(string) {
 
   return lastIndex !== index ? html + str.substring(lastIndex, index) : html;
 }
-
-const getStartIntersectionString = (main, target) => {
-    if (target.indexOf(main) === 0)
-        return { str: main, isFull: true };
-    if (main[0] !== target[0])
-        return { str: '', isFull: false };
-    let startIntersectionString = main[0];
-    for (let i = 1, ln = main.length; i < ln; i += 1) {
-        const character = main[i];
-        if (character === target[i]) {
-            startIntersectionString += character;
-        }
-        else {
-            break;
-        }
-    }
-    return { str: startIntersectionString, isFull: false };
-};
 
 const DATA_INDEX_ATTRIBUTE_NAME = 'data-index';
 const SECRET_CHARACTER = '•';
@@ -6360,7 +6367,7 @@ class ContentEditableInput extends BaseInput {
 
 var template$4 = "<div ref=\"root\">\n  <div ref=\"input\" class=\"root\">{value}</div>\n</div>\n";
 
-var css$6 = {"root":"root-term-️457efebe90f812d594ffccb8790b07ab"};
+var css$6 = {"root":"root-term-️src-Term-Line-Input-ViewableInput-index"};
 
 class ViewableInput extends BaseInput {
     set value(val) {
@@ -6380,7 +6387,7 @@ class ViewableInput extends BaseInput {
     }
 }
 
-var css$7 = {"label":"label-term-️679afd4849096768cfa38bb85a2048b8","labelTextContainer":"labelTextContainer-term-️679afd4849096768cfa38bb85a2048b8","labelText":"labelText-term-️679afd4849096768cfa38bb85a2048b8"};
+var css$7 = {"label":"label-term-️src-Term-Line-Label-index","labelTextContainer":"labelTextContainer-term-️src-Term-Line-Label-index","labelText":"labelText-term-️src-Term-Line-Label-index"};
 
 var template$5 = "<if condition=\"{label || delimiter}\">\n  <div class=\"label\">\n    <if condition=\"{label}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"label\">{label}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </if>\n    <if condition=\"{delimiter}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"delimiter\">{delimiter}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </if>\n  </div>\n</if>\n\n";
 
@@ -6450,7 +6457,7 @@ class Line extends TemplateEngine {
             else if (isArray(value)) {
                 formattedValue = secret ? value.filter(item => get(item, 'lock')) : value;
             }
-            e.preventDefault();
+            e === null || e === void 0 ? void 0 : e.preventDefault();
             if (inputField && onSubmit) {
                 onSubmit({
                     formattedValue,
@@ -6638,6 +6645,9 @@ class Line extends TemplateEngine {
         const { isFocused } = inputField;
         if (isFocused)
             inputField.blur();
+    }
+    submit() {
+        this.submitHandler();
     }
     render(params) {
         const { editable, className, secret } = this;
@@ -8575,6 +8585,12 @@ function () {
     this.removeListeners();
   };
 
+  Emitter.prototype.updateLayerType = function (subscribeType) {
+    this.removeListeners();
+    this.subscribeType = subscribeType;
+    this.addListeners();
+  };
+
   Emitter.prototype.addListeners = function () {
     var subscribeType = this.subscribeType;
     var listenersTarget = Emitter.getListenersTarget(subscribeType);
@@ -8853,6 +8869,7 @@ const checkArraysEqual = (first, second) => first.length === second.length && fi
 
 class KeyboardShortcutsManager {
     constructor(params = {}, unlockKey) {
+        this.layerField = 1;
         this.shortcutsMapField = {};
         this.listeners = {};
         this.isLock = false;
@@ -8891,6 +8908,17 @@ class KeyboardShortcutsManager {
                 || normalizedShortcut.shiftKey;
         }
         return normalizedShortcut;
+    }
+    get layer() {
+        return this.layerField;
+    }
+    set layer(val) {
+        const { layerField, emitter } = this;
+        if (layerField === val)
+            return;
+        this.layerField = val;
+        if (emitter)
+            emitter.updateLayerType(val);
     }
     addListener(action, callback, info) {
         const { listeners } = this;
@@ -8937,7 +8965,7 @@ class KeyboardShortcutsManager {
     }
     activate() {
         if (!this.emitter) {
-            this.emitter = new Emitter(EMITTER_TOP_LAYER_TYPE);
+            this.emitter = new Emitter(this.layerField);
             this.addListeners();
         }
     }
@@ -9090,6 +9118,8 @@ const IS_MAC = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 class Term extends TemplateEngine {
     constructor(container, params = { lines: [], editLine: '' }) {
         super(template$1, container);
+        this.isDisabled = false;
+        this.headerField = '';
         this.history = {
             list: [], index: -1, stopHistory: false,
         };
@@ -9135,13 +9165,14 @@ class Term extends TemplateEngine {
             if (isUpdated)
                 this.updateTermInfo();
         };
-        this.write = (data, duration) => {
+        this.write = (data, options = {}) => {
             const { editLine, isEditing } = this;
+            const { withSubmit, duration = 0 } = options;
             if (!editLine || isEditing)
                 return duration ? Promise.resolve(false) : false;
             this.isEditing = true;
             editLine.disabled = true;
-            if (duration && duration >= 0) {
+            if (duration >= 0) {
                 const { value: original } = editLine;
                 const str = isString(data) ? data : data.str;
                 const millisecondCharactersCount = str.length / duration;
@@ -9154,6 +9185,8 @@ class Term extends TemplateEngine {
                         if (substr === str) {
                             clearInterval(this.writingInterval);
                             this.updateEditLine(data, true, original);
+                            if (withSubmit)
+                                editLine.submit();
                             return res(true);
                         }
                         if (updatingValue.str !== substr) {
@@ -9164,6 +9197,8 @@ class Term extends TemplateEngine {
                 });
             }
             this.updateEditLine(data, true);
+            if (withSubmit)
+                editLine.submit();
             return true;
         };
         this.characterUpdater = () => {
@@ -9300,7 +9335,8 @@ class Term extends TemplateEngine {
         this.updateTermInfo = () => {
             this.pluginManager.updateTermInfo(this.getTermInfo());
         };
-        const { virtualizedTopOffset, virtualizedBottomOffset } = params;
+        const { virtualizedTopOffset, virtualizedBottomOffset, header } = params;
+        this.headerField = header || '';
         this.init(container, params);
         this.ro = new index(this.observeHandler);
         this.keyboardShortcutsManager = new KeyboardShortcutsManager({ onAction: this.actionHandler });
@@ -9310,6 +9346,32 @@ class Term extends TemplateEngine {
         });
         this.preStart(container, params);
         this.pluginManager = new PluginManager(this.getTermInfo(), this.keyboardShortcutsManager);
+    }
+    get disabled() {
+        return this.isDisabled;
+    }
+    set disabled(val) {
+        const { isDisabled, editLine, keyboardShortcutsManager } = this;
+        if (isDisabled === val)
+            return;
+        this.isDisabled = val;
+        if (editLine)
+            editLine.disabled = val;
+        if (val)
+            keyboardShortcutsManager.deactivate();
+        else
+            keyboardShortcutsManager.activate();
+    }
+    get header() {
+        return this.headerField;
+    }
+    set header(val) {
+        const { headerField } = this;
+        if (headerField !== val) {
+            const headerText = this.getRef('headerText');
+            headerText.innerHTML = escapeString(val);
+        }
+        this.headerField = val;
     }
     destroy() {
         var _a;
@@ -9322,6 +9384,7 @@ class Term extends TemplateEngine {
         this.pluginManager.destroy();
         this.keyboardShortcutsManager.destroy();
         getItemSize(this.getRef('root'));
+        // TODO: add unobserve.
         super.destroy();
     }
     setCaret(caret) {
@@ -9362,8 +9425,9 @@ class Term extends TemplateEngine {
             this.isEditing = false;
     }
     init(container, params) {
+        const { header = '' } = params;
         this.setParams(container, params);
-        this.render({ css, header: this.params.header });
+        this.render({ css, header, hidden: header ? '' : css.hidden });
         this.params.scrollbarSize = getScrollbarSize(this.getRef('root'));
         this.itemSize = getItemSize(this.getRef('root'), true);
         this.addListeners();

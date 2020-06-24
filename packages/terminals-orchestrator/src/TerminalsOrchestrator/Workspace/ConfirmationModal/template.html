@@ -1,0 +1,30 @@
+<div class="overlay" ref="overlay">
+  <div ref="root" class="modal">
+    <If condition="{title}">
+      <div class="title">
+        <div class="titleTextContainer">
+          <span>{title}</span>
+        </div>
+      </div>
+    </If>
+    <div class="content">
+      <div class="contentTextContainer">
+        <span class="contentText">{text}</span>
+      </div>
+    </div>
+    <If condition="{cancel || submit}">
+      <div class="controls">
+        <If condition="{submit}">
+          <button class="submit" ref="submit">
+            {submit}
+          </button>
+        </If>
+        <If condition="{cancel}">
+          <button class="cancel" ref="cancel">
+            {cancel}
+          </button>
+        </If>
+      </div>
+    </If>
+  </div>
+</div>

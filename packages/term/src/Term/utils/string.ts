@@ -14,3 +14,10 @@ export const getStartIntersectionString = (
   }
   return { str: startIntersectionString, isFull: false };
 };
+
+export const escapeString = (str: string): string => str
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#039;');

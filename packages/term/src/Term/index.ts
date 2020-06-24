@@ -10,6 +10,7 @@ import VirtualizedList from '@Term/VirtualizedList';
 import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import TemplateEngine from '@Term/TemplateEngine';
 import { getKeyCode } from '@Term/utils/event';
+import { escapeString } from '@Term/utils/string';
 import { DOWN_CODE, K_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { compareItemSize, getItemSize, getScrollbarSize } from '@Term/utils/viewport';
 import {
@@ -51,6 +52,32 @@ import { DEFAULT_DELIMITER } from '@Term/constants/strings';
 import { IS_MAC } from '@Term/constants/browser';
 
 class Term extends TemplateEngine implements ITerm {
+  private isDisabled: boolean = false;
+  public get disabled(): boolean {
+    return this.isDisabled;
+  }
+  public set disabled(val: boolean) {
+    const { isDisabled, editLine, keyboardShortcutsManager } = this;
+    if (isDisabled === val) return;
+    this.isDisabled = val;
+    if (editLine) editLine.disabled = val;
+    if (val) keyboardShortcutsManager.deactivate();
+    else keyboardShortcutsManager.activate();
+  }
+
+  private headerField: string = '';
+  public get header(): string {
+    return this.headerField;
+  }
+  public set header(val: string) {
+    const { headerField } = this;
+    if (headerField !== val) {
+      const headerText = this.getRef('headerText') as HTMLElement;
+      headerText.innerHTML = escapeString(val);
+    }
+    this.headerField = val;
+  }
+
   private readonly ro: ResizeObserver;
   private readonly vl: IVirtualizedList<ILine>;
   public readonly keyboardShortcutsManager: IKeyboardShortcutsManager;
@@ -76,7 +103,8 @@ class Term extends TemplateEngine implements ITerm {
 
   constructor(container: Element, params: TermConstructorParamsType = { lines: [], editLine: '' }) {
     super(template, container);
-    const { virtualizedTopOffset, virtualizedBottomOffset } = params;
+    const { virtualizedTopOffset, virtualizedBottomOffset, header } = params;
+    this.headerField = header || '';
     this.init(container, params);
     this.ro = new ResizeObserver(this.observeHandler);
     this.keyboardShortcutsManager = new KeyboardShortcutsManager({ onAction: this.actionHandler });
@@ -117,6 +145,7 @@ class Term extends TemplateEngine implements ITerm {
     this.pluginManager.destroy();
     this.keyboardShortcutsManager.destroy();
     getItemSize(this.getRef('root') as HTMLElement);
+    // TODO: add unobserve.
     super.destroy();
   }
 
@@ -137,13 +166,15 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   public write = (
-    data: string | FormattedValueFragmentType, duration?: number,
+    data: string | FormattedValueFragmentType,
+    options: { withSubmit?: boolean; duration?: number } = {},
   ): Promise<boolean> | boolean => {
     const { editLine, isEditing } = this;
+    const { withSubmit, duration = 0 } = options;
     if (!editLine || isEditing) return duration ? Promise.resolve(false) : false;
     this.isEditing = true;
     editLine.disabled = true;
-    if (duration && duration >= 0) {
+    if (duration >= 0) {
       const { value: original } = editLine;
       const str = isString(data) ? data : data.str;
       const millisecondCharactersCount = str.length / duration;
@@ -156,6 +187,7 @@ class Term extends TemplateEngine implements ITerm {
           if (substr === str) {
             clearInterval(this.writingInterval as unknown as number);
             this.updateEditLine(data, true, original);
+            if (withSubmit) editLine.submit();
             return res(true);
           }
           if (updatingValue.str !== substr) {
@@ -166,6 +198,7 @@ class Term extends TemplateEngine implements ITerm {
       });
     }
     this.updateEditLine(data, true);
+    if (withSubmit) editLine.submit();
     return true;
   }
 
@@ -208,8 +241,9 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private init(container: Element, params: TermConstructorParamsType) {
+    const { header = '' } = params;
     this.setParams(container, params);
-    this.render({ css, header: this.params.header });
+    this.render({ css, header, hidden: header ? '' : css.hidden });
     this.params.scrollbarSize = getScrollbarSize(this.getRef('root') as HTMLElement);
     this.itemSize = getItemSize(this.getRef('root') as HTMLElement, true);
     this.addListeners();

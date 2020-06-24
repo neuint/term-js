@@ -1,0 +1,16 @@
+@import 'general-mixins';
+
+.header {
+  @include padding-horizontal(2.5rem);
+
+  position: relative;
+
+  > div:first-of-type {
+    @include padding-horizontal(1.5rem);
+  }
+
+  &.editable > div:first-of-type {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}

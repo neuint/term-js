@@ -1,0 +1,152 @@
+@import 'general-mixins.scss';
+@import 'general-components.scss';
+@import 'general-theme.scss';
+
+@import '../../constants.scss';
+@import '../../theme.scss';
+
+.root {
+  position: relative;
+  height: $terminals-orchestrator-tabs-height;
+  display: flex;
+  background: var(--terminals-orchestrator-bg-color);
+  overflow: hidden;
+}
+
+.checkContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.down {
+  @include icon-button($terminals-orchestrator-tabs-height, $terminals-orchestrator-tabs-height);
+}
+
+.hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.leftAdditional, .rightAdditional {
+  .draggable & {
+    opacity: 0.3;
+  }
+}
+
+.leftAdditional {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 0;
+  width: 1rem;
+  overflow: hidden;
+  height: $terminals-orchestrator-tabs-height;
+  left: $terminals-orchestrator-tabs-height + $terminals-orchestrator-tab-margin - 1rem;
+
+  &:before, &:after {
+    position: relative;
+    border-radius: $terminals-orchestrator-tab-border-radius 0 0 0;
+    width: 0.5rem;
+    background: var(--terminals-orchestrator-tab-bg-color);
+    box-shadow: var(--terminals-orchestrator-tab-shadow);
+  }
+
+  &:after {
+    content: '';
+    height: $terminals-orchestrator-tabs-height - 1.75 * $terminals-orchestrator-tab-offset;
+  }
+
+  &.leftTwo {
+    &:after {
+      left: 0.25rem;
+    }
+
+    &:before {
+      content: '';
+      background: var(--terminals-orchestrator-tab-bg-color);
+      height: $terminals-orchestrator-tabs-height - 2.5 * $terminals-orchestrator-tab-offset;
+      left: 0.5rem;
+    }
+  }
+}
+
+.rightAdditional {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 0;
+  width: 1rem;
+  overflow: hidden;
+  height: $terminals-orchestrator-tabs-height;
+  left: 0;
+  flex-direction: row-reverse;
+  z-index: calc(var(--terminals-orchestrator-start-z-index) + 0);
+
+  &:before, &:after {
+    position: relative;
+    border-radius: 0 $terminals-orchestrator-tab-border-radius 0 0;
+    width: 0.5rem;
+    background: var(--terminals-orchestrator-tab-bg-color);
+    box-shadow: var(--terminals-orchestrator-tab-shadow);
+  }
+
+  &:after {
+    content: '';
+    height: $terminals-orchestrator-tabs-height - 1.75 * $terminals-orchestrator-tab-offset;
+    left: -0.5rem;
+  }
+
+  &.rightTwo {
+    &:after {
+      left: -0.25rem;
+    }
+
+    &:before {
+      content: '';
+      background: var(--terminals-orchestrator-tab-bg-color);
+      height: $terminals-orchestrator-tabs-height - 2.5 * $terminals-orchestrator-tab-offset;
+      left: -0.5rem;
+    }
+  }
+}
+
+.list {
+  display: flex;
+  max-width: calc(100% - #{$terminals-orchestrator-tabs-height});
+  position: relative;
+  z-index: calc(var(--terminals-orchestrator-start-z-index) + 1);
+}
+
+.navigationContainer {
+  position: absolute;
+  z-index: calc(var(--terminals-orchestrator-start-z-index) + 2);
+  top: 0;
+  display: flex;
+  width: $terminals-orchestrator-tabs-height * 1.5;
+}
+
+.addContainer {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.add {
+  @include icon-button($terminals-orchestrator-tabs-height, 1.5rem);
+}
+
+.leftList, .rightList {
+  top: calc(#{$terminals-orchestrator-tabs-height} - 0.5rem);
+}
+
+.leftList {
+  left: 0.5rem;
+}
+
+.rightList {
+  right: calc(#{$terminals-orchestrator-tabs-height} + 0.5rem);
+}

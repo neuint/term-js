@@ -190,6 +190,10 @@ class Line extends TemplateEngine implements ILine {
     if (isFocused) inputField.blur();
   }
 
+  public submit() {
+    this.submitHandler();
+  }
+
   public render(params: { label?: string, delimiter?: string }) {
     const { editable, className, secret } = this;
     const reRender = Boolean(this.getRef('root'));
@@ -301,7 +305,7 @@ class Line extends TemplateEngine implements ILine {
     } as { [code: number]: (e: KeyboardEvent) => void })[Number(getKeyCode(e))] || noop)(e);
   }
 
-  private submitHandler = (e: Event) => {
+  private submitHandler = (e?: Event) => {
     const { onSubmit, inputField, secret } = this;
     const value = inputField?.value || '';
     let formattedValue: ValueType = '';
@@ -310,7 +314,7 @@ class Line extends TemplateEngine implements ILine {
     } else if (isArray(value)) {
       formattedValue = secret ? value.filter(item => get(item, 'lock')) : value;
     }
-    e.preventDefault();
+    e?.preventDefault();
     if (inputField && onSubmit) {
       onSubmit({
         formattedValue,

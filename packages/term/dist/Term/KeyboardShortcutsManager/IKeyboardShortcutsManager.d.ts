@@ -1,6 +1,7 @@
 import { ActionShortcutType, CallbackInfoType } from '@Term/KeyboardShortcutsManager/types';
 import { InfoType } from '@Term/types';
 export default interface IKeyboardShortcutsManager {
+    layer: number;
     activate(): void;
     deactivate(): void;
     addShortcut(action: string, shortcut: ActionShortcutType, info?: InfoType): void;

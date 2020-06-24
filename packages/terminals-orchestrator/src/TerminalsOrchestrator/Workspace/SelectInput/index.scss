@@ -1,0 +1,9 @@
+.root {
+  border: none;
+  background: none;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0;
+}
