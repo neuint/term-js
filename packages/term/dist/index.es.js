@@ -3814,6 +3814,54 @@ function template(string, options, guard) {
   return result;
 }
 
+/** Used to map HTML entities to characters. */
+
+var htmlUnescapes = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'"
+};
+/**
+ * Used by `_.unescape` to convert HTML entities to characters.
+ *
+ * @private
+ * @param {string} chr The matched character to unescape.
+ * @returns {string} Returns the unescaped character.
+ */
+
+var unescapeHtmlChar = basePropertyOf(htmlUnescapes);
+
+/** Used to match HTML entities and HTML characters. */
+
+var reEscapedHtml = /&(?:amp|lt|gt|quot|#39);/g,
+    reHasEscapedHtml = RegExp(reEscapedHtml.source);
+/**
+ * The inverse of `_.escape`; this method converts the HTML entities
+ * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to
+ * their corresponding characters.
+ *
+ * **Note:** No other HTML entities are unescaped. To unescape additional
+ * HTML entities use a third-party library like [_he_](https://mths.be/he).
+ *
+ * @static
+ * @memberOf _
+ * @since 0.6.0
+ * @category String
+ * @param {string} [string=''] The string to unescape.
+ * @returns {string} Returns the unescaped string.
+ * @example
+ *
+ * _.unescape('fred, barney, &amp; pebbles');
+ * // => 'fred, barney, & pebbles'
+ */
+
+function unescape(string) {
+  string = toString(string);
+  return string && reHasEscapedHtml.test(string) ? string.replace(reEscapedHtml, unescapeHtmlChar) : string;
+}
+
 /**
  * A collection of shims that provide minimal functionality of the ES6 collections.
  *
@@ -6112,7 +6160,6 @@ class BaseInput extends TemplateEngine {
     }
 }
 
-const STRINGIFY_HTML_PATTERN = /<[^>]+>/g;
 const NON_BREAKING_SPACE_PATTERN = /&nbsp;/g;
 
 const TEXT_NODE_TYPE = 3;
@@ -6149,7 +6196,7 @@ class ContentEditableInput extends BaseInput {
         return parentNode ? ContentEditableInput.checkChildNode(root, parentNode) : false;
     }
     static getHtmlStringifyValue(html) {
-        return html.replace(NON_BREAKING_SPACE_PATTERN, ' ').replace(STRINGIFY_HTML_PATTERN, '');
+        return html.replace(NON_BREAKING_SPACE_PATTERN, ' ');
     }
     static getNodeOffset(root, target, baseOffset = 0) {
         const { parentNode } = target;
@@ -6282,7 +6329,7 @@ class ContentEditableInput extends BaseInput {
     }
     getInputValue() {
         const root = this.getRef('input');
-        const data = root.innerHTML;
+        const data = unescape(root.innerHTML);
         const items = data.replace(/<\/span>[^<]*</g, '</span><').split('</span>').filter(identity);
         return items.reduce((acc, item) => {
             var _a;
@@ -6305,7 +6352,8 @@ class ContentEditableInput extends BaseInput {
             updatedCaretPosition = Math.min(caretPosition, BaseInput.getValueString(this.valueField).length);
         }
         else {
-            this.valueField = BaseInput.getUpdatedValueField(this.getInputValue(), this.valueField);
+            const inputValue = this.getInputValue();
+            this.valueField = BaseInput.getUpdatedValueField(inputValue, this.valueField);
         }
         this.updateContent();
         this.caretPosition = updatedCaretPosition;

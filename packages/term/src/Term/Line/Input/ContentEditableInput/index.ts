@@ -1,15 +1,12 @@
 import template from './template.html';
 import css from './index.scss';
 
-import { identity, isString } from 'lodash-es';
+import { identity, isString, unescape } from 'lodash-es';
 
 import IInput from '@Term/Line/Input/IInput';
 import { FormattedValueType, ValueFragmentType, ValueType } from '@Term/types';
 import BaseInput from '@Term/Line/Input/BaseInput';
-import {
-  NON_BREAKING_SPACE_PATTERN,
-  STRINGIFY_HTML_PATTERN,
-} from './patterns';
+import { NON_BREAKING_SPACE_PATTERN } from './patterns';
 import { CHANGE_EVENT_TYPE, TEXT_NODE_TYPE } from './constants';
 import { SECRET_CHARACTER } from '@Term/Line/Input/constants';
 
@@ -32,7 +29,7 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   private static getHtmlStringifyValue(html: string): string {
-    return html.replace(NON_BREAKING_SPACE_PATTERN, ' ').replace(STRINGIFY_HTML_PATTERN, '');
+    return html.replace(NON_BREAKING_SPACE_PATTERN, ' ');
   }
 
   private static getNodeOffset(
@@ -204,7 +201,7 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   private getInputValue(): string {
     const root = this.getRef('input') as HTMLElement;
-    const data = root.innerHTML;
+    const data = unescape(root.innerHTML);
     const items = data.replace(/<\/span>[^<]*</g, '</span><').split('</span>').filter(identity);
     return items.reduce((acc: string, item: string) => {
       const index = (item.match(/data-index="[0-9]+"/)?.[0] || '').replace(/[^0-9]/g, '');
@@ -226,7 +223,8 @@ class ContentEditableInput extends BaseInput implements IInput {
       updatedCaretPosition = Math.min(caretPosition,
         BaseInput.getValueString(this.valueField).length);
     } else {
-      this.valueField = BaseInput.getUpdatedValueField(this.getInputValue(), this.valueField);
+      const inputValue = this.getInputValue();
+      this.valueField = BaseInput.getUpdatedValueField(inputValue, this.valueField);
     }
     this.updateContent();
     this.caretPosition = updatedCaretPosition;
