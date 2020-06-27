@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
-    "baseUrl": "./packages",
+    "baseUrl": "./",
     "paths": {
-      "@TerminalsOrchestrator/*": ["terminals-orchestrator/src/TerminalsOrchestrator/*"],
-      "@Modals/*": ["modals-plugin/src/Modals/*"],
-      "@StatusBar/*": ["status-bar-plugin/src/StatusBar/*"],
-      "@CommandSearch/*": ["command-search-plugin/src/CommandSearch/*"],
-      "@HistorySearch/*": ["history-search-plugin/src/HistorySearch/*"],
-      "@Autocomplete/*": ["autocomplete-plugin/src/Autocomplete/*"],
-      "@Dropdown/*": ["dropdown-plugin/src/Dropdown/*"],
-      "@ContextMenu/*": ["context-menu-plugin/src/ContextMenu/*"],
-      "@Term/*": ["term/src/Term/*"],
-      "@general/*": ["../general/*"]
+      "@TerminalsOrchestrator/*": ["packages/terminals-orchestrator/src/TerminalsOrchestrator/*"],
+      "@Modals/*": ["packages/modals-plugin/src/Modals/*"],
+      "@StatusBar/*": ["packages/status-bar-plugin/src/StatusBar/*"],
+      "@CommandSearch/*": ["packages/command-search-plugin/src/CommandSearch/*"],
+      "@HistorySearch/*": ["packages/history-search-plugin/src/HistorySearch/*"],
+      "@Autocomplete/*": ["packages/autocomplete-plugin/src/Autocomplete/*"],
+      "@Dropdown/*": ["packages/dropdown-plugin/src/Dropdown/*"],
+      "@ContextMenu/*": ["packages/context-menu-plugin/src/ContextMenu/*"],
+      "@Term/*": ["packages/term/src/Term/*"],
+      "@general/*": ["general/*"]
     }
   },
   "exclude": ["node_modules", "webpack.*.js"]

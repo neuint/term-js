@@ -9,8 +9,8 @@ import template from './template.html';
 import VirtualizedList from '@Term/VirtualizedList';
 import IVirtualizedList from '@Term/VirtualizedList/IVirtualizedList';
 import TemplateEngine from '@Term/TemplateEngine';
-import { getKeyCode } from '@Term/utils/event';
-import { escapeString } from '@Term/utils/string';
+import { getKeyCode } from '@general/utils/event';
+import { escapeString } from '@general/utils/string';
 import { DOWN_CODE, K_CODE, UP_CODE } from '@Term/constants/keyCodes';
 import { compareItemSize, getItemSize, getScrollbarSize } from '@Term/utils/viewport';
 import {
