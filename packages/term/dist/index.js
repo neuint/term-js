@@ -1757,24 +1757,6 @@ const K_CODE = 75;
 const DEFAULT_DELIMITER = '~';
 const NON_BREAKING_SPACE = '&nbsp;';
 
-const getScrollbarSize = (container) => {
-    let { size } = getScrollbarSize;
-    if (size)
-        return size;
-    const target = container || document.body;
-    const div1 = document.createElement('div');
-    const div2 = document.createElement('div');
-    div1.style.width = '100px';
-    div1.style.height = '100px';
-    div1.style.overflow = 'scroll';
-    div2.style.height = '100px';
-    target.appendChild(div1);
-    div1.appendChild(div2);
-    size = div1.offsetWidth - div2.offsetWidth;
-    target.removeChild(div1);
-    getScrollbarSize.size = size;
-    return size;
-};
 const getItemSize = (() => {
     const cache = new Map();
     const addElement = (target) => {
@@ -1808,6 +1790,25 @@ const getItemSize = (() => {
 })();
 const compareItemSize = (first, second) => {
     return first.width === second.width && first.height === second.height;
+};
+
+const getScrollbarSize = (container) => {
+    let { size } = getScrollbarSize;
+    if (size)
+        return size;
+    const target = container || document.body;
+    const div1 = document.createElement('div');
+    const div2 = document.createElement('div');
+    div1.style.width = '100px';
+    div1.style.height = '100px';
+    div1.style.overflow = 'scroll';
+    div2.style.height = '100px';
+    target.appendChild(div1);
+    div1.appendChild(div2);
+    size = div1.offsetWidth - div2.offsetWidth;
+    target.removeChild(div1);
+    getScrollbarSize.size = size;
+    return size;
 };
 
 var css$2 = {"root":"root-term-️cab119304dc90a90f699151e7c15d7ee","visible":"visible-term-️cab119304dc90a90f699151e7c15d7ee","content":"content-term-️cab119304dc90a90f699151e7c15d7ee","helpContainer":"helpContainer-term-️cab119304dc90a90f699151e7c15d7ee","inputContainer":"inputContainer-term-️cab119304dc90a90f699151e7c15d7ee"};

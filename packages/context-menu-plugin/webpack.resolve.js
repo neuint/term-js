@@ -7,6 +7,7 @@ module.exports = {
     modules: ['node_modules'],
     alias: {
       '@ContextMenu': path.resolve(__dirname, 'src/ContextMenu'),
+      '@general': path.resolve(__dirname, '../../general'),
     },
   },
 };
