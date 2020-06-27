@@ -2843,8 +2843,8 @@
 "@term-js/autocomplete-plugin@file:packages/autocomplete-plugin":
   version "0.1.0"
   dependencies:
-    "@term-js/dropdown-plugin" "file:../../Library/Caches/Yarn/v4/npm-@term-js-autocomplete-plugin-0.1.0-0ae9d01d-892b-4ac5-951a-df92657c3d96-1593259738769/node_modules/@term-js/dropdown-plugin"
-    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-autocomplete-plugin-0.1.0-0ae9d01d-892b-4ac5-951a-df92657c3d96-1593259738769/node_modules/@term-js/term"
+    "@term-js/dropdown-plugin" "file:../../Library/Caches/Yarn/v4/npm-@term-js-autocomplete-plugin-0.1.0-d23c372e-2ad2-4bbe-af74-d7208d038a35-1593264108718/node_modules/@term-js/dropdown-plugin"
+    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-autocomplete-plugin-0.1.0-d23c372e-2ad2-4bbe-af74-d7208d038a35-1593264108718/node_modules/@term-js/term"
     "@types/lodash-es" "^4.17.3"
     "@types/uuid" "^7.0.2"
     lodash-es "^4.17.15"
@@ -2853,15 +2853,15 @@
 "@term-js/context-menu-plugin@file:packages/context-menu-plugin":
   version "0.1.0"
   dependencies:
-    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-context-menu-plugin-0.1.0-a4b951de-820a-4af1-9eb4-cb9b029dfc8b-1593259738775/node_modules/@term-js/term"
+    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-context-menu-plugin-0.1.0-6eb1ed4b-db4b-4ef8-81c8-9f3e518fdb0a-1593264108719/node_modules/@term-js/term"
     "@types/lodash-es" "^4.17.3"
     lodash-es "^4.17.15"
 
 "@term-js/dropdown-plugin@file:packages/dropdown-plugin":
   version "0.1.0"
   dependencies:
-    "@term-js/context-menu-plugin" "file:../../Library/Caches/Yarn/v4/npm-@term-js-dropdown-plugin-0.1.0-ac9a0cd0-585a-44a3-8afc-4d9270245b32-1593259738766/node_modules/@term-js/context-menu-plugin"
-    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-dropdown-plugin-0.1.0-ac9a0cd0-585a-44a3-8afc-4d9270245b32-1593259738766/node_modules/@term-js/term"
+    "@term-js/context-menu-plugin" "file:../../Library/Caches/Yarn/v4/npm-@term-js-dropdown-plugin-0.1.0-5dbaa0fe-925e-496b-b506-cba4210613da-1593264108717/node_modules/@term-js/context-menu-plugin"
+    "@term-js/term" "file:../../Library/Caches/Yarn/v4/npm-@term-js-dropdown-plugin-0.1.0-5dbaa0fe-925e-496b-b506-cba4210613da-1593264108717/node_modules/@term-js/term"
     "@types/lodash-es" "^4.17.3"
     lodash-es "^4.17.15"
 
