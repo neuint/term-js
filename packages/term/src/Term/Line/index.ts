@@ -4,7 +4,7 @@ import css from './index.scss';
 import lineTemplate from './template.html';
 
 import { DOWN_CODE, ENTER_CODE, LEFT_CODE, RIGHT_CODE, UP_CODE } from '@Term/constants/keyCodes';
-import { getKeyCode } from '@Term/utils/event';
+import { getKeyCode } from '@general/utils/event';
 import ICaret from '@Term/BaseCaret/ICaret';
 import ICaretFactory from '@Term/CaretFactory/ICaretFactory';
 import CaretFactory from '@Term/CaretFactory';

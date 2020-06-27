@@ -7,6 +7,7 @@ module.exports = {
     modules: ['node_modules'],
     alias: {
       '@HistorySearch': path.resolve(__dirname, 'src/HistorySearch'),
+      '@general': path.resolve(__dirname, '../../general'),
     },
   },
 };

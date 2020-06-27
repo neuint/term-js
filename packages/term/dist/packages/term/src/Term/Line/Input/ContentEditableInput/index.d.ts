@@ -1,0 +1,34 @@
+import IInput from '@Term/Line/Input/IInput';
+import { ValueType } from '@Term/types';
+import BaseInput from '@Term/Line/Input/BaseInput';
+declare class ContentEditableInput extends BaseInput implements IInput {
+    private static getStyledValueTemplate;
+    private static getLastTextNode;
+    private static checkChildNode;
+    private static getHtmlStringifyValue;
+    private static getNodeOffset;
+    private externalChangeListeners;
+    set hiddenCaret(isCaretHidden: boolean);
+    set value(val: ValueType);
+    get value(): ValueType;
+    set secret(secret: boolean);
+    get caretPosition(): number;
+    set caretPosition(position: number);
+    private isDisabled;
+    get disabled(): boolean;
+    set disabled(value: boolean);
+    constructor(container?: Element);
+    moveCaretToEnd(isForce?: boolean): void;
+    addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+    removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+    destroy(): void;
+    protected getRootElement(): Element | undefined;
+    private changeHandler;
+    private getInputValue;
+    private updateValueField;
+    private preventLockUpdate;
+    private updateContent;
+    private setString;
+    private updateStyles;
+}
+export default ContentEditableInput;

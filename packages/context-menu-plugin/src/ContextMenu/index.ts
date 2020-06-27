@@ -13,8 +13,8 @@ import {
   PLUGIN_NAME,
   POSITION_TARGET_TYPE,
 } from '@ContextMenu/constants';
-import { getRelativePosition } from '@ContextMenu/utils/viewport';
-import { stopPropagation } from '@ContextMenu/utils/events';
+import { getRelativePosition } from '@general/utils/viewport';
+import { stopPropagation } from '@general/utils/event';
 
 class ContextMenu extends Plugin implements IContextMenu {
   public readonly name: string = PLUGIN_NAME;

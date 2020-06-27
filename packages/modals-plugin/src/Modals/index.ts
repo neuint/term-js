@@ -1,6 +1,6 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@term-js/term';
 import { v1 } from 'uuid';
-import { constant, last, noop } from 'lodash-es';
+import { last, noop } from 'lodash-es';
 
 import './theme.scss';
 
@@ -9,7 +9,7 @@ import { EDIT_CENTER_POSITION, ESC_KEY_CODE, HIDE_ACTION, PLUGIN_NAME } from '@M
 import { ModalOptionsType, PositionType } from '@Modals/types';
 import IModalView from '@Modals/ModalView/IModalView';
 import ModalView from '@Modals/ModalView';
-import { getRelativePosition } from '@Modals/utils/viewport';
+import { getRelativePosition } from '@general/utils/viewport';
 
 class Modals extends Plugin implements IModals {
   public readonly name: string = PLUGIN_NAME;

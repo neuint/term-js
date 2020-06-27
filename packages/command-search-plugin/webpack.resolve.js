@@ -7,6 +7,7 @@ module.exports = {
     modules: ['node_modules'],
     alias: {
       '@CommandSearch': path.resolve(__dirname, 'src/CommandSearch'),
+      '@general': path.resolve(__dirname, '../../general'),
     },
   },
 };

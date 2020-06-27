@@ -1,6 +1,5 @@
 import css from './index.scss';
 
-import escapeHTML from 'escape-html';
 import { isString } from 'lodash-es';
 
 import TemplateEngine from '@Term/TemplateEngine';
@@ -16,6 +15,7 @@ import { getStartIntersectionString } from '@Term/utils/string';
 import {
   DATA_INDEX_ATTRIBUTE_NAME, SECRET_CHARACTER,
 } from '@Term/Line/Input/constants';
+import { escapeString } from '@general/utils/string';
 
 abstract class BaseInput extends TemplateEngine implements IInput {
   public static getValueString(value: ValueType, params: { secret?: boolean } = {}): string {
@@ -45,7 +45,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
 
   protected static getNormalizedTemplateString(str: string): string {
-    return escapeHTML(str).replace(/\s/g, NON_BREAKING_SPACE);
+    return escapeString(str).replace(/\s/g, NON_BREAKING_SPACE);
   }
 
   protected static getValueFragmentTemplate(

@@ -7,6 +7,7 @@ module.exports = {
     modules: ['node_modules'],
     alias: {
       '@Autocomplete': path.resolve(__dirname, 'src/Autocomplete'),
+      '@general': path.resolve(__dirname, '../../general'),
     },
   },
 };

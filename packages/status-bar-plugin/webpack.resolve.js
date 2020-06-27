@@ -7,6 +7,7 @@ module.exports = {
     modules: ['node_modules'],
     alias: {
       '@StatusBar': path.resolve(__dirname, 'src/StatusBar'),
+      '@general': path.resolve(__dirname, '../../general'),
     },
   },
 };
