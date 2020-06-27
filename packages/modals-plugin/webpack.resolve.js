@@ -7,6 +7,7 @@ module.exports = {
     modules: ['node_modules'],
     alias: {
       '@Modals': path.resolve(__dirname, 'src/Modals'),
+      '@general': path.resolve(__dirname, '../../general'),
     },
   },
 };
