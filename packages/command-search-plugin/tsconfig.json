@@ -9,6 +9,5 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["tests/**/*.*"]
+  "exclude": ["tests/**/*.*", "src/start.ts"]
 }
