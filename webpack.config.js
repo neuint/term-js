@@ -14,7 +14,9 @@ module.exports = ({ cssBlackList, scss, root, resolve = {} }) => {
       rules: [
         {
           test: /\.ts?$/,
-          loader: ['awesome-typescript-loader?module=es6'],
+          use: [
+            { loader: 'awesome-typescript-loader?module=es6' }
+          ],
           exclude: [/node_modules/]
         },
         {
