@@ -1,7 +1,7 @@
 import template from './template.html';
 import css from './index.scss';
 
-import { identity, isString, unescape } from 'lodash-es';
+import { identity, isString, isUndefined, unescape } from 'lodash-es';
 
 import IInput from '@Term/Line/Input/IInput';
 import { FormattedValueType, ValueFragmentType, ValueType } from '@Term/types';
@@ -132,11 +132,13 @@ class ContentEditableInput extends BaseInput implements IInput {
     this.isDisabled = value;
   }
 
+  private prevContent?: string;
+
   constructor(container?: Element) {
     super(template, container, css);
     this.addEventListener('input', this.changeHandler);
     this.addEventListener('cut', this.changeHandler);
-    this.addEventListener('paste', this.changeHandler);
+    this.addEventListener('paste', this.pasteHandler);
   }
 
   public  moveCaretToEnd(isForce: boolean = false) {
@@ -187,11 +189,15 @@ class ContentEditableInput extends BaseInput implements IInput {
     super.destroy();
     this.removeEventListener('input', this.changeHandler);
     this.removeEventListener('cut', this.changeHandler);
-    this.removeEventListener('paste', this.changeHandler);
+    this.removeEventListener('paste', this.pasteHandler);
   }
 
   protected getRootElement(): Element | undefined {
     return this.getRef('input');
+  }
+
+  private pasteHandler = () => {
+    this.prevContent = BaseInput.getValueString(this.value);
   }
 
   private changeHandler = (e: Event) => {
@@ -199,9 +205,29 @@ class ContentEditableInput extends BaseInput implements IInput {
     this.externalChangeListeners.forEach(handler => handler.call(e.target as HTMLElement, e));
   }
 
-  private getInputValue(): string {
+  private getPasteNormalizedData(): string {
+    const prevContent = this.prevContent;
     const root = this.getRef('input') as HTMLElement;
-    const data = unescape(root.innerHTML);
+    const data = unescape(root.innerHTML).replace(NON_BREAKING_SPACE_PATTERN, ' ');
+    if (isUndefined(prevContent)) return data;
+    this.prevContent = undefined;
+    const startIndex = prevContent.split('').reduce((
+      acc: number, char: string, i: number,
+    ): number => {
+      if (acc >= 0) return acc;
+      return data[i] !== char ? i : acc;
+    }, -1);
+    const prefix = startIndex >= 0 ? prevContent.substring(0, startIndex) : prevContent;
+    const suffix = startIndex >= 0 && prefix.length !== prevContent.length
+      ? prevContent.substring(startIndex) : '';
+    const pasteContent = data.replace(prefix, '').replace(suffix, '');
+    const processedPasteContent = pasteContent.replace(/<[a-z]+[^>]*>/g, '')
+      .replace(/<[a-z]+[^>]*\/>/g, '').replace(/<\/[a-z]+>/g, '');
+    return data.replace(pasteContent, processedPasteContent);
+  }
+
+  private getInputValue(): string {
+    const data = this.getPasteNormalizedData();
     const items = data.replace(/<\/span>[^<]*</g, '</span><').split('</span>').filter(identity);
     return items.reduce((acc: string, item: string) => {
       const index = (item.match(/data-index="[0-9]+"/)?.[0] || '').replace(/[^0-9]/g, '');
