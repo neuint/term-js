@@ -84,7 +84,9 @@ abstract class BaseInput extends TemplateEngine implements IInput {
       }
       return acc;
     }, [] as FormattedValueType);
-    checkValue.split('').forEach(char => updatedValueField.push(char));
+    checkValue.replace(/<span[^>]*>/g, '')
+      .split('')
+      .forEach(char => updatedValueField.push(char));
     return updatedValueField.filter(item => isString(item) ? item : item.str);
   }
 
