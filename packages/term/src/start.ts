@@ -11,7 +11,7 @@ if (container) {
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
     label: 'guest',
-    editLine: '',
+    editLine: { secret: true, value: ['Password: '] },
     lines: (new Array(1).fill(null)).map((
       _, index,
     ): ValueType => ([

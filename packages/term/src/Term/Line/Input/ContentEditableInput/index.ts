@@ -201,6 +201,7 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   private changeHandler = (e: Event) => {
+    debugger;
     this.updateValueField();
     this.externalChangeListeners.forEach(handler => handler.call(e.target as HTMLElement, e));
   }
