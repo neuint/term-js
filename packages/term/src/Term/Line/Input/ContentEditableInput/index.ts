@@ -201,7 +201,6 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   private changeHandler = (e: Event) => {
-    debugger;
     this.updateValueField();
     this.externalChangeListeners.forEach(handler => handler.call(e.target as HTMLElement, e));
   }
@@ -209,7 +208,8 @@ class ContentEditableInput extends BaseInput implements IInput {
   private getPasteNormalizedData(): string {
     const prevContent = this.prevContent;
     const root = this.getRef('input') as HTMLElement;
-    const data = unescape(root.innerHTML).replace(NON_BREAKING_SPACE_PATTERN, ' ');
+    const data = unescape(root.innerHTML.replace(/<br>/g, ''))
+      .replace(NON_BREAKING_SPACE_PATTERN, ' ');
     if (isUndefined(prevContent)) return data;
     this.prevContent = undefined;
     const startIndex = prevContent.split('').reduce((
