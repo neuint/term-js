@@ -11,7 +11,7 @@ import {
   ValueType,
 } from '@Term/types';
 import { NON_BREAKING_SPACE } from '@Term/constants/strings';
-import { getStartIntersectionString } from '@Term/utils/string';
+import { clearStringStyles, getStartIntersectionString } from '@Term/utils/string';
 import {
   DATA_INDEX_ATTRIBUTE_NAME, SECRET_CHARACTER,
 } from '@Term/Line/Input/constants';
@@ -69,7 +69,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
 
   protected static getUpdatedValueField(value: string, prevValue: ValueType): ValueType {
     if (isString(prevValue)) return value;
-    let checkValue = value;
+    let checkValue = clearStringStyles(value);
     let stop = false;
     const updatedValueField = prevValue.reduce((
       acc: FormattedValueType, item: ValueFragmentType,

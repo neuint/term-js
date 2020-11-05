@@ -14,3 +14,7 @@ export const getStartIntersectionString = (
   }
   return { str: startIntersectionString, isFull: false };
 };
+
+export const clearStringStyles = (str: string): string => str
+  .replace(/<span[^>]*>/g, '')
+  .replace(/<\/span>/g, '');
