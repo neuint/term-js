@@ -9,6 +9,7 @@ import BaseInput from '@Term/Line/Input/BaseInput';
 import { NON_BREAKING_SPACE_PATTERN } from './patterns';
 import { CHANGE_EVENT_TYPE, TEXT_NODE_TYPE } from './constants';
 import { SECRET_CHARACTER } from '@Term/Line/Input/constants';
+import { clearStringStyles } from '@Term/utils/string';
 
 class ContentEditableInput extends BaseInput implements IInput {
   private static getStyledValueTemplate(val: ValueType, params: { secret?: boolean } = {}): string {
@@ -209,7 +210,9 @@ class ContentEditableInput extends BaseInput implements IInput {
     const prevContent = this.prevContent;
     const root = this.getRef('input') as HTMLElement;
     const data = unescape(root.innerHTML.replace(/<br>/g, ''))
-      .replace(NON_BREAKING_SPACE_PATTERN, ' ');
+      .replace(NON_BREAKING_SPACE_PATTERN, ' ')
+      .replace(/<b>/g, '')
+      .replace(/<\/b>/g, '');
     if (isUndefined(prevContent)) return data;
     this.prevContent = undefined;
     const startIndex = prevContent.split('').reduce((
@@ -260,7 +263,7 @@ class ContentEditableInput extends BaseInput implements IInput {
   private preventLockUpdate(): boolean {
     const { valueField } = this;
     if (isString(valueField)) return false;
-    const value = this.getInputValue();
+    const value = clearStringStyles(this.getInputValue());
     const lockStr = BaseInput.getLockString(valueField);
     const deleteUnlockPart = lockStr
       && lockStr.indexOf(value) === 0
