@@ -1,9 +1,0 @@
-export declare const ESC_CODE = 27;
-export declare const ENTER_CODE = 13;
-export declare const LEFT_CODE = 37;
-export declare const RIGHT_CODE = 39;
-export declare const UP_CODE = 38;
-export declare const DOWN_CODE = 40;
-export declare const BACKSPACE_CODE = 8;
-export declare const TAB_CODE = 9;
-export declare const K_CODE = 75;

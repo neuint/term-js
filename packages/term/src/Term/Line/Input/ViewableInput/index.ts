@@ -20,6 +20,9 @@ class ViewableInput extends BaseInput implements IInput {
     super.render({ css, value: BaseInput.getValueTemplate(this.valueField) });
   }
 
+  // tslint:disable-next-line:no-empty
+  public moveCaretToEnd(isForce: boolean = false) {}
+
   protected getRootElement(): Element | undefined {
     return this.getRef('input');
   }

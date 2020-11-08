@@ -12,9 +12,9 @@ if (container) {
     virtualizedBottomOffset: 400,
     label: 'guest',
     editLine: {
-      secret: false,
+      secret: true,
       value: [
-        { str: 'Enter email:', lock: true, className: css.test },
+        // { str: 'Enter email: ', lock: true, className: css.test },
         { str: 'test', lock: false },
       ],
     },

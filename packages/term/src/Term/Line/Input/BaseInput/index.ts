@@ -16,6 +16,7 @@ import {
   DATA_INDEX_ATTRIBUTE_NAME, SECRET_CHARACTER,
 } from '@Term/Line/Input/constants';
 import { escapeString } from '@general/utils/string';
+import { checkElementFocus } from '@Term/utils/viewport';
 
 abstract class BaseInput extends TemplateEngine implements IInput {
   public static getValueString(value: ValueType, params: { secret?: boolean } = {}): string {
@@ -159,11 +160,9 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
 
   public get isFocused(): boolean {
-    const { activeElement } = document;
     const root = this.getRef('input');
-    return activeElement === root
-      || activeElement?.parentNode === root
-      || activeElement?.parentNode === root;
+    if (!root) return false;
+    return checkElementFocus(root as HTMLElement);
   }
 
   private characterContainer?: HTMLElement;
@@ -222,8 +221,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     return BaseInput.getValueString(this.valueField, { secret: secretField && !showSecret });
   }
 
-  // tslint:disable-next-line:no-empty
-  public moveCaretToEnd(isForce: boolean = false) {}
+  public abstract moveCaretToEnd(isForce?: boolean): void;
 
   public addEventListener<K extends keyof HTMLElementEventMap>(
     type: K,
