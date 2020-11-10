@@ -113,8 +113,8 @@ class Term extends TemplateEngine implements ITerm {
       length: this.lines.length, itemGetter: this.itemGetter, heightGetter: this.heightGetter,
       topOffset: virtualizedTopOffset || 0, bottomOffset: virtualizedBottomOffset || 0,
     });
-    this.preStart(container, params);
     this.pluginManager = new PluginManager(this.getTermInfo(), this.keyboardShortcutsManager);
+    this.preStart(container, params);
   }
 
   public addEventListener = <K extends keyof ITermEventMap>(
@@ -273,7 +273,7 @@ class Term extends TemplateEngine implements ITerm {
   }
 
   private characterUpdater = () => {
-    const { vl, itemSize, editLine } = this;
+    const { vl, itemSize } = this;
     const newItemSize = getItemSize(this.getRef('root') as HTMLElement, true);
     if (!compareItemSize(itemSize, newItemSize)) {
       this.heightCache = [];

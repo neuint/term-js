@@ -15,8 +15,8 @@ if (container) {
       secret: false,
       value: [
         { str: 'Email: ', lock: true, className: css.test },
+        { str: 'pppp', lock: false },
         { str: 'test', lock: false, className: css.denied },
-        { str: '', lock: false },
       ],
     },
     lines: (new Array(0).fill(null)).map((

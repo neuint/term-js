@@ -8,7 +8,7 @@ import {
   moveContentEditableCaretToEnd,
   setContentEditableCaretPosition,
 } from '@Term/utils/viewport';
-import { CHANGE_EVENT_TYPE } from '../constants';
+import { CHANGE_EVENT_TYPE, DATA_INDEX_ATTRIBUTE_NAME } from '../constants';
 import { ValueFragmentType, ValueType } from '@Term/types';
 import { getValueHtmlInfo } from './utils';
 import { getKeyCode } from '@general/utils/event';
@@ -16,6 +16,7 @@ import { U_KEY_CODE, I_KEY_CODE, B_KEY_CODE } from '@general/constants/keyCodes'
 import { TEXT_NODE_TYPE } from '@Term/Line/Input/ContentEditableInput/constants';
 
 import css from './index.scss';
+import { NON_BREAKING_SPACE_PATTERN } from '@Term/constants/patterns';
 
 const CONTROL_KEY_CODES = [
   U_KEY_CODE, I_KEY_CODE, B_KEY_CODE,
@@ -53,7 +54,7 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   public get caretPosition(): number {
-    const editPart = this.getRef('edit-part');
+    const editPart = this.getEditElement();
     const { lockLength } = this;
     if (!editPart) return -1;
     const position = getContentEditableCaretPosition(editPart as HTMLElement);
@@ -61,7 +62,7 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   public set caretPosition(position: number) {
-    const editPart = this.getRef('edit-part');
+    const editPart = this.getEditElement();
     if (position < 0 || !editPart) return;
     setContentEditableCaretPosition(editPart as HTMLElement, position);
   }
@@ -75,7 +76,7 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   public set hiddenCaret(isCaretHidden: boolean) {
-    const input = this.getRef('input');
+    const input = this.getRootElement();
     if (this.isCaretHidden === isCaretHidden || !input) return;
     if (isCaretHidden) {
       (input as HTMLElement).classList.add(css.hiddenCaret);
@@ -99,12 +100,14 @@ class ContentEditableInput extends BaseInput implements IInput {
     super(template, container, css);
     const root = this.getRootElement() as HTMLElement;
     const editElement = this.getEditElement() as HTMLElement;
+    const lockElement = this.getLockElement() as HTMLElement;
     this.addEventListener('input', this.changeHandler);
     this.addEventListener('cut', this.changeHandler);
     this.addEventListener('paste', this.pasteHandler);
     this.addEventListener('keydown', this.keydownHandler);
     if (root) root.addEventListener('click', this.rootClickHandler);
-    if (editElement) editElement.removeEventListener('click', this.editClickHandler);
+    if (editElement) editElement.addEventListener('click', this.editClickHandler);
+    if (lockElement) lockElement.addEventListener('click', this.lockClickHandler);
   }
 
   public moveCaretToEnd(isForce: boolean = false) {
@@ -144,17 +147,23 @@ class ContentEditableInput extends BaseInput implements IInput {
   public destroy() {
     const root = this.getRootElement() as HTMLElement;
     const editElement = this.getEditElement() as HTMLElement;
+    const lockElement = this.getLockElement() as HTMLElement;
     this.removeEventListener('input', this.changeHandler);
     this.removeEventListener('cut', this.changeHandler);
     this.removeEventListener('paste', this.pasteHandler);
     this.removeEventListener('keydown', this.keydownHandler);
     if (root) root.removeEventListener('click', this.rootClickHandler);
     if (editElement) editElement.removeEventListener('click', this.editClickHandler);
+    if (lockElement) lockElement.removeEventListener('click', this.lockClickHandler);
     super.destroy();
   }
 
   protected getEditElement(): Element | undefined {
     return this.getRef('edit-part');
+  }
+
+  protected getLockElement(): Element | undefined {
+    return this.getRef('lock-part');
   }
 
   protected getRootElement(): Element | undefined {
@@ -168,8 +177,8 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   private setString() {
     const { secretField } = this;
-    const editPart = this.getRef('edit-part') as HTMLElement;
-    const lockPart = this.getRef('lock-part') as HTMLElement;
+    const editPart = this.getEditElement() as HTMLElement;
+    const lockPart = this.getLockElement() as HTMLElement;
     if (editPart && lockPart) {
       const { edit, lock } = getValueHtmlInfo(this.valueField, { secret: secretField });
       editPart.innerHTML = edit;
@@ -210,6 +219,11 @@ class ContentEditableInput extends BaseInput implements IInput {
     e.stopPropagation();
   }
 
+  private lockClickHandler = (e: Event) => {
+    e.stopPropagation();
+    this.caretPosition = 0;
+  }
+
   private changeHandler = (e: Event) => {
     this.updateValue();
     if (this.secret) this.hideSecretCharacters();
@@ -218,11 +232,24 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   private updateValue() {
-
+    const editElement = this.getEditElement() as HTMLElement;
+    if (!editElement) return;
+    const info = Array.prototype.reduce.call(
+      editElement.querySelectorAll('span') || [],
+      (acc: unknown, item: HTMLElement): { [key: number]: string } => {
+        const str = item.innerHTML.replace(NON_BREAKING_SPACE_PATTERN, ' ');
+        const dataIndex = item.getAttribute(DATA_INDEX_ATTRIBUTE_NAME);
+        console.log(dataIndex);
+        if (str && dataIndex) (acc as { [key: number]: string })[Number(dataIndex)] = str;
+        return acc as { [key: number]: string };
+      },
+      {} as { [key: number]: string },
+    );
+    console.log(info);
   }
 
   private hideSecretCharacters() {
-
+    if (this.secret) return;
   }
 }
 
