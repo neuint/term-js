@@ -12,7 +12,8 @@ export const getValueItemHtml = (
   const { secret = false, secretClassName = '' } = params;
   const info = isString(item) ? { str: item } as FormattedValueFragmentType : item;
   const className = secret ? `${secretClassName} ${info.className || ''}` : info.className || '';
-  return (`<span ${DATA_INDEX_ATTRIBUTE_NAME}="${index}" ref="fragment-${index}" class="${className}">${secret ? getSecretString(info.str) : escapeString(info.str)}</span>`);
+  const str = secret && !info.lock ? getSecretString(info.str) : escapeString(info.str);
+  return (`<span ${DATA_INDEX_ATTRIBUTE_NAME}="${index}" ref="fragment-${index}" class="${className}">${str}</span>`);
 };
 
 export const getValueHtmlInfo = (

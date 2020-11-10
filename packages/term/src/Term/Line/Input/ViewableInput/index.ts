@@ -26,6 +26,10 @@ class ViewableInput extends BaseInput implements IInput {
   protected getRootElement(): Element | undefined {
     return this.getRef('input');
   }
+
+  protected getEditElement(): Element | undefined {
+    return this.getRef('input');
+  }
 }
 
 export default ViewableInput;

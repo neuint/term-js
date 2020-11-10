@@ -9,7 +9,17 @@
   position: relative;
 }
 
-.input {}
+.input {
+  cursor: text;
+
+  &.hiddenCaret .editPart {
+    @include hidden-caret;
+
+    > * {
+      @include hidden-caret;
+    }
+  }
+}
 
 .lockPart {
   display: inline;
@@ -21,13 +31,5 @@
 
   > span {
     @include input-general;
-  }
-
-  &.hiddenCaret {
-    @include hidden-caret;
-
-    > * {
-      @include hidden-caret;
-    }
   }
 }

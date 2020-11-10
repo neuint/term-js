@@ -197,6 +197,10 @@ class ContentEditableInput extends BaseInput implements IInput {
     return this.getRef('input');
   }
 
+  protected getEditElement(): Element | undefined {
+    return this.getRef('input');
+  }
+
   private pasteHandler = () => {
     this.prevContent = BaseInput.getValueString(this.value);
   }

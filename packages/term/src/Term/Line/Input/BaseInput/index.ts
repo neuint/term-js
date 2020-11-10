@@ -160,9 +160,9 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
 
   public get isFocused(): boolean {
-    const root = this.getRef('input');
-    if (!root) return false;
-    return checkElementFocus(root as HTMLElement);
+    const editElement = this.getEditElement();
+    if (!editElement) return false;
+    return checkElementFocus(editElement as HTMLElement);
   }
 
   private characterContainer?: HTMLElement;
@@ -177,18 +177,18 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
 
   protected addHandlers() {
-    const root = this.getRootElement();
-    if (root) {
-      root.addEventListener('click', this.clickHandler);
-      root.addEventListener('mousedown', this.mouseDownHandler);
+    const editElement = this.getEditElement();
+    if (editElement) {
+      editElement.addEventListener('click', this.clickHandler);
+      editElement.addEventListener('mousedown', this.mouseDownHandler);
     }
   }
 
   protected removeHandlers() {
-    const root = this.getRootElement();
-    if (root) {
-      root.removeEventListener('click', this.clickHandler);
-      root.removeEventListener('mousedown', this.mouseDownHandler);
+    const editElement = this.getEditElement();
+    if (editElement) {
+      editElement.removeEventListener('click', this.clickHandler);
+      editElement.removeEventListener('mousedown', this.mouseDownHandler);
     }
   }
 
@@ -215,6 +215,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   }
 
   protected abstract getRootElement(): Element | undefined;
+  protected abstract getEditElement(): Element | undefined;
 
   public getSimpleValue(showSecret: boolean = true): string {
     const { secretField } = this;
@@ -228,8 +229,8 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
     options?: boolean | AddEventListenerOptions,
   ) {
-    const root = this.getRef('input') as HTMLElement;
-    if (root) root.addEventListener(type, listener, options);
+    const editElement = this.getEditElement() as HTMLElement;
+    if (editElement) editElement.addEventListener(type, listener, options);
   }
 
   public removeEventListener<K extends keyof HTMLElementEventMap>(
@@ -237,18 +238,18 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
     options?: boolean | EventListenerOptions,
   ) {
-    const root = this.getRef('input') as HTMLElement;
-    if (root) root.removeEventListener(type, listener, options);
+    const editElement = this.getEditElement() as HTMLElement;
+    if (editElement) editElement.removeEventListener(type, listener, options);
   }
 
   public focus() {
-    const root = this.getRef('input') as HTMLElement;
-    if (root) root.focus();
+    const editElement = this.getEditElement() as HTMLElement;
+    if (editElement) editElement.focus();
   }
 
   public blur() {
-    const root = this.getRef('input') as HTMLElement;
-    if (root) root.blur();
+    const editElement = this.getEditElement() as HTMLElement;
+    if (editElement) editElement.blur();
   }
 
   public destroy() {
@@ -283,7 +284,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
 
   private getRowCharactersCount(): number {
     const { characterSize } = this;
-    const root = this.getRef('input');
+    const root = this.getRootElement();
     return root ? Math.floor((root as HTMLElement).offsetWidth / characterSize.width) : 0;
   }
 
