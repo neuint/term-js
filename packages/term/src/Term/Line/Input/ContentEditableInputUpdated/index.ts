@@ -4,12 +4,12 @@ import BaseInput from '@Term/Line/Input/BaseInput';
 import IInput from '@Term/Line/Input/IInput';
 import template from './template.html';
 import {
-  getContentEditableCaretPosition,
+  getContentEditableCaretPosition, getLastTextNode,
   moveContentEditableCaretToEnd,
   setContentEditableCaretPosition,
 } from '@Term/utils/viewport';
 import { CHANGE_EVENT_TYPE, DATA_INDEX_ATTRIBUTE_NAME } from '../constants';
-import { ValueFragmentType, ValueType } from '@Term/types';
+import { FormattedValueType, ValueFragmentType, ValueType } from '@Term/types';
 import { getValueHtmlInfo } from './utils';
 import { getKeyCode } from '@general/utils/event';
 import { U_KEY_CODE, I_KEY_CODE, B_KEY_CODE } from '@general/constants/keyCodes';
@@ -85,15 +85,25 @@ class ContentEditableInput extends BaseInput implements IInput {
     }
     this.isCaretHidden = isCaretHidden;
   }
+  public get hiddenCaret(): boolean {
+    return this.isCaretHidden;
+  }
 
   public set value(val: ValueType) {
     this.valueField = val;
+    this.updateLockCount();
     this.updateContent();
+  }
+  public get value(): ValueType {
+    return this.valueField;
   }
 
   public set secret(secret: boolean) {
     this.secretField = secret;
     this.updateContent();
+  }
+  public get secret(): boolean {
+    return this.secretField;
   }
 
   constructor(container?: Element) {
@@ -176,11 +186,11 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   private setString() {
-    const { secretField } = this;
+    const { secretField: secret, lockCount } = this;
     const editPart = this.getEditElement() as HTMLElement;
     const lockPart = this.getLockElement() as HTMLElement;
     if (editPart && lockPart) {
-      const { edit, lock } = getValueHtmlInfo(this.valueField, { secret: secretField });
+      const { edit, lock } = getValueHtmlInfo(this.valueField, { secret, lockCount });
       editPart.innerHTML = edit;
       lockPart.innerHTML = lock;
     }
@@ -232,6 +242,24 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   private updateValue() {
+    const { value } = this;
+    if (isString(value)) {
+      this.updateStringValue();
+    } else {
+      this.updateComplexValue();
+    }
+  }
+
+  private updateStringValue() {
+    const editElement = this.getEditElement() as HTMLElement;
+    if (!editElement) return;
+    const lastText = getLastTextNode(editElement);
+    this.valueField = lastText?.textContent || '';
+  }
+
+  private updateComplexValue() {
+    const { lockCount } = this;
+    const value = this.value as FormattedValueType;
     const editElement = this.getEditElement() as HTMLElement;
     if (!editElement) return;
     const info = Array.prototype.reduce.call(
@@ -239,13 +267,30 @@ class ContentEditableInput extends BaseInput implements IInput {
       (acc: unknown, item: HTMLElement): { [key: number]: string } => {
         const str = item.innerHTML.replace(NON_BREAKING_SPACE_PATTERN, ' ');
         const dataIndex = item.getAttribute(DATA_INDEX_ATTRIBUTE_NAME);
-        console.log(dataIndex);
         if (str && dataIndex) (acc as { [key: number]: string })[Number(dataIndex)] = str;
         return acc as { [key: number]: string };
       },
       {} as { [key: number]: string },
-    );
-    console.log(info);
+    )as { [key: number]: string };
+    this.valueField = value.reduce((
+      acc: FormattedValueType, item: ValueFragmentType, index: number,
+    ): FormattedValueType => {
+      if (index < lockCount) {
+        acc.push(item);
+        return acc;
+      }
+      if (!info[index]) return acc;
+      if (isString(item)) {
+        acc.push(info[index]);
+      } else {
+        item.str = info[index];
+        acc.push(item);
+      }
+      return acc;
+    }, [] as FormattedValueType);
+    if (editElement?.lastChild?.nodeType === TEXT_NODE_TYPE) {
+      this.valueField.push(editElement.lastChild.textContent || '');
+    }
   }
 
   private hideSecretCharacters() {

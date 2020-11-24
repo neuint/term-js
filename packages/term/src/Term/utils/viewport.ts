@@ -106,11 +106,13 @@ export const checkChildNode = (root: HTMLElement, checkNode: HTMLElement | Node)
 export const getContentEditableCaretPosition = (el: HTMLElement): number => {
   const selection = window.getSelection();
   if (!selection || !selection.isCollapsed || !selection.anchorNode) return -1;
-  const { anchorNode } = selection;
-  if (!checkChildNode(el, selection.anchorNode)) return -1;
+  const anchorNode = (selection.anchorNode === el
+    ? getLastTextNode(el) : selection.anchorNode) as Node;
+  if (selection.anchorNode === el && !anchorNode) return 0;
+  if (!anchorNode || !checkChildNode(el, anchorNode)) return -1;
   return getNodeOffset(
     el,
-    anchorNode as Node,
+    anchorNode,
     anchorNode.nodeType === TEXT_NODE_TYPE ? selection.anchorOffset : 0,
   );
 };

@@ -17,17 +17,15 @@ export const getValueItemHtml = (
 };
 
 export const getValueHtmlInfo = (
-  val: ValueType, params: { secret?: boolean, secretClassName?: string } = {},
+  val: ValueType, params: { secret?: boolean, lockCount?: number, secretClassName?: string } = {},
 ): { lock: string, edit: string } => {
   if (isString(val)) return { lock: '', edit: val };
-  let tempString = '';
+  const lastLockIndex = (params.lockCount || 0) - 1;
+  let edit = '';
   let lock = '';
   val.forEach((item: ValueFragmentType, index: number) => {
-    tempString += getValueItemHtml(item, index, params);
-    if (!isString(item) && item.lock) {
-      lock += tempString;
-      tempString = '';
-    }
+    if (lastLockIndex >= index) lock += getValueItemHtml(item, index, params);
+    else edit += getValueItemHtml(item, index, params);
   });
-  return { lock, edit: tempString };
+  return { lock, edit };
 };

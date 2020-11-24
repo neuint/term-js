@@ -130,12 +130,14 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     return true;
   }
 
+  protected lockCount: number = 0;
   protected valueField: ValueType = '';
   public get value(): ValueType {
     return this.valueField;
   }
   public set value(val: ValueType) {
     this.valueField = val;
+    this.updateLockCount();
   }
 
   public get lockString(): string {
@@ -174,6 +176,17 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     this.render({ css: cssData });
     this.setCharacterContainer();
     this.addHandlers();
+  }
+
+  protected updateLockCount() {
+    const { valueField } = this;
+    if (isString(valueField)) return this.lockCount = 0;
+    this.lockCount = valueField.reduce((
+      count: number, item: ValueFragmentType, index: number,
+    ): number => {
+      if (isString(item)) return count;
+      return item.lock ? index + 1 : count;
+    }, 0);
   }
 
   protected addHandlers() {
