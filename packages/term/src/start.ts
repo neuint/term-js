@@ -13,12 +13,11 @@ if (container) {
     label: 'guest',
     editLine: {
       secret: true,
-      value: '',
-      // value: [
-      //   { str: 'Email: ', lock: true, className: css.test },
-      //   { str: 'pppp', lock: false },
-      //   { str: 'test', lock: false, className: css.denied },
-      // ],
+      value: [
+        { str: 'Password: ', lock: true, className: css.granted },
+        // { str: '', lock: false },
+        // { str: 'test', lock: false, className: css.denied },
+      ],
     },
     lines: (new Array(0).fill(null)).map((
       _, index,
