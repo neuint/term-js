@@ -14,9 +14,10 @@ import { getValueHtmlInfo } from './utils';
 import { getKeyCode } from '@general/utils/event';
 import { U_KEY_CODE, I_KEY_CODE, B_KEY_CODE } from '@general/constants/keyCodes';
 import { TEXT_NODE_TYPE } from '@Term/Line/Input/ContentEditableInput/constants';
+import { NON_BREAKING_SPACE_PATTERN } from '@Term/constants/patterns';
 
 import css from './index.scss';
-import { NON_BREAKING_SPACE_PATTERN } from '@Term/constants/patterns';
+import rootCss from '@Term/index.scss';
 
 const CONTROL_KEY_CODES = [
   U_KEY_CODE, I_KEY_CODE, B_KEY_CODE,
@@ -99,8 +100,12 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   public set secret(secret: boolean) {
+    if (secret === this.secretField) return;
     this.secretField = secret;
-    this.updateContent();
+    const editElement = this.getEditElement();
+    if (!editElement) return;
+    if (secret) editElement.classList.add(rootCss.password);
+    else editElement.classList.remove(rootCss.password);
   }
   public get secret(): boolean {
     return this.secretField;

@@ -1,4 +1,5 @@
 @import 'mixins';
+@import '~text-security/text-security-disc.css';
 
 .term {
   background-color: var(--main-bg-color);
@@ -22,6 +23,12 @@
     font-family: 'Ubuntu Mono', sans-serif, monospace;
     font-weight: 400;
     font-size: 16px;
+  }
+
+  *.password {
+    -webkit-text-security: disc;
+    font-family: 'text-security-disc';
+    letter-spacing: 0.1em;
   }
 
   input, textarea {

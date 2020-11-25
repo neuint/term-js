@@ -34,6 +34,7 @@
     "@types/uuid": "^8.3.0",
     "key-layers-js": "^1.1.1",
     "lodash-es": "^4.17.15",
+    "text-security": "^3.1.1",
     "uuid": "^8.3.1"
   },
   "devDependencies": {

@@ -11,15 +11,14 @@ if (container) {
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
     label: 'guest',
-    // editLine: 'test',
     editLine: {
-      secret: false,
-      value: [
-        { str: 'Email: ', lock: true, className: css.test },
-        { str: 'pppp', lock: false },
-        'ttt',
-        // { str: 'test', lock: false, className: css.denied },
-      ],
+      secret: true,
+      value: '',
+      // value: [
+      //   { str: 'Email: ', lock: true, className: css.test },
+      //   { str: 'pppp', lock: false },
+      //   { str: 'test', lock: false, className: css.denied },
+      // ],
     },
     lines: (new Array(0).fill(null)).map((
       _, index,
