@@ -1,23 +1,25 @@
-import { isString } from 'lodash-es';
+import { isString, isUndefined } from 'lodash-es';
 
 import BaseInput from '@Term/Line/Input/BaseInput';
 import IInput from '@Term/Line/Input/IInput';
 import template from './template.html';
 import {
-  getContentEditableCaretPosition, getLastTextNode,
+  getContentEditableCaretPosition,
   moveContentEditableCaretToEnd,
   setContentEditableCaretPosition,
 } from '@Term/utils/viewport';
 import { CHANGE_EVENT_TYPE, DATA_INDEX_ATTRIBUTE_NAME } from '../constants';
 import { FormattedValueType, ValueFragmentType, ValueType } from '@Term/types';
-import { getValueHtmlInfo } from './utils';
+import { getPasteProcessedValueItem, getValueHtmlInfo } from './utils';
 import { getKeyCode } from '@general/utils/event';
 import { U_KEY_CODE, I_KEY_CODE, B_KEY_CODE } from '@general/constants/keyCodes';
 import { TEXT_NODE_TYPE } from '@Term/Line/Input/ContentEditableInput/constants';
 import { NON_BREAKING_SPACE_PATTERN } from '@Term/constants/patterns';
+import { escapePasteString, getPasteString } from '@general/utils/string';
 
 import css from './index.scss';
 import rootCss from '@Term/index.scss';
+import { NON_BREAKING_SPACE } from '@Term/constants/strings';
 
 const CONTROL_KEY_CODES = [
   U_KEY_CODE, I_KEY_CODE, B_KEY_CODE,
@@ -111,6 +113,9 @@ class ContentEditableInput extends BaseInput implements IInput {
     return this.secretField;
   }
 
+  private prevContent?: string;
+  private prevCaretPosition: number = 0;
+
   constructor(container?: Element) {
     super(template, container, css);
     const root = this.getRootElement() as HTMLElement;
@@ -191,11 +196,11 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   private setString() {
-    const { secretField: secret, lockCount } = this;
+    const { lockCount } = this;
     const editPart = this.getEditElement() as HTMLElement;
     const lockPart = this.getLockElement() as HTMLElement;
     if (editPart && lockPart) {
-      const { edit, lock } = getValueHtmlInfo(this.valueField, { secret, lockCount });
+      const { edit, lock } = getValueHtmlInfo(this.valueField, { lockCount });
       editPart.innerHTML = edit;
       lockPart.innerHTML = lock;
     }
@@ -215,8 +220,9 @@ class ContentEditableInput extends BaseInput implements IInput {
     }
   }
 
-  private pasteHandler = (e: ClipboardEvent) => {
-
+  private pasteHandler = () => {
+    this.prevCaretPosition = this.caretPosition;
+    this.prevContent = BaseInput.getValueString(this.value);
   }
 
   private keydownHandler = (e: KeyboardEvent) => {
@@ -256,27 +262,36 @@ class ContentEditableInput extends BaseInput implements IInput {
   }
 
   private updateStringValue() {
+    const { prevContent } = this;
     const editElement = this.getEditElement() as HTMLElement;
+    const isPaste = !isUndefined(prevContent);
     if (!editElement) return;
-    const lastText = getLastTextNode(editElement);
-    this.valueField = lastText?.textContent || '';
+    let lastText = editElement.innerHTML || '';
+    if (isPaste) {
+      const pasteString = getPasteString(prevContent as string, lastText);
+      lastText = pasteString
+        ? lastText.replace(pasteString, escapePasteString(pasteString))
+        : lastText;
+      editElement.innerHTML = lastText.replace(/\s/g, NON_BREAKING_SPACE);
+    }
+    this.valueField = lastText;
+    if (isPaste) this.pasteCaretPositionUpdate();
   }
 
   private updateComplexValue() {
-    const { lockCount } = this;
+    const { lockCount, prevContent } = this;
+    const info = this.getComplexValueUpdateInfo();
+    if (!info) return;
     const value = this.value as FormattedValueType;
     const editElement = this.getEditElement() as HTMLElement;
-    if (!editElement) return;
-    const info = Array.prototype.reduce.call(
-      editElement.querySelectorAll('span') || [],
-      (acc: unknown, item: HTMLElement): { [key: number]: string } => {
-        const str = item.innerHTML.replace(NON_BREAKING_SPACE_PATTERN, ' ');
-        const dataIndex = item.getAttribute(DATA_INDEX_ATTRIBUTE_NAME);
-        if (str && dataIndex) (acc as { [key: number]: string })[Number(dataIndex)] = str;
-        return acc as { [key: number]: string };
-      },
-      {} as { [key: number]: string },
-    )as { [key: number]: string };
+    const isPaste = !isUndefined(prevContent);
+    const pasteString = isPaste
+      ? getPasteString(
+        prevContent as string,
+        Object.keys(info).sort()
+          .reduce((acc: string, key: string): string => acc + info[Number(key)], ''),
+      )
+      : '';
     this.valueField = value.reduce((
       acc: FormattedValueType, item: ValueFragmentType, index: number,
     ): FormattedValueType => {
@@ -286,16 +301,44 @@ class ContentEditableInput extends BaseInput implements IInput {
       }
       if (!info[index]) return acc;
       if (isString(item)) {
-        acc.push(info[index]);
+        acc.push(isPaste
+          ? getPasteProcessedValueItem(item, info[index], pasteString) : info[index]);
       } else {
-        item.str = info[index];
+        item.str = isPaste
+          ? getPasteProcessedValueItem(item.str, info[index], pasteString) : info[index];
         acc.push(item);
       }
       return acc;
     }, [] as FormattedValueType);
     if (editElement?.lastChild?.nodeType === TEXT_NODE_TYPE) {
-      this.valueField.push(editElement.lastChild.textContent || '');
+      this.valueField.push(isPaste
+        ? getPasteProcessedValueItem(editElement.lastChild.textContent || '', '', pasteString)
+        : '');
     }
+    if (isPaste) this.pasteCaretPositionUpdate();
+  }
+
+  private getComplexValueUpdateInfo(): { [key: number]: string } | undefined {
+    const editElement = this.getEditElement() as HTMLElement;
+    if (!editElement) return;
+    return Array.prototype.reduce.call(
+      editElement.querySelectorAll(`span[${DATA_INDEX_ATTRIBUTE_NAME}]`) || [],
+      (acc: unknown, item: HTMLElement): { [key: number]: string } => {
+        const str = item.innerHTML.replace(NON_BREAKING_SPACE_PATTERN, ' ');
+        const dataIndex = item.getAttribute(DATA_INDEX_ATTRIBUTE_NAME);
+        if (str && dataIndex) (acc as { [key: number]: string })[Number(dataIndex)] = str;
+        return acc as { [key: number]: string };
+      },
+      {} as { [key: number]: string },
+    ) as { [key: number]: string };
+  }
+
+  private pasteCaretPositionUpdate() {
+    const { prevContent, prevCaretPosition } = this;
+    this.caretPosition = prevCaretPosition +
+      BaseInput.getValueString(this.valueField).length - (prevContent as string).length;
+    this.prevCaretPosition = 0;
+    this.prevContent = undefined;
   }
 
   private hideSecretCharacters() {
