@@ -1,0 +1,108 @@
+@import 'general-mixins';
+@import 'general-theme.scss';
+
+@mixin overlay($position: fixed) {
+  position: $position;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--term-js-overlay-color);
+
+  @include full-size;
+}
+
+@mixin transparent-overlay($position: fixed) {
+  @include overlay($position);
+
+  background: var(--term-js-transparent-overlay-color);
+}
+
+@mixin popup {
+  background: var(--term-js-popup-bg-color);
+  border: 1px solid var(--term-js-popup-border-color);
+  border-radius: 0.25rem;
+  color: var(--term-js-popup-text-color);
+}
+
+@mixin popup-header {
+  @include flex-vertical;
+  @include font-size(1.15);
+  @include border-top-radius(0.25rem);
+
+  background: var(--term-js-popup-header-bg-color);
+  color: var(--term-js-popup-header-text-color);
+  min-height: 2.5rem;
+}
+
+@mixin context-menu-list {
+  width: 10rem;
+  max-height: 15rem;
+  overflow-y: auto;
+
+  @include clear-list;
+  @include popup;
+}
+
+@mixin button {
+  @include clear-button;
+}
+
+@mixin icon-button($container-size: 2rem, $icon-size: 1rem) {
+  @include clear-button;
+  @include flex-center;
+
+  min-width: $container-size;
+  min-height: $container-size;
+
+  & svg {
+    pointer-events: none;
+    width: $icon-size;
+    height: $icon-size;
+    @include button-transition(fill, stroke);
+
+    fill: var(--term-js-icon-button-color);
+  }
+
+  &:hover svg {
+    fill: var(--term-js-icon-button-color-hover);
+  }
+
+  &:active svg {
+    fill: var(--term-js-icon-button-color-active);
+  }
+}
+
+@mixin button($hover-color) {
+  @include clear-button;
+  @include padding-horizontal(1rem);
+  @include padding-vertical(0.5rem);
+  @include font-size(1);
+
+  text-align: center;
+  border-radius: 0.125rem;
+  min-width: 6rem;
+
+  @if ($hover-color) {
+    &:hover {
+      background: $hover-color;
+    }
+  }
+
+  &:active {
+    background: var(--term-js-button-bg-color-active);
+  }
+}
+
+@mixin button-primary {
+  @include button(var(--term-js-button-primary-bg-color-hover));
+
+  color: var(--term-js-button-primary-text-color);
+  background: var(--term-js-button-primary-bg-color);
+}
+
+@mixin button-default {
+  @include button(var(--term-js-button-primary-bg-color-hover));
+
+  color: var(--term-js-button-default-text-color);
+}

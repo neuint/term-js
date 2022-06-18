@@ -1,0 +1,88 @@
+@import '_styles/mixins';
+
+.term {
+  background-color: var(--main-bg-color);
+  color: var(--main-text-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-bg-color);
+  }
+
+  @include full-size;
+
+  &, input, textarea, select, button, pre {
+    font-family: 'Ubuntu Mono', sans-serif, monospace;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  input, textarea {
+    background: none;
+    border: none;
+    display: inline-block;
+    padding: 0;
+
+    &::selection {
+      background-color: var(--main-selectoin-color);
+    }
+  }
+
+  input:focus, textarea:focus, button:focus, div:focus {
+    outline: none;
+  }
+}
+
+.header {
+  height: 2.5rem;
+  background-color: var(--header-bg-color);
+
+  @include flex-center;
+  @include padding-horizontal(1rem);
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.headerTextContainer {
+  @include truncated;
+
+  flex: 1;
+  text-align: center;
+}
+
+.headerText {
+  font-size: 0.875rem;
+  color: var(--header-text-color);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.linesContainer {
+  flex: 1;
+  overflow: hidden;
+
+  @include margin-vertical(0.25rem);
+}
+
+.line {
+  @include margin-horizontal(0.5rem);
+}
+
+.editLine {
+  margin-bottom: 5rem;
+}

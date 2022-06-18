@@ -1,0 +1,17 @@
+@import 'src/Term/_styles/mixins';
+
+.root {
+  height: 100%;
+
+  @include overflow-y(scroll);
+}
+
+.virtualizedList {
+  position: relative;
+}
+
+.itemsContainer {
+  position: absolute;
+  left: 0;
+  right: 0;
+}

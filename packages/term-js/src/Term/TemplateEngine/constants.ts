@@ -1,0 +1,13 @@
+export const CLASS_NAME_PATTERN = /class="[^"]+"/ig;
+export const REF_PATTERN = /ref="[^"]+"/ig;
+export const IF_OPEN_PATTERN = /<If\scondition="\{[^"]+}">/gi;
+export const IF_CLOSE_PATTERN = /<\/If>/gi;
+export const CHOOSE_OPEN_PATTERN = /<Choose>/gi;
+export const CHOOSE_CLOSE_PATTERN = /<\/Choose>/gi;
+export const CHOOSE_PATTERN = /<Choose>(.(?!\/Choose>)|\n(?!\/Choose>)|\s(?!\/Choose>))+/gi;
+export const WHEN_PATTERN = /<When\scondition="\{[^"]+}">(.(?!\/When>)|\n(?!\/When>)|\s(?!\/When>))+/gi;
+export const WHEN_OPEN_PATTERN = /<When\scondition="\{[^"]+}">/gi;
+export const WHEN_CLOSE_PATTERN = /<\/When>/gi;
+export const OTHERWISE_PATTERN = /<Otherwise>(.(?!\/Otherwise>)|\n(?!\/Otherwise>)|\s(?!\/Otherwise>))+/gi;
+export const OTHERWISE_OPEN_PATTERN = /<Otherwise>/gi;
+export const OTHERWISE_CLOSE_PATTERN = /<\/Otherwise>/gi;

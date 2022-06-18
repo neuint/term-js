@@ -1,3 +1,4 @@
+const path = require('path');
 module.exports = {
   env: {
     browser: true,
@@ -29,6 +30,7 @@ module.exports = {
     'plugin:mocha/recommended',
   ],
   rules: {
+    'default-param-last': 'off',
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
     'react/function-component-definition': 'off',

@@ -1,0 +1,5 @@
+@import 'src/Term/_styles/mixins';
+
+.root {
+  @include input-general;
+}

@@ -8,14 +8,16 @@ const url = require('rollup-plugin-url');
 const svgr = require('@svgr/rollup');
 const copy = require('rollup-plugin-copy');
 const serve = require('rollup-plugin-serve');
-const scss = require('rollup-plugin-scss');
+const postcss = require('rollup-plugin-postcss');
+const { string } = require('rollup-plugin-string');
+const sourcemaps = require('rollup-plugin-sourcemaps');
 
 const pkg = require('./package.json');
 
 const BUILD = !process.argv.includes('dev_server');
 
 module.exports = {
-  input: BUILD ? './src/TermJS/index.ts' : './src/index.ts',
+  input: BUILD ? './src/Term/index.ts' : './src/index.ts',
   watch: {
     exclude: ['node_modules/**'],
   },
@@ -37,15 +39,22 @@ module.exports = {
     external(),
     url(),
     svgr(),
-    scss({
-      output: (styles) => {
-        writeFileSync(BUILD ? './dist/index.css' : './serve/index.css', styles);
-      }
+    string({
+      include: "**/*.html",
+      exclude: ["**/index.html"],
     }),
-    resolve(),
+    postcss({
+      extract: false,
+      modules: true,
+      use: ['sass'],
+    }),
+    resolve({
+      browser: true,
+    }),
     copy({
       targets: [
         BUILD ? null : { src: 'src/index.html', dest: 'serve' },
+        BUILD ? null : { src: 'src/TermJS/assets', dest: 'serve' },
       ].filter(identity),
     }),
     typescript({
@@ -59,5 +68,6 @@ module.exports = {
       host: 'localhost',
       port: 10001,
     }),
+    BUILD ? null : sourcemaps(),
   ].filter(identity),
 };
