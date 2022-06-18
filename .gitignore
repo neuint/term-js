@@ -1,0 +1,8 @@
+**/node_modules
+npm-debug.log
+build
+serve
+coverage
+.idea/
+.vscode/
+**.DS_Store
