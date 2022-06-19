@@ -1,4 +1,3 @@
-const { writeFileSync } = require('fs');
 const { identity } = require('lodash');
 const typescript = require('rollup-plugin-typescript2');
 const commonjs = require('rollup-plugin-commonjs');
@@ -14,7 +13,7 @@ const sourcemaps = require('rollup-plugin-sourcemaps');
 
 const pkg = require('./package.json');
 
-const BUILD = !process.argv.includes('dev_server');
+const BUILD = !process.argv.includes('-w');
 
 module.exports = {
   input: BUILD ? './src/Term/index.ts' : './src/index.ts',
@@ -63,11 +62,11 @@ module.exports = {
       tsconfig: BUILD ? 'tsconfig.json' : 'tsconfig.dev.json'
     }),
     commonjs(),
+    BUILD ? null : sourcemaps(),
     BUILD ? null : serve({
       contentBase: 'serve',
       host: 'localhost',
       port: 10001,
     }),
-    BUILD ? null : sourcemaps(),
   ].filter(identity),
 };

@@ -10,7 +10,7 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "dev": "rollup -c -w dev_server",
+    "dev": "rollup -c -w",
     "build": "rollup -c",
     "test": "jest",
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"

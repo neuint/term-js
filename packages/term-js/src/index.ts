@@ -8,7 +8,6 @@ import { ValueType } from './Term/types';
 const container = document.querySelector('.content');
 if (container) {
   const term = new Term(container, {
-    header: 'Test',
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
     label: 'guest',

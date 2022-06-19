@@ -9,7 +9,6 @@ import IVirtualizedItem from './IVirtualizedItem';
 
 class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
   implements IVirtualizedList<T> {
-
   private lengthValue = 0;
 
   public set length(value: number) {
@@ -237,6 +236,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       if (itemsCache[index]) {
         itemsCache[index].show();
         if (!renderedItems.includes(index)) renderedItems.push(index);
+        return;
       }
       const item = itemGetter(index, { container });
       if (item) itemsCache[index] = item;
@@ -248,6 +248,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
       if (renderCacheItem) {
         renderCacheItem.show(false, beforeCacheItem);
         if (!renderedItems.includes(index)) renderedItems.splice(beforeRenderArrayIndex, 0, index);
+        return;
       }
       const item = itemGetter(index, { container, append: false, ref: beforeCacheItem });
       if (item) itemsCache[index] = item;
