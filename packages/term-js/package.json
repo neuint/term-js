@@ -7,7 +7,7 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/packages/term-js/src/Term/index.d.ts",
   "license": "MIT",
   "scripts": {
     "dev": "rollup -c -w",
@@ -22,7 +22,6 @@
     "node-sass": "^7.0.1",
     "postcss": "^8.4.14",
     "rollup": "^2.75.6",
-    "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-hot": "^0.1.1",

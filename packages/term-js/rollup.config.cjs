@@ -20,6 +20,7 @@ module.exports = {
   watch: {
     exclude: ['node_modules/**'],
   },
+  external: BUILD ? Object.keys(pkg.dependencies) : [],
   output: [
     {
       file: BUILD ? pkg.main : 'serve/index.js',
