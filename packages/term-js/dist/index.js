@@ -1,15 +1,7 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var lodashEs = require('lodash-es');
-var ResizeObserver = require('resize-observer-polyfill');
-var keyLayersJs = require('key-layers-js');
-var uuid = require('uuid');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var ResizeObserver__default = /*#__PURE__*/_interopDefaultLegacy(ResizeObserver);
+import { template as template$5, omit, isUndefined, last, isString, unescape, identity, noop, isArray, get, isNumber, isObject } from 'lodash-es';
+import ResizeObserver from 'resize-observer-polyfill';
+import { Emitter } from 'key-layers-js';
+import { v1 } from 'uuid';
 
 function styleInject(css, ref) {
   if ( ref === void 0 ) ref = {};
@@ -183,7 +175,7 @@ class TemplateEngine extends Animation {
         processedTemplate = TemplateEngine
             .getTemplateExecutorStringWithLodashSwitches(processedTemplate)
             .replace(/\s*%>[\s\n]*<%\s*/g, ' ');
-        return lodashEs.template(processedTemplate);
+        return template$5(processedTemplate);
     }
     static getTemplateExecutorStringWithLodashConditions(template) {
         const conditionList = template.match(IF_OPEN_PATTERN);
@@ -294,7 +286,7 @@ class TemplateEngine extends Animation {
         const { templateExecutor } = this;
         if (!templateExecutor)
             return '';
-        let renderString = templateExecutor(lodashEs.omit(params, ['css']));
+        let renderString = templateExecutor(omit(params, ['css']));
         renderString = TemplateEngine.getRenderStringWithClassNames(renderString, params);
         return TemplateEngine.getRenderStringWithVariables(renderString, params);
     }
@@ -454,7 +446,7 @@ class VirtualizedList extends TemplateEngine {
                     break;
                 if (isViewportItem) {
                     items.push(i);
-                    offset = lodashEs.isUndefined(offset) ? itemOffsetStart : offset;
+                    offset = isUndefined(offset) ? itemOffsetStart : offset;
                 }
             }
             this.viewportItems = items;
@@ -494,7 +486,7 @@ class VirtualizedList extends TemplateEngine {
             || (viewportEnd > itemOffsetStart && viewportEnd < itemOffsetEnd);
     }
     scrollBottom() {
-        if (!lodashEs.isUndefined(this.scrollTimeout))
+        if (!isUndefined(this.scrollTimeout))
             clearTimeout(this.scrollTimeout);
         const root = this.getRef('root');
         if (!root)
@@ -504,7 +496,7 @@ class VirtualizedList extends TemplateEngine {
         }, 0);
     }
     destroy() {
-        if (!lodashEs.isUndefined(this.scrollTimeout))
+        if (!isUndefined(this.scrollTimeout))
             clearTimeout(this.scrollTimeout);
         super.destroy();
     }
@@ -568,7 +560,7 @@ class VirtualizedList extends TemplateEngine {
         const container = this.getRef('itemsContainer');
         if (!container)
             return;
-        if (lodashEs.isUndefined(beforeIndex)) {
+        if (isUndefined(beforeIndex)) {
             if (itemsCache[index]) {
                 itemsCache[index].show();
                 if (!renderedItems.includes(index))
@@ -618,7 +610,7 @@ class VirtualizedList extends TemplateEngine {
         const { viewportItems, renderedItems } = this;
         if (viewportItems.length) {
             let removeCount = 0;
-            const lastItem = lodashEs.last(viewportItems);
+            const lastItem = last(viewportItems);
             renderedItems.reverse().some((itemIndex) => {
                 if (itemIndex <= lastItem)
                     return true;
@@ -959,11 +951,11 @@ class BaseInput extends TemplateEngine {
     }
     static getValueString(value, params = {}) {
         const { secret = false } = params;
-        if (lodashEs.isString(value))
+        if (isString(value))
             return secret ? BaseInput.convertSecret(value) : value;
         return value.reduce((acc, item) => {
-            const str = (lodashEs.isString(item) ? item : item.str);
-            const val = secret && (lodashEs.isString(item) || !item.lock) ? BaseInput.convertSecret(str) : str;
+            const str = (isString(item) ? item : item.str);
+            const val = secret && (isString(item) || !item.lock) ? BaseInput.convertSecret(str) : str;
             return `${acc}${val}`;
         }, '');
     }
@@ -982,7 +974,7 @@ class BaseInput extends TemplateEngine {
     }
     static getValueFragmentTemplate(valueFragment, index, params = {}) {
         const { secret } = params;
-        if (lodashEs.isString(valueFragment)) {
+        if (isString(valueFragment)) {
             return BaseInput.getFragmentTemplate(valueFragment, { index, secret });
         }
         const { str, className = '', lock } = valueFragment;
@@ -990,19 +982,19 @@ class BaseInput extends TemplateEngine {
         return BaseInput.getFragmentTemplate(str, { className, index, secret: isSecret });
     }
     static getValueTemplate(value, params = {}) {
-        if (lodashEs.isString(value))
+        if (isString(value))
             return BaseInput.getNormalizedTemplateString(value);
         return value.reduce((acc, item, index) => {
             return `${acc}${BaseInput.getValueFragmentTemplate(item, index, params)}`;
         }, '');
     }
     static getUpdatedValueField(value, prevValue) {
-        if (lodashEs.isString(prevValue))
+        if (isString(prevValue))
             return value;
         let checkValue = clearStringStyles(value);
         let stop = false;
         const updatedValueField = prevValue.reduce((acc, item) => {
-            const isStringItem = lodashEs.isString(item);
+            const isStringItem = isString(item);
             const itemStr = (isStringItem ? item : item.str);
             const { str, isFull } = getStartIntersectionString(itemStr, checkValue);
             if (str && !stop) {
@@ -1015,15 +1007,15 @@ class BaseInput extends TemplateEngine {
         checkValue.replace(/<span[^>]*>/g, '')
             .split('')
             .forEach((char) => updatedValueField.push(char));
-        return updatedValueField.filter((item) => (lodashEs.isString(item) ? item : item.str));
+        return updatedValueField.filter((item) => (isString(item) ? item : item.str));
     }
     static getLockString(value) {
-        if (lodashEs.isString(value))
+        if (isString(value))
             return '';
         let str = '';
         let lockStr = '';
         value.forEach((item) => {
-            if (lodashEs.isString(item)) {
+            if (isString(item)) {
                 str += item;
             }
             else {
@@ -1103,12 +1095,12 @@ class BaseInput extends TemplateEngine {
     }
     getValueItemString(index) {
         const { valueField } = this;
-        if (lodashEs.isString(valueField))
+        if (isString(valueField))
             return index ? '' : valueField;
         const item = valueField[index];
         if (!item)
             return '';
-        return lodashEs.isString(item) ? item : item.str;
+        return isString(item) ? item : item.str;
     }
     getSimpleValue(showSecret = true) {
         const { secretField } = this;
@@ -1179,11 +1171,11 @@ class BaseInput extends TemplateEngine {
     }
     getElementFormattedValueFragment(element) {
         const { valueField } = this;
-        if (lodashEs.isString(valueField))
+        if (isString(valueField))
             return null;
         const dataIndex = element.getAttribute(DATA_INDEX_ATTRIBUTE_NAME);
         const valueFieldItem = dataIndex ? valueField[Number(dataIndex)] : null;
-        return !valueFieldItem || lodashEs.isString(valueFieldItem)
+        return !valueFieldItem || isString(valueFieldItem)
             ? null : valueFieldItem;
     }
     setCharacterContainer() {
@@ -1374,11 +1366,11 @@ class ContentEditableInput extends BaseInput {
     getPasteNormalizedData() {
         const { prevContent } = this;
         const root = this.getRef('input');
-        const data = lodashEs.unescape(root.innerHTML.replace(/<br>/g, ''))
+        const data = unescape(root.innerHTML.replace(/<br>/g, ''))
             .replace(NON_BREAKING_SPACE_PATTERN, ' ')
             .replace(/<b>/g, '')
             .replace(/<\/b>/g, '');
-        if (lodashEs.isUndefined(prevContent))
+        if (isUndefined(prevContent))
             return data;
         this.prevContent = undefined;
         const startIndex = prevContent.split('').reduce((acc, char, i) => {
@@ -1396,7 +1388,7 @@ class ContentEditableInput extends BaseInput {
     }
     getInputValue() {
         const data = this.getPasteNormalizedData();
-        const items = data.replace(/<\/span>[^<]*</g, '</span><').split('</span>').filter(lodashEs.identity);
+        const items = data.replace(/<\/span>[^<]*</g, '</span><').split('</span>').filter(identity);
         return items.reduce((acc, item) => {
             var _a;
             const index = (((_a = item.match(/data-index="[0-9]+"/)) === null || _a === void 0 ? void 0 : _a[0]) || '').replace(/[^0-9]/g, '');
@@ -1426,7 +1418,7 @@ class ContentEditableInput extends BaseInput {
     }
     preventLockUpdate() {
         const { valueField } = this;
-        if (lodashEs.isString(valueField))
+        if (isString(valueField))
             return false;
         const value = clearStringStyles(this.getInputValue());
         const lockStr = BaseInput.getLockString(valueField);
@@ -1436,7 +1428,7 @@ class ContentEditableInput extends BaseInput {
         if (deleteUnlockPart) {
             const lastLockIndex = this.valueField
                 .reduce((acc, item, index) => {
-                return !lodashEs.isString(item) && item.lock ? index : acc;
+                return !isString(item) && item.lock ? index : acc;
             }, -1);
             this.valueField = this.valueField
                 .filter((_, index) => index <= lastLockIndex);
@@ -1546,9 +1538,9 @@ class Line extends TemplateEngine {
         this.initialValue = '';
         this.className = '';
         this.editable = false;
-        this.onSubmit = lodashEs.noop;
-        this.onChange = lodashEs.noop;
-        this.onUpdateCaretPosition = lodashEs.noop;
+        this.onSubmit = noop;
+        this.onChange = noop;
+        this.onUpdateCaretPosition = noop;
         this.caretPosition = -1;
         this.updateHeight = () => {
             const root = this.getRef('root');
@@ -1563,17 +1555,17 @@ class Line extends TemplateEngine {
                 [RIGHT_CODE]: this.lockCaret,
                 [UP_CODE]: this.lockCaret,
                 [DOWN_CODE]: this.lockCaret,
-            }[Number(getKeyCode(e))] || lodashEs.noop)(e);
+            }[Number(getKeyCode(e))] || noop)(e);
         };
         this.submitHandler = (e) => {
             const { onSubmit, inputField, secret } = this;
             const value = (inputField === null || inputField === void 0 ? void 0 : inputField.value) || '';
             let formattedValue = '';
-            if (lodashEs.isString(value)) {
+            if (isString(value)) {
                 formattedValue = secret ? '' : value;
             }
-            else if (lodashEs.isArray(value)) {
-                formattedValue = secret ? value.filter((item) => lodashEs.get(item, 'lock')) : value;
+            else if (isArray(value)) {
+                formattedValue = secret ? value.filter((item) => get(item, 'lock')) : value;
             }
             e === null || e === void 0 ? void 0 : e.preventDefault();
             if (inputField && onSubmit) {
@@ -1827,7 +1819,7 @@ class Line extends TemplateEngine {
         this.value = '';
     }
     setParams(params) {
-        const { onUpdateCaretPosition = lodashEs.noop, onChange = lodashEs.noop, onSubmit = lodashEs.noop, editable = true, className = '', value, secret = false, } = params;
+        const { onUpdateCaretPosition = noop, onChange = noop, onSubmit = noop, editable = true, className = '', value, secret = false, } = params;
         this.className = className;
         this.onSubmit = onSubmit;
         this.onChange = onChange;
@@ -1917,7 +1909,7 @@ class KeyboardShortcutsManager {
         this.isLock = false;
         this.lockWhiteList = [];
         this.actionHandler = (params || {}).onAction;
-        this.unlockKey = unlockKey || uuid.v1();
+        this.unlockKey = unlockKey || v1();
     }
     static checkShortcutsEqual(first, second) {
         const firstNormalized = KeyboardShortcutsManager.getNormalizedShortcut(first);
@@ -1932,14 +1924,14 @@ class KeyboardShortcutsManager {
         const normalizedShortcut = {
             codes: [], ctrlKey: false, metaKey: false, altKey: false, shiftKey: false,
         };
-        if (lodashEs.isNumber(shortcut)) {
+        if (isNumber(shortcut)) {
             normalizedShortcut.codes = [shortcut];
         }
-        else if (lodashEs.isArray(shortcut) && lodashEs.isNumber(shortcut[0])) {
+        else if (isArray(shortcut) && isNumber(shortcut[0])) {
             normalizedShortcut.codes = shortcut;
         }
         else {
-            normalizedShortcut.codes = lodashEs.isArray(shortcut.code)
+            normalizedShortcut.codes = isArray(shortcut.code)
                 ? shortcut.code : [shortcut.code];
             normalizedShortcut.ctrlKey = shortcut.ctrl
                 || normalizedShortcut.ctrlKey;
@@ -2008,7 +2000,7 @@ class KeyboardShortcutsManager {
     }
     activate() {
         if (!this.emitter) {
-            this.emitter = new keyLayersJs.Emitter(this.layerField);
+            this.emitter = new Emitter(this.layerField);
             this.addListeners();
         }
     }
@@ -2135,7 +2127,7 @@ class PluginManager {
     getPlugin(descriptor) {
         var _a, _b;
         const { pluginList } = this;
-        return lodashEs.isString(descriptor)
+        return isString(descriptor)
             ? ((_a = pluginList.find(({ name }) => name === descriptor)) === null || _a === void 0 ? void 0 : _a.inst) || null
             : ((_b = pluginList.find(({ inst }) => inst instanceof descriptor)) === null || _b === void 0 ? void 0 : _b.inst) || null;
     }
@@ -2201,11 +2193,11 @@ class Term extends TemplateEngine {
             const { editLine, params: currentParams } = this;
             const { label, delimiter } = params;
             let isUpdated = false;
-            if (!lodashEs.isUndefined(label)) {
+            if (!isUndefined(label)) {
                 currentParams.label = label;
                 isUpdated = true;
             }
-            if (!lodashEs.isUndefined(delimiter)) {
+            if (!isUndefined(delimiter)) {
                 currentParams.delimiter = delimiter;
                 isUpdated = true;
             }
@@ -2223,10 +2215,10 @@ class Term extends TemplateEngine {
             editLine.disabled = true;
             if (duration >= 0) {
                 const { value: original } = editLine;
-                const str = lodashEs.isString(data) ? data : data.str;
+                const str = isString(data) ? data : data.str;
                 const millisecondCharactersCount = str.length / duration;
                 let milliseconds = 0;
-                const updatingValue = lodashEs.isString(data) ? { str: data } : Object.assign(Object.assign({}, data), { str: '' });
+                const updatingValue = isString(data) ? { str: data } : Object.assign(Object.assign({}, data), { str: '' });
                 return new Promise((res) => {
                     this.writingInterval = setInterval(() => {
                         milliseconds += 1;
@@ -2270,7 +2262,7 @@ class Term extends TemplateEngine {
         };
         this.heightGetter = (index) => {
             const { heightCache, itemSize, lines, params: { delimiter, label, size, scrollbarSize }, } = this;
-            if (lodashEs.isUndefined(heightCache[index])) {
+            if (isUndefined(heightCache[index])) {
                 heightCache[index] = Line.getHeight({
                     itemSize,
                     delimiter,
@@ -2283,7 +2275,7 @@ class Term extends TemplateEngine {
         };
         this.observeHandler = (entries) => {
             const { params: { size }, vl } = this;
-            const { width, height } = lodashEs.get(entries, '[0].contentRect');
+            const { width, height } = get(entries, '[0].contentRect');
             if (size.width !== width) {
                 size.width = width;
                 size.height = height;
@@ -2306,7 +2298,7 @@ class Term extends TemplateEngine {
             const { value, formattedValue, lockString } = params;
             const { vl, editLine, listeners, history: { list } } = this;
             const historyValue = value.substring(lockString.length);
-            if (historyValue && lodashEs.last(list) !== historyValue && !(editLine === null || editLine === void 0 ? void 0 : editLine.secret))
+            if (historyValue && last(list) !== historyValue && !(editLine === null || editLine === void 0 ? void 0 : editLine.secret))
                 list.push(historyValue);
             if (!editLine)
                 return;
@@ -2387,7 +2379,7 @@ class Term extends TemplateEngine {
         const { virtualizedTopOffset, virtualizedBottomOffset, header } = params;
         this.headerField = header || '';
         this.init(container, params);
-        this.ro = new ResizeObserver__default["default"](this.observeHandler);
+        this.ro = new ResizeObserver(this.observeHandler);
         this.keyboardShortcutsManager = new KeyboardShortcutsManager({ onAction: this.actionHandler });
         this.vl = new VirtualizedList(this.getRef('linesContainer'), {
             length: this.lines.length,
@@ -2467,8 +2459,8 @@ class Term extends TemplateEngine {
     updateEditLine(data, stopEdit, original) {
         const { editLine } = this;
         if (editLine) {
-            const value = lodashEs.isUndefined(original) ? editLine.value : original;
-            editLine.value = lodashEs.isArray(value) ? [...value, data] : [value, data];
+            const value = isUndefined(original) ? editLine.value : original;
+            editLine.value = isArray(value) ? [...value, data] : [value, data];
             editLine.moveCaretToEnd();
             if (stopEdit)
                 editLine.disabled = false;
@@ -2532,13 +2524,13 @@ class Term extends TemplateEngine {
             delimiter,
             caret,
             className: [css$7.line, css$7.editLine].join(' '),
-            value: lodashEs.isArray(editLineParams) || lodashEs.isString(editLineParams)
+            value: isArray(editLineParams) || isString(editLineParams)
                 ? editLineParams : editLineParams.value,
             editable: true,
             onSubmit: this.submitHandler,
             onChange: this.changeHandler,
             onUpdateCaretPosition: this.updateCaretPositionHandler,
-            secret: lodashEs.get(editLineParams, 'secret') || false,
+            secret: get(editLineParams, 'secret') || false,
         });
         this.clearHistoryState();
         this.addKeyDownHandler();
@@ -2664,7 +2656,7 @@ class Term extends TemplateEngine {
             update: (params) => {
                 if (!editLine)
                     return;
-                if (lodashEs.isObject(params) && !lodashEs.isArray(params)) {
+                if (isObject(params) && !isArray(params)) {
                     editLine.secret = Boolean(params.secret);
                     editLine.value = params.value;
                 }
@@ -2686,5 +2678,5 @@ class Term extends TemplateEngine {
     }
 }
 
-exports["default"] = Term;
+export { Term as default };
 //# sourceMappingURL=index.js.map
