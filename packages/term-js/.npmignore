@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+build
+serve
+coverage
+.idea/
+.vscode/
+**.DS_Store
+.npmrc
+rollup.config.cjs
+tsconfig.dev.json
+tsconfig.json
+src
