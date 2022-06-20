@@ -6,6 +6,16 @@ import ITerm from './ITerm';
 import ITermEventMap from './_interfaces/ITermEventMap';
 import IKeyboardShortcutsManager from './KeyboardShortcutsManager/IKeyboardShortcutsManager';
 import IPluginManager from './PluginManager/IPluginManager';
+export { default as ITerm } from './ITerm';
+export { default as ITermInfo } from './_interfaces/ITermInfo';
+export { default as KeyboardShortcutsManager } from './KeyboardShortcutsManager';
+export { default as IKeyboardShortcutsManager } from './KeyboardShortcutsManager/IKeyboardShortcutsManager';
+export { ActionShortcutType } from './KeyboardShortcutsManager/types';
+export { TermConstructorParamsType, ValueType, InfoType } from './types';
+export { default as Plugin } from './PluginManager/Plugin';
+export { default as IPlugin } from './PluginManager/Plugin/IPlugin';
+export { default as TemplateEngine } from './TemplateEngine';
+export { default as ITemplateEngine } from './TemplateEngine/ITemplateEngine';
 declare class Term extends TemplateEngine implements ITerm {
     private isDisabled;
     get disabled(): boolean;

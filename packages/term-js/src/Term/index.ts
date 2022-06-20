@@ -52,6 +52,17 @@ import ICaret from './BaseCaret/ICaret';
 import { DEFAULT_DELIMITER } from './_constants/strings';
 import { IS_MAC } from './_constants/browser';
 
+export { default as ITerm } from './ITerm';
+export { default as ITermInfo } from './_interfaces/ITermInfo';
+export { default as KeyboardShortcutsManager } from './KeyboardShortcutsManager';
+export { default as IKeyboardShortcutsManager } from './KeyboardShortcutsManager/IKeyboardShortcutsManager';
+export { ActionShortcutType } from './KeyboardShortcutsManager/types';
+export { TermConstructorParamsType, ValueType, InfoType } from './types';
+export { default as Plugin } from './PluginManager/Plugin';
+export { default as IPlugin } from './PluginManager/Plugin/IPlugin';
+export { default as TemplateEngine } from './TemplateEngine';
+export { default as ITemplateEngine } from './TemplateEngine/ITemplateEngine';
+
 class Term extends TemplateEngine implements ITerm {
   private isDisabled = false;
 
