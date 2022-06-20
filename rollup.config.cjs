@@ -22,13 +22,13 @@ module.exports = (build, pkg) => ({
       file: build ? pkg.main : 'serve/index.js',
       format: 'cjs',
       exports: 'named',
-      sourcemap: true,
+      sourcemap: !build,
     },
     {
       file: build ? pkg.main : 'serve/index.es.js',
       format: 'es',
       exports: 'named',
-      sourcemap: true,
+      sourcemap: !build,
     },
   ],
   plugins: [
