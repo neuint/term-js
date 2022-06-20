@@ -10,4 +10,4 @@ coverage
 rollup.config.cjs
 tsconfig.dev.json
 tsconfig.json
-./src
+src/
