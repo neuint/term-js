@@ -1,8 +1,4 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var termJs = require('@neuint/term-js');
+import { TemplateEngine, Plugin } from '@neuint/term-js';
 
 function styleInject(css, ref) {
   if (ref === void 0) ref = {};
@@ -42,7 +38,7 @@ var css_248z = ".index_root__3eru0 {\n  height: 1.5rem;\n  display: flex;\n  ali
 var css = {"root":"index_root__3eru0","icon":"index_icon__zGxlq","text":"index_text__TEdNY"};
 styleInject(css_248z);
 
-class StatusView extends termJs.TemplateEngine {
+class StatusView extends TemplateEngine {
     constructor(container) {
         super(template, container);
         this.iconField = '';
@@ -72,7 +68,7 @@ class StatusView extends termJs.TemplateEngine {
 
 const PLUGIN_NAME = 'status-bar-plugin';
 
-class StatusBar extends termJs.Plugin {
+class StatusBar extends Plugin {
     constructor() {
         super(...arguments);
         this.name = PLUGIN_NAME;
@@ -118,6 +114,11 @@ class StatusBar extends termJs.Plugin {
         this.view.icon = icon;
         this.view.render();
     }
+}
+
+export { StatusBar as default };
+//# sourceMappingURL=index.js.map
+   }
 }
 
 exports["default"] = StatusBar;
