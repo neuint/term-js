@@ -1,6 +1,6 @@
 import { isArray, isString, noop, get } from 'lodash-es';
 
-import css from './index.scss';
+import './index.scss';
 import lineTemplate from './template.html';
 
 import { DOWN_CODE, ENTER_CODE, LEFT_CODE, RIGHT_CODE, UP_CODE } from '../_constants/keyCodes';
@@ -83,9 +83,9 @@ class Line extends TemplateEngine implements ILine {
     if (this.isVisible === value || !root) return;
     this.isVisible = value;
     if (value) {
-      root.classList.add(css.visible);
+      root.classList.add('Line__visible');
     } else {
-      root.classList.remove(css.visible);
+      root.classList.remove('Line__visible');
     }
   }
 
@@ -221,7 +221,7 @@ class Line extends TemplateEngine implements ILine {
     }
     if (this.label) this.label.destroy();
     super.render({
-      css, editable, className, nbs: NON_BREAKING_SPACE,
+      editable, className, nbs: NON_BREAKING_SPACE,
     }, reRender ? { replace: this } : {});
     this.inputField = editable
       ? new ContentEditableInput(this.getRef('inputContainer') as HTMLElement)

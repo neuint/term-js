@@ -1,6 +1,6 @@
 import { isString } from 'lodash-es';
 
-import css from './index.scss';
+import './index.scss';
 
 import TemplateEngine from '../../../TemplateEngine';
 import IInput from '../IInput';
@@ -33,7 +33,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
     params: { className?: string; index: number; secret?: boolean },
   ): string {
     const { className = '', secret = false, index } = params;
-    const composedClassName = [secret ? css.secret : '', className].join(' ');
+    const composedClassName = [secret ? 'BaseInput__secret' : '', className].join(' ');
     const processedString = BaseInput.getNormalizedTemplateString(secret
       ? BaseInput.convertSecret(str) : str);
     return `<span

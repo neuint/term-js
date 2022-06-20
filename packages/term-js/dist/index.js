@@ -3,50 +3,13 @@ import ResizeObserver from 'resize-observer-polyfill';
 import { Emitter } from 'key-layers-js';
 import { v1 } from 'uuid';
 
-function styleInject(css, ref) {
-  if ( ref === void 0 ) ref = {};
-  var insertAt = ref.insertAt;
-
-  if (!css || typeof document === 'undefined') { return; }
-
-  var head = document.head || document.getElementsByTagName('head')[0];
-  var style = document.createElement('style');
-  style.type = 'text/css';
-
-  if (insertAt === 'top') {
-    if (head.firstChild) {
-      head.insertBefore(style, head.firstChild);
-    } else {
-      head.appendChild(style);
-    }
-  } else {
-    head.appendChild(style);
-  }
-
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css;
-  } else {
-    style.appendChild(document.createTextNode(css));
-  }
-}
-
-var css_248z$9 = "/* cyrillic-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Italic\"), local(\"UbuntuMono-Italic\"), url(src/Term/_assets/fonts/KFOhCneDtsqEr0keqCMhbCc_OsvSkKJMc3uMAA.woff2) format(\"woff2\");\n  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Italic\"), local(\"UbuntuMono-Italic\"), url(src/Term/_assets/fonts/KFOhCneDtsqEr0keqCMhbCc_OsLSkKJMc3uMAA.woff2) format(\"woff2\");\n  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* greek-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Italic\"), local(\"UbuntuMono-Italic\"), url(src/Term/_assets/fonts/KFOhCneDtsqEr0keqCMhbCc_OsrSkKJMc3uMAA.woff2) format(\"woff2\");\n  unicode-range: U+1F00-1FFF;\n}\n/* greek */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Italic\"), local(\"UbuntuMono-Italic\"), url(src/Term/_assets/fonts/KFOhCneDtsqEr0keqCMhbCc_OsXSkKJMc3uMAA.woff2) format(\"woff2\");\n  unicode-range: U+0370-03FF;\n}\n/* latin-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Italic\"), local(\"UbuntuMono-Italic\"), url(src/Term/_assets/fonts/KFOhCneDtsqEr0keqCMhbCc_OsjSkKJMc3uMAA.woff2) format(\"woff2\");\n  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Italic\"), local(\"UbuntuMono-Italic\"), url(src/Term/_assets/fonts/KFOhCneDtsqEr0keqCMhbCc_OsbSkKJMc3s.woff2) format(\"woff2\");\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold Italic\"), local(\"UbuntuMono-BoldItalic\"), url(src/Term/_assets/fonts/KFO8CneDtsqEr0keqCMhbCc_Mn33hYJuflG2CVknYg.woff2) format(\"woff2\");\n  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold Italic\"), local(\"UbuntuMono-BoldItalic\"), url(src/Term/_assets/fonts/KFO8CneDtsqEr0keqCMhbCc_Mn33hYtuflG2CVknYg.woff2) format(\"woff2\");\n  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* greek-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold Italic\"), local(\"UbuntuMono-BoldItalic\"), url(src/Term/_assets/fonts/KFO8CneDtsqEr0keqCMhbCc_Mn33hYNuflG2CVknYg.woff2) format(\"woff2\");\n  unicode-range: U+1F00-1FFF;\n}\n/* greek */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold Italic\"), local(\"UbuntuMono-BoldItalic\"), url(src/Term/_assets/fonts/KFO8CneDtsqEr0keqCMhbCc_Mn33hYxuflG2CVknYg.woff2) format(\"woff2\");\n  unicode-range: U+0370-03FF;\n}\n/* latin-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold Italic\"), local(\"UbuntuMono-BoldItalic\"), url(src/Term/_assets/fonts/KFO8CneDtsqEr0keqCMhbCc_Mn33hYFuflG2CVknYg.woff2) format(\"woff2\");\n  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: italic;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold Italic\"), local(\"UbuntuMono-BoldItalic\"), url(src/Term/_assets/fonts/KFO8CneDtsqEr0keqCMhbCc_Mn33hY9uflG2CVk.woff2) format(\"woff2\");\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono\"), local(\"UbuntuMono-Regular\"), url(src/Term/_assets/fonts/KFOjCneDtsqEr0keqCMhbCc3CsTYl4BOQ3o.woff2) format(\"woff2\");\n  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono\"), local(\"UbuntuMono-Regular\"), url(src/Term/_assets/fonts/KFOjCneDtsqEr0keqCMhbCc-CsTYl4BOQ3o.woff2) format(\"woff2\");\n  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* greek-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono\"), local(\"UbuntuMono-Regular\"), url(src/Term/_assets/fonts/KFOjCneDtsqEr0keqCMhbCc2CsTYl4BOQ3o.woff2) format(\"woff2\");\n  unicode-range: U+1F00-1FFF;\n}\n/* greek */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono\"), local(\"UbuntuMono-Regular\"), url(src/Term/_assets/fonts/KFOjCneDtsqEr0keqCMhbCc5CsTYl4BOQ3o.woff2) format(\"woff2\");\n  unicode-range: U+0370-03FF;\n}\n/* latin-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono\"), local(\"UbuntuMono-Regular\"), url(src/Term/_assets/fonts/KFOjCneDtsqEr0keqCMhbCc0CsTYl4BOQ3o.woff2) format(\"woff2\");\n  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 400;\n  font-display: swap;\n  src: local(\"Ubuntu Mono\"), local(\"UbuntuMono-Regular\"), url(src/Term/_assets/fonts/KFOjCneDtsqEr0keqCMhbCc6CsTYl4BO.woff2) format(\"woff2\");\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}\n/* cyrillic-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold\"), local(\"UbuntuMono-Bold\"), url(src/Term/_assets/fonts/KFO-CneDtsqEr0keqCMhbC-BL9H4tY1keXO0OVg.woff2) format(\"woff2\");\n  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;\n}\n/* cyrillic */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold\"), local(\"UbuntuMono-Bold\"), url(src/Term/_assets/fonts/KFO-CneDtsqEr0keqCMhbC-BL9HxtY1keXO0OVg.woff2) format(\"woff2\");\n  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;\n}\n/* greek-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold\"), local(\"UbuntuMono-Bold\"), url(src/Term/_assets/fonts/KFO-CneDtsqEr0keqCMhbC-BL9H5tY1keXO0OVg.woff2) format(\"woff2\");\n  unicode-range: U+1F00-1FFF;\n}\n/* greek */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold\"), local(\"UbuntuMono-Bold\"), url(src/Term/_assets/fonts/KFO-CneDtsqEr0keqCMhbC-BL9H2tY1keXO0OVg.woff2) format(\"woff2\");\n  unicode-range: U+0370-03FF;\n}\n/* latin-ext */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold\"), local(\"UbuntuMono-Bold\"), url(src/Term/_assets/fonts/KFO-CneDtsqEr0keqCMhbC-BL9H7tY1keXO0OVg.woff2) format(\"woff2\");\n  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;\n}\n/* latin */\n@font-face {\n  font-family: \"Ubuntu Mono\";\n  font-style: normal;\n  font-weight: 700;\n  font-display: swap;\n  src: local(\"Ubuntu Mono Bold\"), local(\"UbuntuMono-Bold\"), url(src/Term/_assets/fonts/KFO-CneDtsqEr0keqCMhbC-BL9H1tY1keXO0.woff2) format(\"woff2\");\n  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n}";
-styleInject(css_248z$9);
-
-var css_248z$8 = ":root {\n  --main-bg-color: #0C1114;\n  --scrollbar-bg-color: #324754;\n  --main-text-color: #FAFAFA;\n  --main-selectoin-color: #c7c7c7;\n  --header-text-color: #aeaeae;\n  --header-bg-color: #12191e;\n  --line-lable-text-color: #7b7b7b;\n  --simple-caret-bg-color: #161f24;\n}";
-styleInject(css_248z$8);
-
-var css_248z$7 = ".index_term__7BeNm {\n  background-color: var(--main-bg-color);\n  color: var(--main-text-color);\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  width: 100%;\n  height: 100%;\n}\n.index_term__7BeNm ::-webkit-scrollbar {\n  width: 0.5rem;\n  height: 0.5rem;\n}\n.index_term__7BeNm ::-webkit-scrollbar-thumb {\n  background: var(--scrollbar-bg-color);\n}\n.index_term__7BeNm, .index_term__7BeNm input, .index_term__7BeNm textarea, .index_term__7BeNm select, .index_term__7BeNm button, .index_term__7BeNm pre {\n  font-family: \"Ubuntu Mono\", sans-serif, monospace;\n  font-weight: 400;\n  font-size: 16px;\n}\n.index_term__7BeNm input, .index_term__7BeNm textarea {\n  background: none;\n  border: none;\n  display: inline-block;\n  padding: 0;\n}\n.index_term__7BeNm input::selection, .index_term__7BeNm textarea::selection {\n  background-color: var(--main-selectoin-color);\n}\n.index_term__7BeNm input:focus, .index_term__7BeNm textarea:focus, .index_term__7BeNm button:focus, .index_term__7BeNm div:focus {\n  outline: none;\n}\n\n.index_header__ntmO9 {\n  height: 2.5rem;\n  background-color: var(--header-bg-color);\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  padding-left: 1rem;\n  padding-right: 1rem;\n}\n.index_header__ntmO9.index_hidden__khWLQ {\n  display: none;\n}\n\n.index_headerTextContainer__QxVJg {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  flex: 1;\n  text-align: center;\n}\n\n.index_headerText__XqqcY {\n  font-size: 0.875rem;\n  color: var(--header-text-color);\n}\n\n.index_content__-2V1F {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  overflow: hidden;\n  position: relative;\n}\n\n.index_linesContainer__7YWN1 {\n  flex: 1;\n  overflow: hidden;\n  margin-top: 0.25rem;\n  margin-bottom: 0.25rem;\n}\n\n.index_line__8prV- {\n  margin-left: 0.5rem;\n  margin-right: 0.5rem;\n}\n\n.index_editLine__Nd9E1 {\n  margin-bottom: 5rem;\n}";
 var css$7 = {"term":"index_term__7BeNm","header":"index_header__ntmO9","hidden":"index_hidden__khWLQ","headerTextContainer":"index_headerTextContainer__QxVJg","headerText":"index_headerText__XqqcY","content":"index_content__-2V1F","linesContainer":"index_linesContainer__7YWN1","line":"index_line__8prV-","editLine":"index_editLine__Nd9E1"};
-styleInject(css_248z$7);
 
 var template$4 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header {hidden}\">\n    <div ref=\"headerTextContainer\" class=\"headerTextContainer\">\n      <span ref=\"headerText\" class=\"headerText\">{header}</span>\n    </div>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
 
 var template$3 = "<div ref=\"root\" class=\"root className\">\n  <div ref=\"virtualizedList\" class=\"virtualizedList\">\n    <div ref=\"itemsContainer\" class=\"itemsContainer\"></div>\n  </div>\n  <div ref=\"generalList\" class=\"generalList\"></div>\n</div>\n";
 
-var css_248z$6 = ".index_root__JLL19 {\n  height: 100%;\n  overflow-y: scroll;\n  will-change: transform;\n  transform: translateZ(0);\n  -webkit-overflow-scrolling: touch;\n}\n\n.index_virtualizedList__MsOXV {\n  position: relative;\n}\n\n.index_itemsContainer__zn1gx {\n  position: absolute;\n  left: 0;\n  right: 0;\n}";
 var css$6 = {"root":"index_root__JLL19","virtualizedList":"index_virtualizedList__MsOXV","itemsContainer":"index_itemsContainer__zn1gx"};
-styleInject(css_248z$6);
 
 class Animation {
     constructor() {
@@ -744,9 +707,7 @@ const getScrollbarSize = (container) => {
     return size;
 };
 
-var css_248z$5 = ".index_root__-yPDv {\n  position: relative;\n  visibility: hidden;\n}\n\n.index_visible__XemI- {\n  visibility: visible;\n}\n\n.index_content__x--72 {\n  display: flex;\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n}\n\n.index_helpContainer__DSyG1 {\n  top: 0;\n  right: 0;\n  position: absolute;\n  visibility: hidden;\n}\n\n.index_inputContainer__WFASr {\n  flex: 1;\n  position: relative;\n}";
 var css$5 = {"root":"index_root__-yPDv","visible":"index_visible__XemI-","content":"index_content__x--72","helpContainer":"index_helpContainer__DSyG1","inputContainer":"index_inputContainer__WFASr"};
-styleInject(css_248z$5);
 
 var lineTemplate = "<div ref=\"root\" class=\"root visible {className}\">\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"helpContainer\" class=\"labelText helpContainer\">{nbs}</div>\n    <div ref=\"labelContainer\"></div>\n    <div ref=\"inputContainer\" class=\"inputContainer\"></div>\n  </div>\n</div>\n";
 
@@ -813,9 +774,7 @@ class BaseCaret extends TemplateEngine {
 
 var SimpleCaretTemplate = "<span ref=\"root\" class=\"root\">\n  <span ref=\"character\" class=\"character\"></span>\n</span>\n";
 
-var css_248z$4 = "@keyframes index_carriage-return-blink__z9qQq {\n  0% {\n    opacity: 1;\n  }\n  25% {\n    opacity: 0.05;\n  }\n  75% {\n    opacity: 1;\n  }\n}\n@keyframes index_carriage-return-busy__W5QbF {\n  0% {\n    transform: translate(-50%, -50%) scale(0);\n    opacity: 0;\n  }\n  50% {\n    opacity: 1;\n  }\n  100% {\n    transform: translate(-50%, -50%) scale(1);\n    opacity: 0;\n  }\n}\n.index_root__S-LRK {\n  position: absolute;\n  left: 0;\n  top: 0;\n  user-select: none;\n  pointer-events: none;\n  background: var(--main-text-color);\n  border-radius: 0.0625rem;\n  animation-name: index_carriage-return-blink__z9qQq;\n  animation-duration: 1s;\n  animation-iteration-count: infinite;\n  color: var(--main-bg-color);\n  display: inline-block;\n}\n.index_root__S-LRK.index_lock__pqgvx, .index_root__S-LRK.index_busy__BVRiy {\n  animation-name: index_none__LrzxK;\n  opacity: 1;\n}\n.index_root__S-LRK.index_busy__BVRiy {\n  background: none;\n}\n.index_root__S-LRK.index_busy__BVRiy:after, .index_root__S-LRK.index_busy__BVRiy:before {\n  content: \"\";\n  position: absolute;\n  width: 0.75rem;\n  height: 0.75rem;\n  border-radius: 50%;\n  background: var(--simple-caret-bg-color);\n  top: calc(50% + 0.0625rem);\n  left: 100%;\n  transform: translate(-50%, -50%);\n  animation-name: index_carriage-return-busy__W5QbF;\n  animation-duration: 1s;\n  animation-iteration-count: infinite;\n  animation-timing-function: ease-in-out;\n}\n.index_root__S-LRK.index_busy__BVRiy:after {\n  border-style: solid;\n  border-width: 0.0625rem;\n  border-color: var(--main-text-color);\n}\n.index_root__S-LRK.index_hidden__e7MV- {\n  display: none;\n}";
 var css$4 = {"root":"index_root__S-LRK","carriage-return-blink":"index_carriage-return-blink__z9qQq","lock":"index_lock__pqgvx","busy":"index_busy__BVRiy","none":"index_none__LrzxK","carriage-return-busy":"index_carriage-return-busy__W5QbF","hidden":"index_hidden__e7MV-"};
-styleInject(css_248z$4);
 
 class SimpleCaret extends BaseCaret {
     constructor(container) {
@@ -893,13 +852,9 @@ const LOCK_TIMEOUT = 600;
 
 var template$2 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
 
-var css_248z$3 = ".index_root__eR2wZ {\n  position: relative;\n}\n\n.index_input__Oo4lS {\n  word-break: break-all;\n  resize: none;\n}\n.index_input__Oo4lS > span {\n  word-break: break-all;\n  resize: none;\n}\n.index_input__Oo4lS.index_hiddenCaret__YdO5F {\n  color: transparent;\n  text-shadow: 0 0 0 var(--main-text-color);\n}\n.index_input__Oo4lS.index_hiddenCaret__YdO5F > * {\n  color: transparent;\n  text-shadow: 0 0 0 var(--main-text-color);\n}\n\n.index_hidden__D3QsW {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  bottom: 0;\n  visibility: hidden;\n  user-select: none;\n  pointer-events: none;\n  word-break: break-all;\n  resize: none;\n}";
 var css$3 = {"root":"index_root__eR2wZ","input":"index_input__Oo4lS","hiddenCaret":"index_hiddenCaret__YdO5F","hidden":"index_hidden__D3QsW"};
-styleInject(css_248z$3);
 
-var css_248z$2 = ".index_secret__6cfwN {\n  position: relative;\n  opacity: 0.5;\n}";
 var css$2 = {"secret":"index_secret__6cfwN"};
-styleInject(css_248z$2);
 
 const getStartIntersectionString = (main, target) => {
     if (target.indexOf(main) === 0)
@@ -1473,9 +1428,7 @@ class ContentEditableInput extends BaseInput {
 
 var template$1 = "<div ref=\"root\">\n  <div ref=\"input\" class=\"root\">{value}</div>\n</div>\n";
 
-var css_248z$1 = ".index_root__UQi-y {\n  word-break: break-all;\n  resize: none;\n}";
 var css$1 = {"root":"index_root__UQi-y"};
-styleInject(css_248z$1);
 
 class ViewableInput extends BaseInput {
     set value(val) {
@@ -1495,9 +1448,7 @@ class ViewableInput extends BaseInput {
     }
 }
 
-var css_248z = ".index_label__RpeZL {\n  display: flex;\n}\n\n.index_labelTextContainer__sI-zL {\n  max-width: 10rem;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.index_labelText__JZVny {\n  color: var(--line-lable-text-color);\n}";
 var css = {"label":"index_label__RpeZL","labelTextContainer":"index_labelTextContainer__sI-zL","labelText":"index_labelText__JZVny"};
-styleInject(css_248z);
 
 var template = "<If condition=\"{label || delimiter}\">\n  <div class=\"label\">\n    <If condition=\"{label}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"label\">{label}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </If>\n    <If condition=\"{delimiter}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"delimiter\">{delimiter}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </If>\n  </div>\n</If>\n\n";
 
@@ -2701,4 +2652,29 @@ class Term extends TemplateEngine {
 }
 
 export { KeyboardShortcutsManager, Plugin, TemplateEngine, Term as default };
+//# sourceMappingURL=index.js.map
+           editLine.value = params.value;
+                }
+                else {
+                    editLine.value = params;
+                }
+                this.updateTermInfo();
+            },
+            endOffset: (editLine === null || editLine === void 0 ? void 0 : editLine.endOffset) || { left: 0, top: 0 },
+        };
+    }
+    getTermInfoLines() {
+        const { lines } = this;
+        return {
+            list: lines.map((line) => BaseInput.getValueString(line)),
+            parameterizedList: lines,
+            update: this.setLines,
+        };
+    }
+}
+
+exports.KeyboardShortcutsManager = KeyboardShortcutsManager;
+exports.Plugin = Plugin;
+exports.TemplateEngine = TemplateEngine;
+exports["default"] = Term;
 //# sourceMappingURL=index.js.map

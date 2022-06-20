@@ -1,16 +1,16 @@
 @import '../_styles/mixins';
 
-.root {
+.VirtualizedList__root {
   height: 100%;
 
   @include overflow-y(scroll);
 }
 
-.virtualizedList {
+.VirtualizedList {
   position: relative;
 }
 
-.itemsContainer {
+.VirtualizedList__itemsContainer {
   position: absolute;
   left: 0;
   right: 0;

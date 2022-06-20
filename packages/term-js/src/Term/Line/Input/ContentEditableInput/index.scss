@@ -5,27 +5,27 @@
   text-shadow: 0 0 0 var(--main-text-color);
 }
 
-.root {
+.ContentEditableInput {
   position: relative;
 }
 
-.input {
+.ContentEditableInput__input {
   @include input-general;
 
   > span {
     @include input-general;
   }
+}
 
-  &.hiddenCaret {
+.ContentEditableInput__input--hiddenCaret {
+  @include hidden-caret;
+
+  > * {
     @include hidden-caret;
-
-    > * {
-      @include hidden-caret;
-    }
   }
 }
 
-.hidden {
+.ContentEditableInput__hidden {
   position: absolute;
   left: 0;
   right: 0;

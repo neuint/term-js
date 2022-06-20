@@ -1,4 +1,4 @@
-import css from './index.scss';
+import './index.scss';
 
 import Term from './Term/index';
 import ITerm from './Term/ITerm';
@@ -14,13 +14,13 @@ if (container) {
     editLine: {
       secret: false,
       value: [
-        { str: 'Enter email: ', lock: true, className: css.test },
+        { str: 'Enter email: ', lock: true, className: 'test' },
       ],
     },
     lines: (new Array(0).fill(null)).map((
       _, index,
     ): ValueType => ([
-      { str: 'User name: ', className: css.granted },
+      { str: 'User name: ', className: 'granted' },
       `test ${index} `,
       (new Array(40).fill(null)).map((): string => 's').join(''),
     ])),

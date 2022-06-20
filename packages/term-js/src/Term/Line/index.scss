@@ -1,28 +1,28 @@
 @import '../_styles/mixins';
 
-.root {
+.Line__root {
   position: relative;
   visibility: hidden;
 }
 
-.visible {
+.Line__visible {
   visibility: visible;
 }
 
-.content {
+.Line__content {
   display: flex;
 
   @include padding-vertical(0.25rem);
 }
 
-.helpContainer {
+.Line__helpContainer {
   top: 0;
   right: 0;
   position: absolute;
   visibility: hidden;
 }
 
-.inputContainer {
+.Line__inputContainer {
   flex: 1;
   position: relative;
 }

@@ -1,19 +1,19 @@
 <If condition="{label || delimiter}">
-  <div class="label">
+  <div class="Label__label">
     <If condition="{label}">
-      <div class="labelTextContainer">
-        <span class="labelText" ref="label">{label}</span>
+      <div class="Label__labelTextContainer">
+        <span class="Label__labelText" ref="label">{label}</span>
       </div>
       <div>
-        <span class="labelText">{nbs}</span>
+        <span class="Label__labelText">{nbs}</span>
       </div>
     </If>
     <If condition="{delimiter}">
-      <div class="labelTextContainer">
-        <span class="labelText" ref="delimiter">{delimiter}</span>
+      <div class="Label__labelTextContainer">
+        <span class="Label__labelText" ref="delimiter">{delimiter}</span>
       </div>
       <div>
-        <span class="labelText">{nbs}</span>
+        <span class="Label__labelText">{nbs}</span>
       </div>
     </If>
   </div>

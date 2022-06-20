@@ -1,7 +1,7 @@
 import { identity, isString, isUndefined, unescape } from 'lodash-es';
 
 import template from './template.html';
-import css from './index.scss';
+import './index.scss';
 
 import IInput from '../IInput';
 import { FormattedValueType, ValueFragmentType, ValueType } from '../../../types';
@@ -65,9 +65,9 @@ class ContentEditableInput extends BaseInput implements IInput {
     if (this.isCaretHidden === isCaretHidden) return;
     const root = this.getRef('input') as HTMLElement;
     if (isCaretHidden) {
-      root.classList.add(css.hiddenCaret);
+      root.classList.add('ContentEditableInput__input--hiddenCaret');
     } else {
-      root.classList.remove(css.hiddenCaret);
+      root.classList.remove('ContentEditableInput__input--hiddenCaret');
     }
     this.isCaretHidden = isCaretHidden;
   }
@@ -138,7 +138,7 @@ class ContentEditableInput extends BaseInput implements IInput {
   private prevContent?: string;
 
   constructor(container?: Element) {
-    super(template, container, css);
+    super(template, container);
     this.addEventListener('input', this.changeHandler);
     this.addEventListener('cut', this.changeHandler);
     this.addEventListener('paste', this.pasteHandler);

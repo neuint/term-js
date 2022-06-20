@@ -3,7 +3,7 @@ import ResizeObserver from 'resize-observer-polyfill';
 
 import './_styles/fonts.scss';
 import './_styles/theme.scss';
-import css from './index.scss';
+import './index.scss';
 import template from './template.html';
 
 import VirtualizedList from './VirtualizedList';
@@ -248,9 +248,9 @@ class Term extends TemplateEngine implements ITerm {
     const headerText = this.getRef('headerText') as Element;
     if (text) {
       headerText.innerHTML = text;
-      header?.classList.remove(css.hidden);
+      header?.classList.remove('Term__header--hidden');
     } else {
-      header?.classList.add(css.hidden);
+      header?.classList.add('Term__header--hidden');
     }
     this.params.header = '';
     this.updateTermInfo();
@@ -277,7 +277,7 @@ class Term extends TemplateEngine implements ITerm {
   private init(container: Element, params: TermConstructorParamsType) {
     const { header = '' } = params;
     this.setParams(container, params);
-    this.render({ css, header, hidden: header ? '' : css.hidden });
+    this.render({ header, hidden: header ? '' : 'Term__header--hidden' });
     this.params.scrollbarSize = getScrollbarSize(this.getRef('root') as HTMLElement);
     this.itemSize = getItemSize(this.getRef('root') as HTMLElement, true);
     this.addListeners();
@@ -323,7 +323,7 @@ class Term extends TemplateEngine implements ITerm {
     const virtualItemsContainer = container || (vl
       ? vl.getVirtualItemsContainer() as HTMLElement : undefined);
     return virtualItemsContainer ? new Line(virtualItemsContainer, {
-      ref, append, delimiter, label, editable: false, value: lines[index], className: css.line,
+      ref, append, delimiter, label, editable: false, value: lines[index], className: 'Term__line',
     }) : null;
   };
 
@@ -382,7 +382,7 @@ class Term extends TemplateEngine implements ITerm {
       label,
       delimiter,
       caret,
-      className: [css.line, css.editLine].join(' '),
+      className: ['Term__line', 'Term__editLine'].join(' '),
       value: isArray(editLineParams) || isString(editLineParams)
         ? editLineParams : editLineParams.value,
       editable: true,

@@ -15,28 +15,6 @@
     "test": "jest",
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
-  "devDependencies": {
-    "@modular-css/rollup": "^28.1.4",
-    "@svgr/rollup": "^6.2.1",
-    "lodash": "^4.17.21",
-    "node-sass": "^7.0.1",
-    "postcss": "^8.4.14",
-    "rollup": "^2.75.6",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-copy": "^3.4.0",
-    "rollup-plugin-hot": "^0.1.1",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-scss": "^3.0.0",
-    "rollup-plugin-serve": "^1.1.0",
-    "rollup-plugin-sourcemaps": "^0.6.3",
-    "rollup-plugin-string": "^3.0.0",
-    "rollup-plugin-typescript2": "^0.32.1",
-    "rollup-plugin-url": "^3.0.1",
-    "rollup-watch": "^4.3.1",
-    "sass": "^1.52.3"
-  },
   "dependencies": {
     "key-layers-js": "^1.1.1",
     "lodash-es": "^4.17.21",

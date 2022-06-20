@@ -1,5 +1,5 @@
 import template from './template.html';
-import css from './index.scss';
+import './index.scss';
 
 import IInput from '../IInput';
 import BaseInput from '../BaseInput';
@@ -13,11 +13,11 @@ class ViewableInput extends BaseInput implements IInput {
   }
 
   constructor(container?: Element) {
-    super(template, container, css);
+    super(template, container);
   }
 
   public render() {
-    super.render({ css, value: BaseInput.getValueTemplate(this.valueField) });
+    super.render({ value: BaseInput.getValueTemplate(this.valueField) });
   }
 
   protected getRootElement(): Element | undefined {

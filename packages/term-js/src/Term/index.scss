@@ -1,6 +1,6 @@
 @import '_styles/mixins';
 
-.term {
+.Term {
   background-color: var(--main-bg-color);
   color: var(--main-text-color);
   display: flex;
@@ -40,31 +40,31 @@
   }
 }
 
-.header {
+.Term__header {
   height: 2.5rem;
   background-color: var(--header-bg-color);
 
   @include flex-center;
   @include padding-horizontal(1rem);
-
-  &.hidden {
-    display: none;
-  }
 }
 
-.headerTextContainer {
+.Term__header--hidden {
+  display: none;
+}
+
+.Term__headerTextContainer {
   @include truncated;
 
   flex: 1;
   text-align: center;
 }
 
-.headerText {
+.Term__headerText {
   font-size: 0.875rem;
   color: var(--header-text-color);
 }
 
-.content {
+.Term__content {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -72,17 +72,17 @@
   position: relative;
 }
 
-.linesContainer {
+.Term__linesContainer {
   flex: 1;
   overflow: hidden;
 
   @include margin-vertical(0.25rem);
 }
 
-.line {
+.Term__line {
   @include margin-horizontal(0.5rem);
 }
 
-.editLine {
+.Term__editLine {
   margin-bottom: 5rem;
 }
