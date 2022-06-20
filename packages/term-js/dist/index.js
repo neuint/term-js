@@ -2702,28 +2702,3 @@ class Term extends TemplateEngine {
 
 export { KeyboardShortcutsManager, Plugin, TemplateEngine, Term as default };
 //# sourceMappingURL=index.js.map
-           editLine.value = params.value;
-                }
-                else {
-                    editLine.value = params;
-                }
-                this.updateTermInfo();
-            },
-            endOffset: (editLine === null || editLine === void 0 ? void 0 : editLine.endOffset) || { left: 0, top: 0 },
-        };
-    }
-    getTermInfoLines() {
-        const { lines } = this;
-        return {
-            list: lines.map((line) => BaseInput.getValueString(line)),
-            parameterizedList: lines,
-            update: this.setLines,
-        };
-    }
-}
-
-exports.KeyboardShortcutsManager = KeyboardShortcutsManager;
-exports.Plugin = Plugin;
-exports.TemplateEngine = TemplateEngine;
-exports["default"] = Term;
-//# sourceMappingURL=index.js.map
