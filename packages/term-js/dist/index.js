@@ -3,13 +3,11 @@ import ResizeObserver from 'resize-observer-polyfill';
 import { Emitter } from 'key-layers-js';
 import { v1 } from 'uuid';
 
-var css$7 = {"term":"index_term__7BeNm","header":"index_header__ntmO9","hidden":"index_hidden__khWLQ","headerTextContainer":"index_headerTextContainer__QxVJg","headerText":"index_headerText__XqqcY","content":"index_content__-2V1F","linesContainer":"index_linesContainer__7YWN1","line":"index_line__8prV-","editLine":"index_editLine__Nd9E1"};
+var template$4 = "<div ref=\"root\" class=\"Term\">\n  <div ref=\"header\" class=\"Term__header {hidden}\">\n    <div ref=\"headerTextContainer\" class=\"Term__headerTextContainer\">\n      <span ref=\"headerText\" class=\"Term__headerText\">{header}</span>\n    </div>\n  </div>\n  <div ref=\"content\" class=\"Term__content\">\n    <div ref=\"linesContainer\" class=\"Term__linesContainer\"></div>\n  </div>\n</div>\n";
 
-var template$4 = "<div ref=\"root\" class=\"term\">\n  <div ref=\"header\" class=\"header {hidden}\">\n    <div ref=\"headerTextContainer\" class=\"headerTextContainer\">\n      <span ref=\"headerText\" class=\"headerText\">{header}</span>\n    </div>\n  </div>\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"linesContainer\" class=\"linesContainer\"></div>\n  </div>\n</div>\n";
+var template$3 = "<div ref=\"root\" class=\"VirtualizedList__root className\">\n  <div ref=\"virtualizedList\" class=\"VirtualizedList\">\n    <div ref=\"itemsContainer\" class=\"VirtualizedList__itemsContainer\"></div>\n  </div>\n  <div ref=\"generalList\" class=\"VirtualizedList__generalList\"></div>\n</div>\n";
 
-var template$3 = "<div ref=\"root\" class=\"root className\">\n  <div ref=\"virtualizedList\" class=\"virtualizedList\">\n    <div ref=\"itemsContainer\" class=\"itemsContainer\"></div>\n  </div>\n  <div ref=\"generalList\" class=\"generalList\"></div>\n</div>\n";
-
-var css$6 = {"root":"index_root__JLL19","virtualizedList":"index_virtualizedList__MsOXV","itemsContainer":"index_itemsContainer__zn1gx"};
+var css$1 = undefined;
 
 class Animation {
     constructor() {
@@ -424,7 +422,7 @@ class VirtualizedList extends TemplateEngine {
         this.topOffset = params.topOffset || this.topOffset;
         this.bottomOffset = params.bottomOffset || this.bottomOffset;
         this.render({
-            css: Object.assign(Object.assign({}, css$6), { className: params.className || '' }),
+            css: Object.assign(Object.assign({}, css$1), { className: params.className || '' }),
         });
         this.renderViewportItems();
         this.frameHandler = this.renderViewportItems;
@@ -707,9 +705,7 @@ const getScrollbarSize = (container) => {
     return size;
 };
 
-var css$5 = {"root":"index_root__-yPDv","visible":"index_visible__XemI-","content":"index_content__x--72","helpContainer":"index_helpContainer__DSyG1","inputContainer":"index_inputContainer__WFASr"};
-
-var lineTemplate = "<div ref=\"root\" class=\"root visible {className}\">\n  <div ref=\"content\" class=\"content\">\n    <div ref=\"helpContainer\" class=\"labelText helpContainer\">{nbs}</div>\n    <div ref=\"labelContainer\"></div>\n    <div ref=\"inputContainer\" class=\"inputContainer\"></div>\n  </div>\n</div>\n";
+var lineTemplate = "<div ref=\"root\" class=\"Line__root Line__visible {className}\">\n  <div ref=\"content\" class=\"Line__content\">\n    <div ref=\"helpContainer\" class=\"Label__labelText Line__helpContainer\">{nbs}</div>\n    <div ref=\"labelContainer\"></div>\n    <div ref=\"inputContainer\" class=\"Line__inputContainer\"></div>\n  </div>\n</div>\n";
 
 class BaseCaret extends TemplateEngine {
     constructor() {
@@ -772,14 +768,12 @@ class BaseCaret extends TemplateEngine {
     }
 }
 
-var SimpleCaretTemplate = "<span ref=\"root\" class=\"root\">\n  <span ref=\"character\" class=\"character\"></span>\n</span>\n";
-
-var css$4 = {"root":"index_root__S-LRK","carriage-return-blink":"index_carriage-return-blink__z9qQq","lock":"index_lock__pqgvx","busy":"index_busy__BVRiy","none":"index_none__LrzxK","carriage-return-busy":"index_carriage-return-busy__W5QbF","hidden":"index_hidden__e7MV-"};
+var SimpleCaretTemplate = "<span ref=\"root\" class=\"SimpleCaret\">\n  <span ref=\"character\" class=\"SimpleCaret__character\"></span>\n</span>\n";
 
 class SimpleCaret extends BaseCaret {
     constructor(container) {
         super(SimpleCaretTemplate, container);
-        this.render({ css: css$4 });
+        this.render();
     }
     updateLockStyles() {
         const root = this.getRef('root');
@@ -787,10 +781,10 @@ class SimpleCaret extends BaseCaret {
         if (!root || lock === prevLock)
             return;
         if (lock) {
-            root.classList.add(css$4.lock);
+            root.classList.add('SimpleCaret--lock');
         }
         else {
-            root.classList.remove(css$4.lock);
+            root.classList.remove('SimpleCaret--lock');
         }
     }
     updateBusyStyles() {
@@ -799,10 +793,10 @@ class SimpleCaret extends BaseCaret {
         if (!root || busy === prevBusy)
             return;
         if (busy) {
-            root.classList.add(css$4.busy);
+            root.classList.add('SimpleCaret--busy');
         }
         else {
-            root.classList.remove(css$4.busy);
+            root.classList.remove('SimpleCaret--busy');
         }
     }
     updateHiddenStyles() {
@@ -811,10 +805,10 @@ class SimpleCaret extends BaseCaret {
         if (!root || hidden === prevHidden)
             return;
         if (hidden) {
-            root.classList.add(css$4.hidden);
+            root.classList.add('SimpleCaret--hidden');
         }
         else {
-            root.classList.remove(css$4.hidden);
+            root.classList.remove('SimpleCaret--hidden');
         }
     }
     setValue(value) {
@@ -850,11 +844,7 @@ CaretFactory.caretMap = {
 
 const LOCK_TIMEOUT = 600;
 
-var template$2 = "<div ref=\"root\" class=\"root\">\n  <div ref=\"input\" class=\"input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"hidden\"></div>\n</div>\n";
-
-var css$3 = {"root":"index_root__eR2wZ","input":"index_input__Oo4lS","hiddenCaret":"index_hiddenCaret__YdO5F","hidden":"index_hidden__D3QsW"};
-
-var css$2 = {"secret":"index_secret__6cfwN"};
+var template$2 = "<div ref=\"root\" class=\"ContentEditableInput\">\n  <div ref=\"input\" class=\"ContentEditableInput__input\" contenteditable=\"true\"></div>\n  <div ref=\"hidden\" class=\"ContentEditableInput__hidden\"></div>\n</div>\n";
 
 const getStartIntersectionString = (main, target) => {
     if (target.indexOf(main) === 0)
@@ -916,7 +906,7 @@ class BaseInput extends TemplateEngine {
     }
     static getFragmentTemplate(str, params) {
         const { className = '', secret = false, index } = params;
-        const composedClassName = [secret ? css$2.secret : '', className].join(' ');
+        const composedClassName = [secret ? 'BaseInput__secret' : '', className].join(' ');
         const processedString = BaseInput.getNormalizedTemplateString(secret
             ? BaseInput.convertSecret(str) : str);
         return `<span
@@ -1156,7 +1146,7 @@ const CHANGE_EVENT_TYPE = 'change';
 
 class ContentEditableInput extends BaseInput {
     constructor(container) {
-        super(template$2, container, css$3);
+        super(template$2, container);
         this.externalChangeListeners = [];
         this.isDisabled = false;
         this.pasteHandler = () => {
@@ -1216,10 +1206,10 @@ class ContentEditableInput extends BaseInput {
             return;
         const root = this.getRef('input');
         if (isCaretHidden) {
-            root.classList.add(css$3.hiddenCaret);
+            root.classList.add('ContentEditableInput__input--hiddenCaret');
         }
         else {
-            root.classList.remove(css$3.hiddenCaret);
+            root.classList.remove('ContentEditableInput__input--hiddenCaret');
         }
         this.isCaretHidden = isCaretHidden;
     }
@@ -1426,9 +1416,7 @@ class ContentEditableInput extends BaseInput {
     }
 }
 
-var template$1 = "<div ref=\"root\">\n  <div ref=\"input\" class=\"root\">{value}</div>\n</div>\n";
-
-var css$1 = {"root":"index_root__UQi-y"};
+var template$1 = "<div ref=\"root\">\n  <div ref=\"input\" class=\"ViewableInput\">{value}</div>\n</div>\n";
 
 class ViewableInput extends BaseInput {
     set value(val) {
@@ -1438,19 +1426,19 @@ class ViewableInput extends BaseInput {
             root.innerHTML = BaseInput.getValueTemplate(this.valueField);
     }
     constructor(container) {
-        super(template$1, container, css$1);
+        super(template$1, container);
     }
     render() {
-        super.render({ css: css$1, value: BaseInput.getValueTemplate(this.valueField) });
+        super.render({ value: BaseInput.getValueTemplate(this.valueField) });
     }
     getRootElement() {
         return this.getRef('input');
     }
 }
 
-var css = {"label":"index_label__RpeZL","labelTextContainer":"index_labelTextContainer__sI-zL","labelText":"index_labelText__JZVny"};
+var css = undefined;
 
-var template = "<If condition=\"{label || delimiter}\">\n  <div class=\"label\">\n    <If condition=\"{label}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"label\">{label}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </If>\n    <If condition=\"{delimiter}\">\n      <div class=\"labelTextContainer\">\n        <span class=\"labelText\" ref=\"delimiter\">{delimiter}</span>\n      </div>\n      <div>\n        <span class=\"labelText\">{nbs}</span>\n      </div>\n    </If>\n  </div>\n</If>\n\n";
+var template = "<If condition=\"{label || delimiter}\">\n  <div class=\"Label__label\">\n    <If condition=\"{label}\">\n      <div class=\"Label__labelTextContainer\">\n        <span class=\"Label__labelText\" ref=\"label\">{label}</span>\n      </div>\n      <div>\n        <span class=\"Label__labelText\">{nbs}</span>\n      </div>\n    </If>\n    <If condition=\"{delimiter}\">\n      <div class=\"Label__labelTextContainer\">\n        <span class=\"Label__labelText\" ref=\"delimiter\">{delimiter}</span>\n      </div>\n      <div>\n        <span class=\"Label__labelText\">{nbs}</span>\n      </div>\n    </If>\n  </div>\n</If>\n\n";
 
 class Label extends TemplateEngine {
     constructor(container, params = {}) {
@@ -1627,10 +1615,10 @@ class Line extends TemplateEngine {
             return;
         this.isVisible = value;
         if (value) {
-            root.classList.add(css$5.visible);
+            root.classList.add('Line__visible');
         }
         else {
-            root.classList.remove(css$5.visible);
+            root.classList.remove('Line__visible');
         }
     }
     get hidden() {
@@ -1720,7 +1708,7 @@ class Line extends TemplateEngine {
         if (this.label)
             this.label.destroy();
         super.render({
-            css: css$5, editable, className, nbs: NON_BREAKING_SPACE,
+            editable, className, nbs: NON_BREAKING_SPACE,
         }, reRender ? { replace: this } : {});
         this.inputField = editable
             ? new ContentEditableInput(this.getRef('inputContainer'))
@@ -2230,7 +2218,7 @@ class Term extends TemplateEngine {
             const virtualItemsContainer = container || (vl
                 ? vl.getVirtualItemsContainer() : undefined);
             return virtualItemsContainer ? new Line(virtualItemsContainer, {
-                ref, append, delimiter, label, editable: false, value: lines[index], className: css$7.line,
+                ref, append, delimiter, label, editable: false, value: lines[index], className: 'Term__line',
             }) : null;
         };
         this.heightGetter = (index) => {
@@ -2416,10 +2404,10 @@ class Term extends TemplateEngine {
         const headerText = this.getRef('headerText');
         if (text) {
             headerText.innerHTML = text;
-            header === null || header === void 0 ? void 0 : header.classList.remove(css$7.hidden);
+            header === null || header === void 0 ? void 0 : header.classList.remove('Term__header--hidden');
         }
         else {
-            header === null || header === void 0 ? void 0 : header.classList.add(css$7.hidden);
+            header === null || header === void 0 ? void 0 : header.classList.add('Term__header--hidden');
         }
         this.params.header = '';
         this.updateTermInfo();
@@ -2444,7 +2432,7 @@ class Term extends TemplateEngine {
     init(container, params) {
         const { header = '' } = params;
         this.setParams(container, params);
-        this.render({ css: css$7, header, hidden: header ? '' : css$7.hidden });
+        this.render({ header, hidden: header ? '' : 'Term__header--hidden' });
         this.params.scrollbarSize = getScrollbarSize(this.getRef('root'));
         this.itemSize = getItemSize(this.getRef('root'), true);
         this.addListeners();
@@ -2496,7 +2484,7 @@ class Term extends TemplateEngine {
             label,
             delimiter,
             caret,
-            className: [css$7.line, css$7.editLine].join(' '),
+            className: ['Term__line', 'Term__editLine'].join(' '),
             value: isArray(editLineParams) || isString(editLineParams)
                 ? editLineParams : editLineParams.value,
             editable: true,

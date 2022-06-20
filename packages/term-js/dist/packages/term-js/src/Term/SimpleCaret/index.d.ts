@@ -1,5 +1,6 @@
 import BaseCaret from '../BaseCaret';
 import ICaret from '../BaseCaret/ICaret';
+import './index.scss';
 declare class SimpleCaret extends BaseCaret implements ICaret {
     constructor(container: Element);
     protected updateLockStyles(): void;

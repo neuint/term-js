@@ -1,6 +1,6 @@
 {
   "name": "@neuint/status-bar-plugin",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Status bar for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -15,34 +15,8 @@
     "test": "jest",
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
-  "devDependencies": {
-    "@modular-css/rollup": "^28.2.0",
-    "@rollup/plugin-alias": "^3.1.9",
-    "@rollup/plugin-babel": "^5.3.1",
-    "@rollup/plugin-commonjs": "^22.0.0",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "@svgr/rollup": "^6.2.1",
-    "lodash": "^4.17.21",
-    "node-sass": "^7.0.1",
-    "postcss": "^8.4.14",
-    "rollup": "^2.75.7",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-copy": "^3.4.0",
-    "rollup-plugin-hot": "^0.1.1",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-polyfill": "^4.0.0",
-    "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-scss": "^3.0.0",
-    "rollup-plugin-serve": "^1.1.0",
-    "rollup-plugin-sourcemaps": "^0.6.3",
-    "rollup-plugin-string": "^3.0.0",
-    "rollup-plugin-typescript2": "^0.32.1",
-    "rollup-plugin-url": "^3.0.1",
-    "rollup-watch": "^4.3.1",
-    "sass": "^1.52.3"
-  },
   "dependencies": {
-    "@neuint/term-js": "^0.1.6",
+    "@neuint/term-js": "^0.1.7",
     "lodash-es": "^4.17.21"
   }
 }

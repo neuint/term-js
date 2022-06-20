@@ -1,4 +1,5 @@
 import { TemplateEngine } from '@neuint/term-js';
+import './index.scss';
 import IStatusView from './IStatusView';
 declare class StatusView extends TemplateEngine implements IStatusView {
     private iconField;

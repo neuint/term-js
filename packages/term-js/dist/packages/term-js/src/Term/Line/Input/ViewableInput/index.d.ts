@@ -1,3 +1,4 @@
+import './index.scss';
 import IInput from '../IInput';
 import BaseInput from '../BaseInput';
 import { ValueType } from '../../../types';

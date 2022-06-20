@@ -1,3 +1,4 @@
+import './index.scss';
 import TemplateEngine from '../../../TemplateEngine';
 import IInput from '../IInput';
 import { ValueFragmentType, ValueType } from '../../../types';

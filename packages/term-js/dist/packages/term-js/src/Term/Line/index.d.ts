@@ -1,3 +1,4 @@
+import './index.scss';
 import { ValueType } from '../types';
 import TemplateEngine from '../TemplateEngine';
 import ILine from './ILine';

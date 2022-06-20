@@ -34,7 +34,6 @@
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-hot": "^0.1.1",
-    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-scss": "^3.0.0",
@@ -44,6 +43,10 @@
     "rollup-plugin-typescript2": "^0.32.1",
     "rollup-plugin-url": "^3.0.1",
     "rollup-watch": "^4.3.1",
-    "sass": "^1.52.3"
+    "sass": "^1.52.3",
+    "@rollup/plugin-alias": "^3.1.9",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0"
   }
 }

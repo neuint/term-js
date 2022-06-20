@@ -1,0 +1,33 @@
+:root {
+  --status-bar-plugin-text-color: #7b7b7b;
+  --status-bar-plugin-icon-color: #949494;
+  --status-bar-plugin-bg-color: #161f24;
+  --status-bar-plugin-border-color: black;
+}
+.StatusView {
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--status-bar-plugin-border-color);
+  background: var(--status-bar-plugin-bg-color);
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.StatusView__icon {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 0.25rem;
+}
+.StatusView__icon svg {
+  width: 1rem;
+  height: 1rem;
+  stroke: var(--status-bar-plugin-icon-color);
+  fill: var(--status-bar-plugin-icon-color);
+}
+
+.StatusView__text {
+  font-size: 0.875rem;
+  color: var(--status-bar-plugin-text-color);
+}

@@ -1,5 +1,6 @@
 import './_styles/fonts.scss';
 import './_styles/theme.scss';
+import './index.scss';
 import TemplateEngine from './TemplateEngine';
 import { EditLineParamsType, FormattedValueFragmentType, TermConstructorParamsType } from './types';
 import ITerm from './ITerm';
