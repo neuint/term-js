@@ -1,13 +1,13 @@
 {
   "name": "@neuint/status-bar-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Status bar for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
-  "types": "dist/packages/term-js/src/Term/index.d.ts",
+  "types": "dist/StatusBar/index.d.ts",
   "license": "MIT",
   "scripts": {
     "dev": "rollup -c -w",
