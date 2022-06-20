@@ -20,12 +20,6 @@ module.exports = (build, pkg) => ({
   external: build ? Object.keys(pkg.dependencies) : [],
   output: [
     {
-      file: build ? pkg.main : 'serve/index.js',
-      format: 'cjs',
-      exports: 'named',
-      sourcemap: !build,
-    },
-    {
       file: build ? pkg.main : 'serve/index.es.js',
       format: 'es',
       exports: 'named',

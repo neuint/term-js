@@ -1,6 +1,6 @@
 {
   "name": "@neuint/status-bar-plugin",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Status bar for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,7 +16,7 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/term-js": "^0.1.10",
+    "@neuint/term-js": "^0.1.11",
     "lodash-es": "^4.17.21"
   }
 }
