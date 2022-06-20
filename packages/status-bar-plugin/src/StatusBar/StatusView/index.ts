@@ -1,30 +1,34 @@
-import { TemplateEngine } from '@term-js/term';
+import { TemplateEngine } from '@neuint/term-js';
 
 import template from './template.html';
 import css from './index.scss';
 
-import IStatusView from '@StatusBar/StatusView/IStatusView';
+import IStatusView from './IStatusView';
 
 class StatusView extends TemplateEngine implements IStatusView {
-  private iconField: string = '';
+  private iconField = '';
+
   public set icon(val: string) {
     this.iconField = val;
     this.render();
   }
+
   public get icon(): string {
     return this.iconField;
   }
 
-  private textField: string = '';
+  private textField = '';
+
   public set text(val: string) {
     this.textField = val;
     this.render();
   }
+
   public get text(): string {
     return this.textField;
   }
 
-  private isRendered: boolean = false;
+  private isRendered = false;
 
   constructor(container: HTMLElement) {
     super(template, container);

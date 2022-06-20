@@ -1,18 +1,23 @@
-import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@term-js/term';
+import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
 
 import './theme.scss';
 
-import IStatusBar from '@StatusBar/IStatusBar';
-import StatusView from '@StatusBar/StatusView';
-import IStatusView from '@StatusBar/StatusView/IStatusView';
-import { PLUGIN_NAME } from '@StatusBar/constants';
+import IStatusBar from './IStatusBar';
+import StatusView from './StatusView';
+import IStatusView from './StatusView/IStatusView';
+import { PLUGIN_NAME } from './constants';
+
+export { default as IStatusBar } from './IStatusBar';
 
 class StatusBar extends Plugin implements IStatusBar {
   public readonly name: string = PLUGIN_NAME;
 
-  private text: string = '';
-  private icon: string = '';
+  private text = '';
+
+  private icon = '';
+
   private view?: IStatusView;
+
   public set status(val: { text: string; icon?: string }) {
     const { view } = this;
     this.text = val.text;
@@ -22,6 +27,7 @@ class StatusBar extends Plugin implements IStatusBar {
       view.text = this.text;
     }
   }
+
   public get status(): { text: string; icon?: string } {
     const { text, icon } = this;
     return { text, icon };

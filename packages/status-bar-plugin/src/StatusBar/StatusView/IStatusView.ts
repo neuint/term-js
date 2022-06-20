@@ -1,4 +1,4 @@
-import { ITemplateEngine } from '@term-js/term';
+import { ITemplateEngine } from '@neuint/term-js';
 
 export default interface IStatusView extends ITemplateEngine {
   text: string;

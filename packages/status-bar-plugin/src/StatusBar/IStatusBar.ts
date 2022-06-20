@@ -1,5 +1,4 @@
-/* tslint:disable:no-empty-interface */
-import { IPlugin } from '@term-js/term';
+import { IPlugin } from '@neuint/term-js';
 
 export default interface IStatusBar extends IPlugin {
   status: { text: string; icon?: string };
