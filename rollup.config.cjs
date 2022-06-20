@@ -11,6 +11,7 @@ const serve = require('rollup-plugin-serve');
 const postcss = require('rollup-plugin-postcss');
 const { string } = require('rollup-plugin-string');
 const sourcemaps = require('rollup-plugin-sourcemaps');
+const { terser } = require('rollup-plugin-terser');
 
 module.exports = (build, pkg) => ({
   watch: {
@@ -40,6 +41,7 @@ module.exports = (build, pkg) => ({
       exclude: ["../**/index.html"],
     }),
     postcss({
+      minimize: build,
       use: ['sass'],
       extract: build ? path.resolve('dist/index.css') : path.resolve('serve/index.css'),
     }),
@@ -60,6 +62,7 @@ module.exports = (build, pkg) => ({
     }),
     commonjs(),
     build ? null : sourcemaps(),
+    build ? terser() : null,
     build ? null : serve({
       contentBase: 'serve',
       host: 'localhost',
