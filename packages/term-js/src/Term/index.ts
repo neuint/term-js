@@ -1,7 +1,6 @@
 import { last, get, isUndefined, isArray, isString, isObject } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 
-import './_styles/fonts.scss';
 import './_styles/theme.scss';
 import './index.scss';
 import template from './template.html';

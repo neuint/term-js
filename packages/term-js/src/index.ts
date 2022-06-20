@@ -1,4 +1,5 @@
 import './index.scss';
+import './Term/_styles/fonts.scss';
 
 import Term from './Term/index';
 import ITerm from './Term/ITerm';
