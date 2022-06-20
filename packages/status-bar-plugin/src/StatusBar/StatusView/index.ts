@@ -1,7 +1,7 @@
 import { TemplateEngine } from '@neuint/term-js';
 
 import template from './template.html';
-import css from './index.scss';
+import './index.scss';
 
 import IStatusView from './IStatusView';
 
@@ -36,7 +36,7 @@ class StatusView extends TemplateEngine implements IStatusView {
 
   render() {
     const { icon, text, isRendered } = this;
-    super.render({ css, icon, text }, isRendered ? { replace: this } : {});
+    super.render({ icon, text }, isRendered ? { replace: this } : {});
     this.isRendered = true;
   }
 }

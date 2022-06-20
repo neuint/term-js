@@ -3,7 +3,7 @@ const path = require('path');
 const typescript = require('rollup-plugin-typescript2');
 const commonjs = require('rollup-plugin-commonjs');
 const external = require('rollup-plugin-peer-deps-external');
-const resolve = require('rollup-plugin-node-resolve');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const url = require('rollup-plugin-url');
 const svgr = require('@svgr/rollup');
 const copy = require('rollup-plugin-copy');
@@ -36,15 +36,17 @@ module.exports = (build, pkg) => ({
     url(),
     svgr(),
     string({
-      include: "**/*.html",
-      exclude: ["**/index.html"],
+      include: "../**/*.html",
+      exclude: ["../**/index.html"],
     }),
     postcss({
       use: ['sass'],
       extract: build ? path.resolve('dist/index.css') : path.resolve('serve/index.css'),
     }),
-    resolve({
+    nodeResolve({
+      ain: true,
       browser: true,
+      preferBuiltins: false,
     }),
     copy({
       targets: [
