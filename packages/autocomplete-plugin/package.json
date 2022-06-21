@@ -1,6 +1,6 @@
 {
   "name": "@neuint/autocomplete-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Autocomplete for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",

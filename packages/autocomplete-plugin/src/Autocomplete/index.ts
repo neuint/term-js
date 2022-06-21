@@ -16,6 +16,8 @@ import { PLUGIN_NAME, SHOW_ACTION } from './constants';
 import IAutocomplete from './IAutocomplete';
 import { ListInfoType } from './types';
 
+export { default as IAutocomplete } from './IAutocomplete';
+
 class Autocomplete extends Plugin implements IAutocomplete {
   public readonly name: string = PLUGIN_NAME;
 

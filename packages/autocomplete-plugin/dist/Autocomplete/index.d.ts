@@ -3,6 +3,7 @@ import '@neuint/dropdown-plugin/dist/index.css';
 import './theme.scss';
 import './index.scss';
 import IAutocomplete from './IAutocomplete';
+export { default as IAutocomplete } from './IAutocomplete';
 declare class Autocomplete extends Plugin implements IAutocomplete {
     readonly name: string;
     private listsInfo;
