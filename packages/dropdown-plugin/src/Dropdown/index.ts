@@ -154,7 +154,7 @@ class Dropdown extends Plugin implements IDropdown {
     if (contextMenuPlugin) {
       this.contextMenuPlugin = contextMenuPlugin as IContextMenu;
     } else {
-      this.contextMenuPlugin = new ContextMenu();
+      this.contextMenuPlugin = new ContextMenu(this.pluginManager);
       this.pluginManager.register(this.contextMenuPlugin);
     }
   }
