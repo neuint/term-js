@@ -5,5 +5,5 @@ const baseConfig = require('../../rollup.config.cjs')(BUILD, pkg);
 
 module.exports = {
   ...baseConfig,
-  input: BUILD ? './src/StatusBar/index.ts' : './src/index.ts',
+  input: BUILD ? './src/ContextMenu/index.ts' : './src/index.ts',
 };
