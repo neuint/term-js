@@ -1,13 +1,13 @@
 {
-  "name": "@neuint/dropdown-plugin",
-  "version": "0.1.0",
-  "description": "Dropdown for the terminal",
+  "name": "@neuint/autocomplete-plugin",
+  "version": "0.1.1",
+  "description": "Autocomplete for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
-  "types": "dist/StatusBar/index.d.ts",
+  "types": "dist/Autocomplete/index.d.ts",
   "license": "MIT",
   "scripts": {
     "dev": "rollup -c -w",
@@ -16,8 +16,9 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/context-menu-plugin": "^0.1.1",
-    "@neuint/term-js": "^0.1.13",
-    "lodash-es": "^4.17.21"
+    "@neuint/dropdown-plugin": "^0.1.2",
+    "@neuint/term-js": "^0.1.14",
+    "lodash-es": "^4.17.21",
+    "uuid": "^8.3.2"
   }
 }

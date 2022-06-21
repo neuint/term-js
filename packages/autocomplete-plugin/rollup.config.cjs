@@ -5,5 +5,5 @@ const baseConfig = require('../../rollup.config.cjs')(BUILD, pkg);
 
 module.exports = {
   ...baseConfig,
-  input: BUILD ? './src/Dropdown/index.ts' : './src/index.ts',
+  input: BUILD ? './src/Autocomplete/index.ts' : './src/index.ts',
 };

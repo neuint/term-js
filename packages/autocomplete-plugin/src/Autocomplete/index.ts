@@ -5,26 +5,31 @@ import {
   IKeyboardShortcutsManager,
   ActionShortcutType,
   InfoType,
-} from '@term-js/term';
-import { Dropdown, IDropdown } from '@term-js/dropdown-plugin';
-import '@term-js/dropdown-plugin/dist/index.css';
+} from '@neuint/term-js';
+import Dropdown, { IDropdown } from '@neuint/dropdown-plugin';
+import '@neuint/dropdown-plugin/dist/index.css';
 
 import './theme.scss';
-import css from './index.scss';
+import './index.scss';
 
-import { PLUGIN_NAME, SHOW_ACTION } from '@Autocomplete/constants';
-import IAutocomplete from '@Autocomplete/IAutocomplete';
-import { ListInfoType } from '@Autocomplete/types';
+import { PLUGIN_NAME, SHOW_ACTION } from './constants';
+import IAutocomplete from './IAutocomplete';
+import { ListInfoType } from './types';
 
 class Autocomplete extends Plugin implements IAutocomplete {
   public readonly name: string = PLUGIN_NAME;
+
   private listsInfo: ListInfoType[] = [];
+
   private activeSuggestions: string[] = [];
+
   private dropdownPlugin?: IDropdown;
 
   private commandList: string[] = [];
-  private active: string = '';
-  private isSetShowHandler: boolean = false;
+
+  private active = '';
+
+  private isSetShowHandler = false;
 
   public addList(items: string[], actionShortcut: ActionShortcutType, icon?: string) {
     const info: ListInfoType = {
@@ -37,7 +42,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
 
   public removeList(uuidValue: string) {
     const { listsInfo, keyboardShortcutsManager } = this;
-    const index = listsInfo.findIndex(item => item.uuid === uuidValue);
+    const index = listsInfo.findIndex((item) => item.uuid === uuidValue);
     if (index < 0) return;
     const listInfo = listsInfo[index];
     listsInfo.splice(index, 1);
@@ -68,7 +73,6 @@ class Autocomplete extends Plugin implements IAutocomplete {
   public clear() {
     this.hideSuggestionsList();
     this.active = '';
-    super.clear();
   }
 
   public destroy() {
@@ -87,9 +91,10 @@ class Autocomplete extends Plugin implements IAutocomplete {
     if (!keyboardShortcutsManager || (info && info.isRegistered)) return;
     if (info) {
       keyboardShortcutsManager.addShortcut(SHOW_ACTION, info.actionShortcut, info.uuid);
+      // eslint-disable-next-line no-param-reassign
       info.isRegistered = true;
     } else {
-      listsInfo.forEach(item => this.registerShortcut(item));
+      listsInfo.forEach((item) => this.registerShortcut(item));
     }
     if (!isSetShowHandler) {
       keyboardShortcutsManager.addListener(SHOW_ACTION, this.onAutocomplete);
@@ -100,12 +105,12 @@ class Autocomplete extends Plugin implements IAutocomplete {
   private setDropdownPlugin() {
     const { termInfo } = this;
     if (!termInfo) return;
-    const dropdownPlugin = termInfo.pluginManager.getPlugin(Dropdown);
+    const dropdownPlugin = this.pluginManager.getPlugin(Dropdown);
     if (dropdownPlugin) {
       this.dropdownPlugin = dropdownPlugin as IDropdown;
     } else {
-      this.dropdownPlugin = new Dropdown();
-      termInfo.pluginManager.register(this.dropdownPlugin);
+      this.dropdownPlugin = new Dropdown(this.pluginManager);
+      this.pluginManager.register(this.dropdownPlugin);
     }
   }
 
@@ -113,7 +118,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
     const { dropdownPlugin, listsInfo, active } = this;
     const infoUuid = info?.shortcut;
     if (!infoUuid || (active && active !== infoUuid)) return;
-    this.commandList = listsInfo.find(item => item.uuid === infoUuid)?.items || [];
+    this.commandList = listsInfo.find((item) => item.uuid === infoUuid)?.items || [];
     e.stopPropagation();
     e.preventDefault();
     if (dropdownPlugin && this.setSuggestions()) {
@@ -122,7 +127,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
       this.showSuggestions();
       setTimeout(() => dropdownPlugin.isActionsLock = false, 0);
     }
-  }
+  };
 
   private setSuggestions(): boolean {
     const { termInfo, commandList } = this;
@@ -131,7 +136,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
     return this.setNewSuggestions(position !== value.length
       ? []
       : commandList
-        .filter(command => command.indexOf(value) === 0 && command !== value));
+        .filter((command) => command.indexOf(value) === 0 && command !== value));
   }
 
   private setNewSuggestions(newActiveSuggestions: string[]): boolean {
@@ -154,12 +159,12 @@ class Autocomplete extends Plugin implements IAutocomplete {
     const { dropdownPlugin, activeSuggestions, termInfo, active, listsInfo } = this;
     const value = termInfo?.edit.value;
     if (!dropdownPlugin || !value) return;
-    const icon = listsInfo.find(item => item.uuid === active)?.icon;
+    const icon = listsInfo.find((item) => item.uuid === active)?.icon;
     dropdownPlugin.show(activeSuggestions, {
       onSelect: this.onSelect,
       onClose: this.onClose,
       append: icon,
-      className: icon ? css.withIcon : '',
+      className: icon ? 'Autocomplete__withIcon' : '',
     });
     dropdownPlugin.highlight = value.trim();
   }
@@ -178,12 +183,12 @@ class Autocomplete extends Plugin implements IAutocomplete {
       edit.write(text.replace(edit.value, ''));
     }
     this.clear();
-  }
+  };
 
   private onClose = () => {
     this.activeSuggestions = [];
     this.active = '';
-  }
+  };
 }
 
 export default Autocomplete;

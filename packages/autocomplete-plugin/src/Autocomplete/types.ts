@@ -1,4 +1,4 @@
-import { ActionShortcutType } from '@term-js/term';
+import { ActionShortcutType } from '@neuint/term-js';
 
 export type ListInfoType = {
   items: string[];
