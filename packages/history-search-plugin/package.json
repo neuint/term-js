@@ -1,7 +1,7 @@
 {
-  "name": "@neuint/command-search-plugin",
-  "version": "0.1.1",
-  "description": "Command autocomplete for the terminal",
+  "name": "@neuint/history-search-plugin",
+  "version": "0.1.0",
+  "description": "History search for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "main": "dist/index.js",

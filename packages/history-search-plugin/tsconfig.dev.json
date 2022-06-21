@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": false,
+    "outDir": "./serve",
+    "baseUrl": ".",
+    "paths": {
+      "@neuint/term-js": ["../term-js/src/Term"],
+      "@neuint/autocomplete-plugin": ["../autocomplete-plugin/src/Autocomplete"],
+      "@neuint/dropdown-plugin": ["../dropdown-plugin/src/Dropdown"]
+    }
+  }
+}
