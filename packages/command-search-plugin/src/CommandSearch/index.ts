@@ -1,31 +1,39 @@
-import '@term-js/autocomplete-plugin/dist/index.css';
+import '@neuint/autocomplete-plugin/dist/index.css';
 
-import { Plugin, ITermInfo, IKeyboardShortcutsManager, ActionShortcutType } from '@term-js/term';
-import { Autocomplete, IAutocomplete } from '@term-js/autocomplete-plugin';
+import {
+  Plugin, ITermInfo, IKeyboardShortcutsManager, ActionShortcutType, IPluginManager,
+} from '@neuint/term-js';
+import Autocomplete, { IAutocomplete } from '@neuint/autocomplete-plugin';
 
 import icon from './icon.html';
 
-import ICommandSearch from '@CommandSearch/ICommandSearch';
-import { PLUGIN_NAME, SHOW_KEY_CODE } from '@CommandSearch/constants';
+import ICommandSearch from './ICommandSearch';
+import { PLUGIN_NAME, SHOW_KEY_CODE } from './constants';
+
+export { default as ICommandSearch } from './ICommandSearch';
 
 class CommandSearch extends Plugin implements ICommandSearch {
   public readonly name: string = PLUGIN_NAME;
 
   private commandList: string[] = [];
+
   public set commands(list: string[]) {
     this.commandList = list;
     this.setList();
   }
+
   public get commands(): string[] {
     return this.commandList;
   }
 
   private autocomplete?: IAutocomplete;
+
   private removeList?: () => void;
+
   private readonly actionShortcut: ActionShortcutType = { code: SHOW_KEY_CODE };
 
-  constructor(actionShortcut?: ActionShortcutType) {
-    super();
+  constructor(pluginManager: IPluginManager, actionShortcut?: ActionShortcutType) {
+    super(pluginManager);
     if (actionShortcut) this.actionShortcut = actionShortcut;
   }
 
@@ -41,7 +49,6 @@ class CommandSearch extends Plugin implements ICommandSearch {
   public clear() {
     const { autocomplete } = this;
     if (autocomplete) autocomplete.clear();
-    super.clear();
   }
 
   public destroy() {
@@ -52,10 +59,13 @@ class CommandSearch extends Plugin implements ICommandSearch {
   private setAutocomplete() {
     const { termInfo } = this;
     if (!termInfo) return;
-    const autocomplete = termInfo.pluginManager.getPlugin(Autocomplete);
-    if (autocomplete) return this.autocomplete = autocomplete as IAutocomplete;
-    this.autocomplete = new Autocomplete();
-    termInfo.pluginManager.register(this.autocomplete);
+    const autocomplete = this.pluginManager.getPlugin(Autocomplete);
+    if (autocomplete) {
+      this.autocomplete = autocomplete as IAutocomplete;
+    } else {
+      this.autocomplete = new Autocomplete(this.pluginManager);
+      this.pluginManager.register(this.autocomplete);
+    }
   }
 
   private setList() {
