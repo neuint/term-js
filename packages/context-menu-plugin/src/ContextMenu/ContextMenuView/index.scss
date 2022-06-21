@@ -1,0 +1,10 @@
+.root {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--context-menu-plugin-bg-color);
+  border: 1px solid var(--context-menu-plugin-border-color);
+  color: var(--context-menu-plugin-text-color);
+  visibility: hidden;
+  border-radius: 0.25rem;
+}

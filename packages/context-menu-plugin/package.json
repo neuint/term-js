@@ -1,0 +1,22 @@
+{
+  "name": "@neuint/context-menu-plugin",
+  "version": "0.1.7",
+  "description": "Status bar for the terminal",
+  "repository": "git@github.com:neuint/term-js.git",
+  "author": "Pavlo Gusar <p.gusar@yahoo.com>",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "types": "dist/StatusBar/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
+    "test": "jest",
+    "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
+  },
+  "dependencies": {
+    "@neuint/term-js": "^0.1.11",
+    "lodash-es": "^4.17.21"
+  }
+}

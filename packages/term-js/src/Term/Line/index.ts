@@ -68,8 +68,11 @@ class Line extends TemplateEngine implements ILine {
   }
 
   public set disabled(value: boolean) {
-    const { input, editable } = this;
-    if (input && editable) input.disabled = value;
+    const { input, caret, editable } = this;
+    if (input && editable) {
+      input.disabled = value;
+      if (caret) caret.hidden = value;
+    }
   }
 
   private isVisible = true;
@@ -373,7 +376,8 @@ class Line extends TemplateEngine implements ILine {
 
   private updateCaretData = () => {
     const {
-      editable, caret, inputField, onUpdateCaretPosition, caretPosition: caretPositionPrev,
+      editable, disabled, caret, inputField, onUpdateCaretPosition,
+      caretPosition: caretPositionPrev,
     } = this;
     if (!editable || !inputField || !caret) {
       if (caretPositionPrev !== -1) {
@@ -383,7 +387,7 @@ class Line extends TemplateEngine implements ILine {
       return;
     }
     const { caretPosition } = inputField;
-    if (inputField.isFocused && caretPosition >= 0) {
+    if (inputField.isFocused && caretPosition >= 0 && !disabled) {
       this.showCaret(caretPosition);
     } else {
       this.hideCaret();

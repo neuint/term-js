@@ -20,7 +20,7 @@ module.exports = (build, pkg) => ({
   external: build ? Object.keys(pkg.dependencies) : [],
   output: [
     {
-      file: build ? pkg.main : 'serve/index.es.js',
+      file: build ? pkg.main : 'serve/index.js',
       format: 'es',
       exports: 'named',
       sourcemap: !build,
@@ -37,7 +37,7 @@ module.exports = (build, pkg) => ({
     postcss({
       minimize: build,
       use: ['sass'],
-      extract: build ? path.resolve('dist/index.css') : path.resolve('serve/index.css'),
+      ...(build ? { extract: path.resolve('dist/index.css') } : { extract: false }),
     }),
     nodeResolve({
       ain: true,
