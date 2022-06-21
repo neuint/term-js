@@ -2,6 +2,7 @@ import { Plugin, ITermInfo, IKeyboardShortcutsManager, IPluginManager } from '@n
 import '@neuint/context-menu-plugin/dist/index.css';
 import './theme.scss';
 import IDropdown from './IDropdown';
+export { default as IDropdown } from './IDropdown';
 declare class Dropdown extends Plugin implements IDropdown {
     readonly name: string;
     isActionsLock: boolean;

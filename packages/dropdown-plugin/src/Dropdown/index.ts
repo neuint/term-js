@@ -18,6 +18,8 @@ import {
 } from './constants/keyCodes';
 import { PLUGIN_NAME } from './constants/general';
 
+export { default as IDropdown } from './IDropdown';
+
 class Dropdown extends Plugin implements IDropdown {
   public readonly name: string = PLUGIN_NAME;
 

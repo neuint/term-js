@@ -1,0 +1,6 @@
+@import 'colors';
+
+:root {
+  --autocomplete-plugin-svg-color: #{rgba($alabaster, 0.5)};
+  --autocomplete-plugin-svg-container-bg-color: #{lighten($bunker, 10)};
+}
