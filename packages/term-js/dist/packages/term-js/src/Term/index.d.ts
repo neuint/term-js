@@ -1,7 +1,7 @@
 import './_styles/theme.scss';
 import './index.scss';
 import TemplateEngine from './TemplateEngine';
-import { EditLineParamsType, FormattedValueFragmentType, TermConstructorParamsType } from './types';
+import { EditLineParamsType, FormattedValueFragmentType, TermConstructorParamsType, ValueType } from './types';
 import ITerm from './ITerm';
 import ITermEventMap from './_interfaces/ITermEventMap';
 import IKeyboardShortcutsManager from './KeyboardShortcutsManager/IKeyboardShortcutsManager';
@@ -11,7 +11,8 @@ export { default as ITermInfo } from './_interfaces/ITermInfo';
 export { default as KeyboardShortcutsManager } from './KeyboardShortcutsManager';
 export { default as IKeyboardShortcutsManager } from './KeyboardShortcutsManager/IKeyboardShortcutsManager';
 export { ActionShortcutType } from './KeyboardShortcutsManager/types';
-export { TermConstructorParamsType, ValueType, InfoType } from './types';
+export { TermConstructorParamsType, ValueType, InfoType, FormattedValueType, ValueFragmentType, FormattedValueFragmentType, } from './types';
+export { default as IPluginManager } from './PluginManager/IPluginManager';
 export { default as Plugin } from './PluginManager/Plugin';
 export { default as IPlugin } from './PluginManager/Plugin/IPlugin';
 export { default as TemplateEngine } from './TemplateEngine';
@@ -23,6 +24,8 @@ declare class Term extends TemplateEngine implements ITerm {
     private headerField;
     get header(): string;
     set header(val: string);
+    get value(): ValueType;
+    set value(val: ValueType);
     private readonly ro;
     private readonly vl;
     readonly keyboardShortcutsManager: IKeyboardShortcutsManager;

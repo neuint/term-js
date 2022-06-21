@@ -7,7 +7,6 @@ import IContextMenu from './ContextMenu/IContextMenu';
 
 const container = document.querySelector('#root');
 if (container) {
-  const contextMenu = new ContextMenu();
   const term = new Term(container, {
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
@@ -15,6 +14,7 @@ if (container) {
     editLine: '',
     lines: [],
   });
+  const contextMenu = new ContextMenu(term.pluginManager);
   term.setHeader('context-menu-plugin');
   term.pluginManager.register(contextMenu);
   (window as unknown as { term: ITerm }).term = term;

@@ -18,6 +18,7 @@ import { stopPropagation } from '../../../../general/utils/event';
 
 export { default as IContextMenu } from './IContextMenu';
 export { PositionType, ShowOptionsType, TargetType } from './types';
+export { END_OF_LINE_TYPE, CLOSE_ACTION } from './constants';
 
 class ContextMenu extends Plugin implements IContextMenu {
   public readonly name: string = PLUGIN_NAME;
@@ -88,7 +89,6 @@ class ContextMenu extends Plugin implements IContextMenu {
 
   public clear() {
     this.hide();
-    super.clear();
   }
 
   private escHandler = () => {

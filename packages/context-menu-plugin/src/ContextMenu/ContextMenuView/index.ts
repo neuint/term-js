@@ -1,7 +1,7 @@
 import { TemplateEngine, ITemplateEngine } from '@neuint/term-js';
 
 import template from './template.html';
-import css from './index.scss';
+import './index.scss';
 
 class ContextMenuView extends TemplateEngine implements ITemplateEngine {
   private reRender = false;
@@ -11,7 +11,7 @@ class ContextMenuView extends TemplateEngine implements ITemplateEngine {
   }
 
   public render() {
-    super.render({ css }, this.reRender ? { replace: this } : {});
+    super.render({}, this.reRender ? { replace: this } : {});
     this.reRender = true;
   }
 }

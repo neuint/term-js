@@ -4,6 +4,7 @@ import IContextMenu from './IContextMenu';
 import { ShowOptionsType, TargetType } from './types';
 export { default as IContextMenu } from './IContextMenu';
 export { PositionType, ShowOptionsType, TargetType } from './types';
+export { END_OF_LINE_TYPE, CLOSE_ACTION } from './constants';
 declare class ContextMenu extends Plugin implements IContextMenu {
     readonly name: string;
     private contextMenuView?;

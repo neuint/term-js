@@ -49,6 +49,10 @@ class StatusBar extends Plugin implements IStatusBar {
     super.destroy();
   }
 
+  public clear() {
+    this.destroy();
+  }
+
   private setView() {
     const { termInfo, text, icon, view } = this;
     if (!termInfo) return;

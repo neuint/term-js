@@ -1,0 +1,17 @@
+.Item {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+
+  &.Item__active {
+    background: var(--dropdown-plugin-active-bg-color);
+  }
+}
+
+.Item__text {
+  color: var(--dropdown-plugin-text-color);
+}
+
+.Item__matchText {
+  opacity: 0.3;
+}
+

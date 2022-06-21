@@ -1,15 +1,21 @@
-/* tslint:disable:no-empty */
 import ITermInfo from '../../_interfaces/ITermInfo';
 import IKeyboardShortcutsManager from '../../KeyboardShortcutsManager/IKeyboardShortcutsManager';
 import { BASE_PLUGIN_NAME } from '../constants';
 import IPlugin from './IPlugin';
+import IPluginManager from '../IPluginManager';
 
-class Plugin implements IPlugin {
+abstract class Plugin implements IPlugin {
   public readonly name: string = BASE_PLUGIN_NAME;
 
   protected termInfo?: ITermInfo;
 
   protected keyboardShortcutsManager?: IKeyboardShortcutsManager;
+
+  protected pluginManager: IPluginManager;
+
+  constructor(pluginManager: IPluginManager) {
+    this.pluginManager = pluginManager;
+  }
 
   public setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager) {
     this.termInfo = termInfo;
@@ -28,7 +34,7 @@ class Plugin implements IPlugin {
     return plugin.name === this.name;
   }
 
-  public clear() {}
+  public abstract clear();
 }
 
 export default Plugin;

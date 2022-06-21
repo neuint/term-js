@@ -56,7 +56,15 @@ export { default as ITermInfo } from './_interfaces/ITermInfo';
 export { default as KeyboardShortcutsManager } from './KeyboardShortcutsManager';
 export { default as IKeyboardShortcutsManager } from './KeyboardShortcutsManager/IKeyboardShortcutsManager';
 export { ActionShortcutType } from './KeyboardShortcutsManager/types';
-export { TermConstructorParamsType, ValueType, InfoType } from './types';
+export {
+  TermConstructorParamsType,
+  ValueType,
+  InfoType,
+  FormattedValueType,
+  ValueFragmentType,
+  FormattedValueFragmentType,
+} from './types';
+export { default as IPluginManager } from './PluginManager/IPluginManager';
 export { default as Plugin } from './PluginManager/Plugin';
 export { default as IPlugin } from './PluginManager/Plugin/IPlugin';
 export { default as TemplateEngine } from './TemplateEngine';
@@ -91,6 +99,15 @@ class Term extends TemplateEngine implements ITerm {
       headerText.innerHTML = escapeString(val);
     }
     this.headerField = val;
+  }
+
+  public get value(): ValueType {
+    return this.editLine?.value || '';
+  }
+
+  public set value(val: ValueType) {
+    const { editLine } = this;
+    if (editLine) editLine.value = val;
   }
 
   private readonly ro: ResizeObserver;

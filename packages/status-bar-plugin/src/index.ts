@@ -13,7 +13,6 @@ const icon = `
 
 const container = document.querySelector('#root');
 if (container) {
-  const plugin: IStatusBar = new StatusBar();
   const term = new Term(container, {
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
@@ -21,6 +20,7 @@ if (container) {
     editLine: '',
     lines: [].map(identity),
   });
+  const plugin: IStatusBar = new StatusBar(term.pluginManager);
   term.setHeader('status-bar-plugin');
   term.pluginManager.register(plugin);
   plugin.status = { icon, text: 'Test' };

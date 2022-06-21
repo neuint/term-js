@@ -1,13 +1,14 @@
 import ITermEventMap from './_interfaces/ITermEventMap';
 import IKeyboardShortcutsManager from './KeyboardShortcutsManager/IKeyboardShortcutsManager';
 import IPluginManager from './PluginManager/IPluginManager';
-import { FormattedValueFragmentType } from './types';
+import { FormattedValueFragmentType, ValueType } from './types';
 
 export default interface ITerm {
   keyboardShortcutsManager: IKeyboardShortcutsManager;
   pluginManager: IPluginManager;
   header: string;
   disabled: boolean;
+  value: ValueType;
   write(
     data: string | FormattedValueFragmentType,
     options?: { withSubmit?: boolean; duration?: number },

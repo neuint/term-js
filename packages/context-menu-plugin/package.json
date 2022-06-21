@@ -1,7 +1,7 @@
 {
   "name": "@neuint/context-menu-plugin",
-  "version": "0.1.0",
-  "description": "Status bar for the terminal",
+  "version": "0.1.1",
+  "description": "Context menu for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "main": "dist/index.js",
@@ -16,7 +16,7 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/term-js": "^0.1.12",
+    "@neuint/term-js": "^0.1.13",
     "lodash-es": "^4.17.21"
   }
 }

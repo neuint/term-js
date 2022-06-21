@@ -18,6 +18,7 @@ declare class StatusBar extends Plugin implements IStatusBar {
     setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager): void;
     updateTermInfo(termInfo: ITermInfo): void;
     destroy(): void;
+    clear(): void;
     private setView;
 }
 export default StatusBar;
