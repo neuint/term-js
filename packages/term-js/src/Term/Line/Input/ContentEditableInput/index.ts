@@ -133,6 +133,7 @@ class ContentEditableInput extends BaseInput implements IInput {
 
   public set disabled(value: boolean) {
     this.isDisabled = value;
+    this.getRef('input')?.setAttribute('contenteditable', value ? 'false' : 'true');
   }
 
   private prevContent?: string;
