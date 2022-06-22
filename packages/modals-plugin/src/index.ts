@@ -1,10 +1,9 @@
 import Term, { ITerm } from '@neuint/term-js';
 
-import Modals from './Modals';
+import Modals, { TERMINAL_CENTER_POSITION, EDIT_CENTER_POSITION } from './Modals';
 import IModals from './Modals/IModals';
 
 import './index.scss';
-import { TERMINAL_CENTER_POSITION, EDIT_CENTER_POSITION } from './Modals/constants';
 
 const container = document.querySelector('#root');
 if (container) {
