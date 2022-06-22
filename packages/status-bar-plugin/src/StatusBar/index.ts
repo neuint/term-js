@@ -1,4 +1,5 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
+import { noop } from 'lodash-es';
 
 import './theme.scss';
 
@@ -49,9 +50,7 @@ class StatusBar extends Plugin implements IStatusBar {
     super.destroy();
   }
 
-  public clear() {
-    this.destroy();
-  }
+  public clear = noop;
 
   private setView() {
     const { termInfo, text, icon, view } = this;

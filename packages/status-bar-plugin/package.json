@@ -16,7 +16,7 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/term-js": "^0.1.13",
+    "@neuint/term-js": "^0.1.15",
     "lodash-es": "^4.17.21"
   }
 }
