@@ -1,0 +1,26 @@
+@mixin truncate($lines: 1) {
+  overflow: hidden;
+  @if $lines == 1 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin clear-button {
+  display: inline-block;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
