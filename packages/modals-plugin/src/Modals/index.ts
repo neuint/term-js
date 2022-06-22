@@ -11,6 +11,11 @@ import IModalView from './ModalView/IModalView';
 import ModalView from './ModalView';
 import { getRelativePosition } from '../../../../general/utils/viewport';
 
+export { default as IModals } from './IModals';
+export {
+  EDIT_CENTER_POSITION, TERMINAL_CENTER_POSITION, GENERAL_BUTTON_TYPE, PRIMARY_BUTTON_TYPE,
+} from './constants';
+
 class Modals extends Plugin implements IModals {
   public readonly name: string = PLUGIN_NAME;
 
