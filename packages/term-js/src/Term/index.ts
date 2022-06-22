@@ -239,6 +239,7 @@ class Term extends TemplateEngine implements ITerm {
             clearInterval(this.writingInterval as unknown as number);
             this.updateEditLine(data, true, original);
             if (withSubmit) editLine.submit();
+            setTimeout(() => editLine.focus(), 0);
             res(true);
           } else if (updatingValue.str !== substr) {
             updatingValue.str = substr;
@@ -249,6 +250,7 @@ class Term extends TemplateEngine implements ITerm {
     }
     this.updateEditLine(data, true);
     if (withSubmit) editLine.submit();
+    setTimeout(() => editLine.focus(), 0);
     return true;
   };
 
