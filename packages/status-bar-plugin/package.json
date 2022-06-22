@@ -1,6 +1,6 @@
 {
   "name": "@neuint/status-bar-plugin",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Status bar for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
