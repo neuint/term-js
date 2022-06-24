@@ -3,9 +3,10 @@
   "compilerOptions": {
     "sourceMap": false,
     "outDir": "./serve",
-    "baseUrl": ".",
     "paths": {
-      "@neuint/term-js": ["../term-js/src/Term"]
+      "@general/*": ["../../../general/*"],
+      "@neuint/term-js": ["../../term-js/src/Term"],
+      "@neuint/context-menu-plugin": ["../../context-menu-plugin/src/ContextMenu"]
     }
   }
 }

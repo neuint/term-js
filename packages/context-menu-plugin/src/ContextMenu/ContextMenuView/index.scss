@@ -1,10 +1,13 @@
+@import '@styles/functions';
+
 .ContextMenuView {
   position: absolute;
   left: 0;
   top: 0;
-  background: var(--context-menu-plugin-bg-color);
-  border: 1px solid var(--context-menu-plugin-border-color);
-  color: var(--context-menu-plugin-text-color);
+  background: var(--term-js-context-menu-bg);
+  color: var(--term-js-context-menu-color);
+  border: unit(1) solid var(--term-js-context-menu-border);
+  border-top-width: unit(0.25);
+  border-bottom-width: unit(0.25);
   visibility: hidden;
-  border-radius: 0.25rem;
 }

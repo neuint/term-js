@@ -3,7 +3,7 @@ import Term, { ITerm } from '@neuint/term-js';
 import Dropdown from './Dropdown';
 import IDropdown from './Dropdown/IDropdown';
 
-import css from './index.scss';
+import './index.scss';
 
 const append = `
 <svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -26,9 +26,6 @@ if (container) {
   (window as unknown as { term: ITerm }).term = term;
   (window as unknown as { plugin: IDropdown }).plugin = plugin;
   setTimeout(() => {
-    plugin.show(['test 1', 'test 2'], {
-      append,
-      className: css.root,
-    });
+    plugin.show(['test 1', 'test 2']);
   }, 1000);
 }

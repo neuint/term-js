@@ -1,0 +1,38 @@
+@import 'constants';
+
+:root {
+  --term-js-bg: #{$celtic};
+  --term-js-text: #{$shamrock};
+  --term-js-scrollbar-bg: #{$sea-green};
+  --term-js-selectoin: #{$sea-green};
+  --term-js-header-text: #{$genoa};
+  --term-js-header-bg: #{darken($racing-green, 2)};
+  --term-js-content-bg: #{$racing-green};
+  --term-js-label-text: #{$como};
+
+  --term-js-status-bar-border: #{$celtic};
+  --term-js-status-bar-bg: #{$aztec};
+  --term-js-status-bar-icon: #{$green-pea};
+  --term-js-status-bar-text: #{$green-pea};
+
+  --term-js-context-menu-bg: #{$aztec};
+  --term-js-context-menu-border: #{$bush};
+  --term-js-context-menu-color: #{$shamrock};
+
+  --term-js-dropdown-bg-active: #{$bush};
+  --term-js-dropdown-text: #{$shamrock};
+
+  --term-js-autocomplete-icon-bg: #{$racing-green};
+  --term-js-autocomplete-icon-color: #{$sea-green};
+
+  --term-js-modals-overlay-bg: #{rgba($black, 0.3)};
+  --term-js-modals-bg: #{$aztec};
+  --term-js-modals-border: #{$bush};
+  --term-js-modals-header-text: #{$sea-green};
+  --term-js-modals-close: #{$sea-green};
+  --term-js-modals-close-bg: #{$bush};
+  --term-js-modals-close-hover: #{$shamrock};
+  --term-js-modals-close-active: #{$aztec};
+  --term-js-modals-btn-color: #{$shamrock};
+  --term-js-modals-btn-bg-active: #{$celtic};
+}

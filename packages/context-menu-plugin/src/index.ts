@@ -19,4 +19,5 @@ if (container) {
   term.pluginManager.register(contextMenu);
   (window as unknown as { term: ITerm }).term = term;
   (window as unknown as { contextMenu: IContextMenu }).contextMenu = contextMenu;
+  // contextMenu.show('<div style="padding: 20px">Test</div>', 'end of line');
 }

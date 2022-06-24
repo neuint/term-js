@@ -28,6 +28,7 @@ if (container) {
     overlayHide: true,
     closeButton: true,
     content: 'Test 2',
+    title: 'Test 2',
     position: TERMINAL_CENTER_POSITION,
     actions: [[
       { text: 'Submit', type: 'submit' },

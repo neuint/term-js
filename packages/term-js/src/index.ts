@@ -1,14 +1,12 @@
 import './index.scss';
-import './Term/_styles/fonts.scss';
 
-import Term from './Term/index';
+import Term, { ValueType } from './Term/index';
 import ITerm from './Term/ITerm';
-
-import { ValueType } from './Term/types';
 
 const container = document.querySelector('.content');
 if (container) {
   const term = new Term(container, {
+    header: 'Term',
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
     label: 'guest',

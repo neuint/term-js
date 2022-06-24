@@ -1,10 +1,11 @@
 import { isArray, isString, noop, get } from 'lodash-es';
 
+import { getKeyCode } from '@general/utils/event';
+
 import './index.scss';
 import lineTemplate from './template.html';
 
 import { DOWN_CODE, ENTER_CODE, LEFT_CODE, RIGHT_CODE, UP_CODE } from '../_constants/keyCodes';
-import { getKeyCode } from '../../../../../general/utils/event';
 import ICaret from '../BaseCaret/ICaret';
 import ICaretFactory from '../CaretFactory/ICaretFactory';
 import CaretFactory from '../CaretFactory';

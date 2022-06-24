@@ -1,4 +1,7 @@
 const path = require('path');
+
+const rootPath = __dirname.replace(/term-js\/packages.+/, 'term-js');
+
 module.exports = {
   env: {
     browser: true,
@@ -18,7 +21,12 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ['@typescript-eslint', 'react', 'mocha'],
+  plugins: [
+    '@typescript-eslint',
+    'react',
+    'mocha',
+    'import',
+  ],
   extends: [
     'airbnb',
     'airbnb/hooks',
@@ -67,11 +75,18 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
+      alias: {
+        map: [
+          ['@general', path.join(rootPath, 'general')],
+          ['@styles', path.join(rootPath, 'general/styles')],
+        ],
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.scss'],
+      },
       'babel-module': {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
       node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx']
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     },
   },

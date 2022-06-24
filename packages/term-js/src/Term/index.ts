@@ -1,18 +1,18 @@
 import { last, get, isUndefined, isArray, isString, isObject } from 'lodash-es';
 import ResizeObserver from 'resize-observer-polyfill';
 
-import './_styles/theme.scss';
+import { getKeyCode } from '@general/utils/event';
+import { escapeString } from '@general/utils/string';
+import { getScrollbarSize } from '@general/utils/viewport';
+
 import './index.scss';
 import template from './template.html';
 
 import VirtualizedList from './VirtualizedList';
 import IVirtualizedList from './VirtualizedList/IVirtualizedList';
 import TemplateEngine from './TemplateEngine';
-import { getKeyCode } from '../../../../general/utils/event';
-import { escapeString } from '../../../../general/utils/string';
 import { DOWN_CODE, K_CODE, UP_CODE } from './_constants/keyCodes';
 import { compareItemSize, getItemSize } from './_utils/viewport';
-import { getScrollbarSize } from '../../../../general/utils/viewport';
 import {
   EditLineParamsType,
   FormattedValueFragmentType,

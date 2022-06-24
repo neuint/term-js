@@ -1,8 +1,9 @@
+@import '@styles/functions';
 
-$size: 1rem;
-$top: 0.375rem;
-$right: 0.375rem;
-$iconSize: $size * 0.8;
+$size: 5;
+$top: 1.5;
+$right: 1.5;
+$iconSize: $size * 0.6;
 
 $left: -$right - $size;
 $svgTop: $top + ($size - $iconSize) / 2;
@@ -13,20 +14,19 @@ $svgLeft: -$right - $size + ($size - $iconSize) / 2;
   &:before {
     content: '';
     position: absolute;
-    top: $top;
-    left: $left;
-    width: $size;
-    height: $size;
-    border-radius: 50%;
-    background-color: var(--autocomplete-plugin-svg-container-bg-color);
+    top: unit($top);
+    left: unit($left);
+    width: unit($size);
+    height: unit($size);
+    background-color: var(--term-js-autocomplete-icon-bg);
   }
   svg {
     position: absolute;
-    top: $svgTop;
-    width: $iconSize;
-    height: $iconSize;
-    left: $svgLeft;
-    stroke: var(--autocomplete-plugin-svg-color);
-    fill: var(--autocomplete-plugin-svg-color);
+    top: unit($svgTop);
+    width: unit($iconSize);
+    height: unit($iconSize);
+    left: unit($svgLeft);
+    stroke: var(--term-js-autocomplete-icon-color);
+    fill: var(--term-js-autocomplete-icon-color);
   }
 }

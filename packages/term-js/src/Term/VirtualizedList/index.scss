@@ -1,8 +1,8 @@
-@import '../_styles/mixins';
+@import '@styles/mixins';
+@import '@styles/functions';
 
 .VirtualizedList__root {
   height: 100%;
-
   @include overflow-y(scroll);
 }
 

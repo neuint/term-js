@@ -1,8 +1,6 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
 import { noop } from 'lodash-es';
 
-import './theme.scss';
-
 import IStatusBar from './IStatusBar';
 import StatusView from './StatusView';
 import IStatusView from './StatusView/IStatusView';

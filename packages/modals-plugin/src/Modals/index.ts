@@ -2,14 +2,14 @@ import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
 import { v1 } from 'uuid';
 import { last, noop } from 'lodash-es';
 
-import './theme.scss';
+import { getRelativePosition } from '@general/utils/viewport';
+import { ESC_KEY_CODE } from '@general/constants/keyCodes';
 
 import IModals from './IModals';
-import { EDIT_CENTER_POSITION, ESC_KEY_CODE, HIDE_ACTION, PLUGIN_NAME } from './constants';
+import { EDIT_CENTER_POSITION, HIDE_ACTION, PLUGIN_NAME } from './constants';
 import { ModalOptionsType, PositionType } from './types';
 import IModalView from './ModalView/IModalView';
 import ModalView from './ModalView';
-import { getRelativePosition } from '../../../../general/utils/viewport';
 
 export { default as IModals } from './IModals';
 export {
@@ -48,7 +48,7 @@ class Modals extends Plugin implements IModals {
   public show(options: ModalOptionsType): () => void {
     const { termInfo, unlockCallback, keyboardShortcutsManager } = this;
     if (!termInfo || !termInfo.elements.root) return noop;
-    const { root } = termInfo.elements;
+    const container = termInfo.elements.root.parentElement;
     const {
       content, onClose: closeHandler, title, overlayHide, closeButton, actions, className, position,
     } = options;
@@ -59,7 +59,7 @@ class Modals extends Plugin implements IModals {
       if (closeHandler) closeHandler();
     };
     const isAbsolute = position === EDIT_CENTER_POSITION;
-    const view = new ModalView(root as HTMLElement, {
+    const view = new ModalView(container as HTMLElement, {
       onClose, content, title, overlayHide, closeButton, actions, className, isAbsolute,
     });
     if (isAbsolute) this.updatePosition(view, position);

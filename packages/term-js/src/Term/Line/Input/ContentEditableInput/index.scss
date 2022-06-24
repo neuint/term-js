@@ -1,8 +1,9 @@
-@import '../../../_styles/mixins';
+@import '@styles/mixins';
+@import '@styles/functions';
 
 @mixin hidden-caret {
   color: transparent;
-  text-shadow: 0 0 0 var(--main-text-color);
+  text-shadow: 0 0 0 var(--term-js-text);
 }
 
 .ContentEditableInput {

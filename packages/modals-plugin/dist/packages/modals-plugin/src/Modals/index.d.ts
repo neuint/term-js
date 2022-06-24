@@ -1,5 +1,4 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
-import './theme.scss';
 import IModals from './IModals';
 import { ModalOptionsType } from './types';
 export { default as IModals } from './IModals';

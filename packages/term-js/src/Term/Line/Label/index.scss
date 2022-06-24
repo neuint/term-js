@@ -1,15 +1,15 @@
-@import '../../_styles/mixins';
+@import '@styles/mixins';
+@import '@styles/functions';
 
 .Label__label {
   display: flex;
 }
 
 .Label__labelTextContainer {
-  max-width: 10rem;
-
+  max-width: unit(40);
   @include truncated;
 }
 
 .Label__labelText {
-  color: var(--line-lable-text-color);
+  color: var(--term-js-label-text);
 }

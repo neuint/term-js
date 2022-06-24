@@ -1,8 +1,0 @@
-@import 'colors';
-
-:root {
-  --status-bar-plugin-text-color: #{darken($alabaster, 50)};
-  --status-bar-plugin-icon-color: #{darken($alabaster, 40)};
-  --status-bar-plugin-bg-color: #{lighten($bunker, 5)};
-  --status-bar-plugin-border-color: #{darken($bunker, 10)};
-}

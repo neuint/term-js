@@ -1,14 +1,16 @@
+@import '@styles/functions';
+
 .Item {
-  padding: 0.5rem 0.75rem;
+  padding: unit(2.5) unit(3);
   cursor: pointer;
 
   &.Item__active {
-    background: var(--dropdown-plugin-active-bg-color);
+    background: var(--term-js-dropdown-bg-active);
   }
 }
 
 .Item__text {
-  color: var(--dropdown-plugin-text-color);
+  color: var(--term-js-dropdown-text);
 }
 
 .Item__matchText {

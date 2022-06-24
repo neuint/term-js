@@ -1,5 +1,4 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
-import './theme.scss';
 import IContextMenu from './IContextMenu';
 import { ShowOptionsType, TargetType } from './types';
 export { default as IContextMenu } from './IContextMenu';

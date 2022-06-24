@@ -1,5 +1,9 @@
-@import 'general-constants.scss';
-@import 'general-theme.scss';
+@import 'functions';
+
+@mixin input-general {
+  word-break: break-all;
+  resize: none;
+}
 
 @mixin touch-scrolling {
   will-change: transform;
@@ -23,11 +27,15 @@
   margin: 0;
 }
 
+@mixin font-size($scale: 1) {
+  font-size: unit(3.5 * $scale) !important;
+}
+
 @mixin font {
   &, input, textarea, select, button, pre {
-    font-family: 'Ubuntu Mono', sans-serif, monospace;
+    font-family: 'Roboto Mono', monospace, sans-serif;
     font-weight: 400;
-    font-size: 16px;
+    @include font-size(1);
   }
 }
 
@@ -52,10 +60,6 @@
   height: 100%;
 }
 
-@mixin font-size($scale: 1) {
-  font-size: $font-size * $scale !important;
-}
-
 @mixin button-font-size {
   @include font-size(0.75);
 }
@@ -72,13 +76,28 @@
   }
 }
 
-@mixin flex-center {
+@mixin flex-c {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-@mixin flex-vertical {
+@mixin flex-ch {
+  display: flex;
+  justify-content: center;
+}
+
+@mixin flex-rh {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@mixin flex-lh {
+  display: flex;
+  justify-content: flex-start;
+}
+
+@mixin flex-cv {
   display: flex;
   align-items: center;
 }
@@ -129,22 +148,28 @@
   border-bottom-right-radius: $value;
 }
 
-@mixin margin-vertical($value) {
+@mixin margin-v($value) {
   margin-top: $value;
   margin-bottom: $value;
 }
 
-@mixin margin-horizontal($value) {
+@mixin margin-h($value) {
   margin-left: $value;
   margin-right: $value;
 }
 
-@mixin padding-vertical($value) {
+@mixin padding-v($value) {
   padding-top: $value;
   padding-bottom: $value;
 }
 
-@mixin padding-horizontal($value) {
+@mixin padding-h($value) {
   padding-left: $value;
   padding-right: $value;
+}
+
+@mixin truncated {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

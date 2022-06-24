@@ -1,5 +1,7 @@
 import { isString } from 'lodash-es';
 
+import { escapeString } from '@general/utils/string';
+
 import './index.scss';
 
 import TemplateEngine from '../../../TemplateEngine';
@@ -15,7 +17,6 @@ import { clearStringStyles, getStartIntersectionString } from '../../../_utils/s
 import {
   DATA_INDEX_ATTRIBUTE_NAME, SECRET_CHARACTER,
 } from '../constants';
-import { escapeString } from '../../../../../../../general/utils/string';
 
 abstract class BaseInput extends TemplateEngine implements IInput {
   public static getValueString(value: ValueType, params: { secret?: boolean } = {}): string {

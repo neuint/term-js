@@ -12,10 +12,25 @@ const postcss = require('rollup-plugin-postcss');
 const { string } = require('rollup-plugin-string');
 const sourcemaps = require('rollup-plugin-sourcemaps');
 const { terser } = require('rollup-plugin-terser');
+const replacement = require('@rollup/plugin-alias');
+
+const generalPath = path.join(__dirname, 'general');
+const customResolver = nodeResolve({
+  extensions: ['.scss', 'ts', '.js', '.json'],
+});
+
+const alias = {
+  '@styles/theme': path.join(generalPath, 'styles/theme.scss'),
+  '@styles/variables': path.join(generalPath, 'styles/variables.scss'),
+  '@styles/mixins': path.join(generalPath, 'styles/mixins.scss'),
+  '@styles/functions': path.join(generalPath, 'styles/functions.scss'),
+  '@styles/constants': path.join(generalPath, 'styles/constants.scss'),
+  '@styles/components': path.join(generalPath, 'styles/components.scss'),
+};
 
 module.exports = (build, pkg) => ({
   watch: {
-    exclude: ['node_modules/**'],
+    exclude: ['node_modules/**', './**/node_modules/**'],
   },
   external: build ? Object.keys(pkg.dependencies) : [],
   output: [
@@ -30,10 +45,27 @@ module.exports = (build, pkg) => ({
     external(),
     url(),
     svgr(),
+    {
+      name: 'preprocess',
+      transform: (code, id) => {
+        if (!/\.scss$/i.test(id)) return code;
+        Object.keys(alias).forEach((key) => {
+          const regex = new RegExp(key, 'g');
+          // eslint-disable-next-line no-param-reassign
+          code = code.replace(regex, alias[key]);
+        });
+        return code;
+      },
+    },
     string({
-      include: "../**/*.html",
-      exclude: ["../**/index.html"],
+      include: '../**/*.html',
+      exclude: ['../**/index.html'],
     }),
+    replacement({
+      entries: [
+        { find: /^@general/, replacement: generalPath },
+      ],
+    }, customResolver),
     postcss({
       minimize: build,
       use: ['sass'],
@@ -43,6 +75,7 @@ module.exports = (build, pkg) => ({
       ain: true,
       browser: true,
       preferBuiltins: false,
+      extensions: ['.ts', '.json'],
     }),
     copy({
       targets: [
@@ -52,7 +85,7 @@ module.exports = (build, pkg) => ({
     typescript({
       rollupCommonJSResolveHack: true,
       clean: true,
-      tsconfig: build ? 'tsconfig.json' : 'tsconfig.dev.json'
+      tsconfig: build ? 'tsconfig.json' : 'tsconfig.dev.json',
     }),
     commonjs(),
     build ? null : sourcemaps(),

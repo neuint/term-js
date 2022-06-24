@@ -1,7 +1,8 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager, ITemplateEngine } from '@neuint/term-js';
 import { isString, noop } from 'lodash-es';
 
-import './theme.scss';
+import { getRelativePosition } from '@general/utils/viewport';
+import { stopPropagation } from '@general/utils/event';
 
 import IContextMenu from './IContextMenu';
 import ContextMenuView from './ContextMenuView';
@@ -13,8 +14,6 @@ import {
   PLUGIN_NAME,
   POSITION_TARGET_TYPE,
 } from './constants';
-import { getRelativePosition } from '../../../../general/utils/viewport';
-import { stopPropagation } from '../../../../general/utils/event';
 
 export { default as IContextMenu } from './IContextMenu';
 export { PositionType, ShowOptionsType, TargetType } from './types';

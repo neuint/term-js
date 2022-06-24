@@ -1,4 +1,3 @@
-import './_styles/theme.scss';
 import './index.scss';
 import TemplateEngine from './TemplateEngine';
 import { EditLineParamsType, FormattedValueFragmentType, TermConstructorParamsType, ValueType } from './types';

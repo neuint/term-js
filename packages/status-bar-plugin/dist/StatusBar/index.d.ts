@@ -1,5 +1,4 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
-import './theme.scss';
 import IStatusBar from './IStatusBar';
 export { default as IStatusBar } from './IStatusBar';
 declare class StatusBar extends Plugin implements IStatusBar {

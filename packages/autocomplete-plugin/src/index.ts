@@ -1,11 +1,12 @@
 import Term, { ITerm } from '@neuint/term-js';
 
-import Autocomplete from './Autocomplete';
-import IAutocomplete from './Autocomplete/IAutocomplete';
-import { TAB_KEY_CODE, E_KEY_CODE } from './keyCodes';
-import icon from './icon.html';
+import { TAB_KEY_CODE } from '@general/constants/keyCodes';
 
 import './index.scss';
+import icon from './icon.html';
+
+import Autocomplete from './Autocomplete';
+import IAutocomplete from './Autocomplete/IAutocomplete';
 
 const container = document.querySelector('#root');
 if (container) {

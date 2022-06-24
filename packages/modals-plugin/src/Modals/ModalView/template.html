@@ -1,24 +1,28 @@
 <div ref="root" class="ModalView">
-  <div ref="modal" class="ModalView__modal {className}">
-    <If condition="{title || closeButton}">
+  <div ref="modal" class="ModalView__container {className}">
+    <If condition="{title}">
       <div class="ModalView__header">
         <If condition="{title}">
           <div class="ModalView__title">
             <span class="ModalView__titleText">{title}</span>
           </div>
         </If>
-        <If condition="{closeButton}">
-          <button type="button" ref="closeButton" class="ModalView__closeButton">
+      </div>
+    </If>
+    <div ref="modalInner" class="ModalView__modal {className}">
+      <div ref="content" class="ModalView__content">
+        <If condition="{content}">
+          <span class="ModalView__contentText">{content}</span>
+        </If>
+      </div>
+      <If condition="{closeButton}">
+        <button type="button" ref="closeButton" class="ModalView__closeButton">
+          <div class="ModalView__closeIconContainer">
             <svg class="ModalView__closeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="none">
               <path stroke="none" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
-          </button>
-        </If>
-      </div>
-    </If>
-    <div ref="content" class="ModalView__content">
-      <If condition="{content}">
-        <span class="ModalView__contentText">{content}</span>
+          </div>
+        </button>
       </If>
     </div>
     <If condition="{actions}">

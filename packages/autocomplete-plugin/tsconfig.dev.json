@@ -3,10 +3,10 @@
   "compilerOptions": {
     "sourceMap": false,
     "outDir": "./serve",
-    "baseUrl": ".",
     "paths": {
-      "@neuint/term-js": ["../term-js/src/Term"],
-      "@neuint/dropdown-plugin": ["../dropdown-plugin/src/Dropdown"]
+      "@general/*": ["../../../general/*"],
+      "@neuint/term-js": ["../../term-js/src/Term"],
+      "@neuint/dropdown-plugin": ["../../dropdown-plugin/src/Dropdown"]
     }
   }
 }

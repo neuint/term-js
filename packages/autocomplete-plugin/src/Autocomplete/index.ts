@@ -9,7 +9,6 @@ import {
 import Dropdown, { IDropdown } from '@neuint/dropdown-plugin';
 import '@neuint/dropdown-plugin/dist/index.css';
 
-import './theme.scss';
 import './index.scss';
 
 import { PLUGIN_NAME, SHOW_ACTION } from './constants';

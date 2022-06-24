@@ -6,5 +6,4 @@ export const PRIMARY_BUTTON_TYPE = 'submit';
 export const GENERAL_BUTTON_TYPE = 'submit';
 export const DATA_LINE_ATTRIBUTE_NAME = 'modals-plugin-data-line';
 export const DATA_INDEX_ATTRIBUTE_NAME = 'modals-plugin-data-index';
-export const ESC_KEY_CODE = 27;
 export const HIDE_ACTION = 'modals-plugin-hide-action';

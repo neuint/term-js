@@ -1,27 +1,24 @@
-@import '_styles/mixins';
+@import '@styles/variables';
+@import '@styles/theme';
+
+@import '@styles/mixins';
+@import '@styles/functions';
 
 .Term {
-  background-color: var(--main-bg-color);
-  color: var(--main-text-color);
+  background-color: var(--term-js-bg);
+  color: var(--term-js-text);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  @include full-size;
+  @include font;
 
   ::-webkit-scrollbar {
-    width: 0.5rem;
-    height: 0.5rem;
+    @include size(unit(2));
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-bg-color);
-  }
-
-  @include full-size;
-
-  &, input, textarea, select, button, pre {
-    font-family: 'Ubuntu Mono', sans-serif, monospace;
-    font-weight: 400;
-    font-size: 16px;
+    background: var(--term-js-scrollbar-bg);
   }
 
   input, textarea {
@@ -31,21 +28,34 @@
     padding: 0;
 
     &::selection {
-      background-color: var(--main-selectoin-color);
+      background-color: var(--term-js-selectoin);
     }
   }
 
   input:focus, textarea:focus, button:focus, div:focus {
     outline: none;
   }
+
+  &:after {
+    position: absolute;
+    content: "";
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(12, 52, 32, 0.12) 50%, rgba(16, 16, 16, 0.09) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.03));
+    background-size: 100% unit(0.5), unit() 100%;
+    pointer-events: none;
+  }
 }
 
 .Term__header {
-  height: 2.5rem;
-  background-color: var(--header-bg-color);
+  height: unit(10);
+  background-color: var(--term-js-header-bg);
 
-  @include flex-center;
-  @include padding-horizontal(1rem);
+  @include flex-c;
+  @include padding-h(unit(4));
 }
 
 .Term__header--hidden {
@@ -60,8 +70,8 @@
 }
 
 .Term__headerText {
-  font-size: 0.875rem;
-  color: var(--header-text-color);
+  font-size: unit(3.5);
+  color: var(--term-js-header-text);
 }
 
 .Term__content {
@@ -70,19 +80,20 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
+  background: radial-gradient(ellipse, var(--term-js-content-bg) 2%, var(--term-js-content-bg) 93%);
 }
 
 .Term__linesContainer {
   flex: 1;
   overflow: hidden;
 
-  @include margin-vertical(0.25rem);
+  @include margin-v(unit(1));
 }
 
 .Term__line {
-  @include margin-horizontal(0.5rem);
+  @include margin-h(unit(2));
 }
 
 .Term__editLine {
-  margin-bottom: 5rem;
+  margin-bottom: unit(20);
 }

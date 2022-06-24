@@ -1,6 +1,5 @@
-@import '../mixins';
-
-$modals-plugin-border-radius: 0.25rem;
+@import '@styles/mixins';
+@import '@styles/functions';
 
 .ModalView {
   position: absolute;
@@ -8,17 +7,23 @@ $modals-plugin-border-radius: 0.25rem;
   right: 0;
   top: 0;
   bottom: 0;
-  background: var(--modals-plugin-overlay-bg-color);
+  background: var(--term-js-modals-overlay-bg);
 
-  @include flex-center;
+  @include flex-c;
+}
+
+.ModalView__container {
+  max-width: unit(240);
+  max-height: unit(120);
+  min-width: unit(80);
 }
 
 .ModalView__modal {
-  max-width: 20rem;
-  max-height: 30rem;
-  min-width: 20rem;
-  background: var(--modals-plugin-modal-bg-color);
-  border-radius: $modals-plugin-border-radius;
+  position: relative;
+  border: unit(1) solid var(--term-js-modals-border);
+  border-top-width: unit(0.25);
+  border-bottom-width: unit(0.25);
+  background: var(--term-js-modals-bg);
 }
 
 .ModalView__absoluteModal {
@@ -29,93 +34,124 @@ $modals-plugin-border-radius: 0.25rem;
 
 .ModalView__header {
   position: relative;
-  height: 2.5rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  background: var(--modals-plugin-modal-header-bg-color);
-  border-radius: $modals-plugin-border-radius $modals-plugin-border-radius 0 0;
+  height: unit(7.5);
+  padding-left: unit(1);
 
-  @include flex-center;
+  @include flex-cv;
 }
 
 .ModalView__title {
   @include truncate();
+  flex: 1;
   text-align: center;
 }
 
 .ModalView__titleText {
-  font-size: 1.125rem;
-  color: var(--modals-plugin-title-text-color);
+  @include font-size(0.75);
+  color: var(--term-js-modals-header-text);
 }
 
 .ModalView__closeButton {
   position: absolute;
   right: 0;
-  top: 0;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-top-right-radius: $modals-plugin-border-radius;
+  top: unit(-3.75);
+  width: unit(7.5);
+  height: unit(7.5);
 
   @include clear-button;
-  @include flex-center;
+  @include flex-c;
 
-  background: var(--modals-plugin-close-bg);
-
-  &:hover {
-    background: var(--modals-plugin-close-bg-hover);
+  &:hover .ModalView__closeIcon {
+    fill: var(--term-js-modals-close-hover);
+    stroke: var(--term-js-modals-close-hover);
   }
 
-  &:active {
-    background: var(--modals-plugin-close-bg-active);
+  &:active .ModalView__closeIcon {
+    fill: var(--term-js-modals-close-active);
+    stroke: var(--term-js-modals-close-active);
   }
+}
+
+.ModalView__closeIconContainer {
+  @include flex-c;
+  background: var(--term-js-modals-close-bg);
+  width: unit(5);
+  height: unit(5);
 }
 
 .ModalView__closeIcon {
   pointer-events: none;
-  width: 1rem;
-  height: 1rem;
-  fill: var(--modals-plugin-close-color);
-  stroke: var(--modals-plugin-close-color);
+  width: unit(4);
+  height: unit(4);
+  fill: var(--term-js-modals-close);
+  stroke: var(--term-js-modals-close);
 }
 
 .ModalView__actionLine {
   display: flex;
   justify-content: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: unit(4);
 }
 
 .ModalView__content {
-  padding: 1.5rem 1rem;
+  padding: unit(6) unit(4);
+}
+
+.ModalView__actions {
+  position: relative;
+  top: unit(-1.5);
 }
 
 .ModalView__actionButton {
+  position: relative;
   border: none;
   background: none;
   display: inline-block;
   text-align: center;
+  cursor: pointer;
   @include truncate();
-  padding: 0.75rem 0.5rem;
-  min-width: 5rem;
-  margin: 0 0.5rem;
+  padding: unit(3) unit(2);
+  min-width: unit(20);
+  margin: 0 unit(4);
+  color: var(--term-js-modals-btn-text);
+}
+
+.ModalView__actionButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.ModalView__actionButton:not([disabled]) {
+  &:hover {
+    &:before, &:after {
+      position: absolute;
+      top: calc(50% - #{unit(0.25)});
+      content: '';
+      width: unit(0.5);
+      height: unit(0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      background: var(--term-js-modals-btn-color);
+    }
+
+    &:before {
+      left: 0;
+    }
+
+    &:after {
+      right: 0;
+    }
+  }
+
+  &:active {
+    color: var(--term-js-modals-btn-bg-active);
+  }
 }
 
 .ModalView__submitActionButton {
-  background: var(--modals-plugin-button-active-bg);
-  color: var(--modals-plugin-button-active-color);
-
-  &:hover {
-    background: var(--modals-plugin-button-active-bg-hover);
-  }
+  font-weight: 600 !important;
 }
 
 .ModalView__generalActionButton {
-  color: var(--modals-plugin-button-general-color);
-
-  &:hover {
-    background: var(--modals-plugin-button-general-bg-hover);
-  }
-}
-
-.ModalView__actionButton:active {
-  background: var(--modals-plugin-button-bg-active);
+  font-weight: 200 !important;
 }

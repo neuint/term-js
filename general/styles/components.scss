@@ -1,5 +1,5 @@
-@import 'general-mixins';
-@import 'general-theme.scss';
+@import 'mixins';
+@import 'functions';
 
 @mixin overlay($position: fixed) {
   position: $position;
@@ -21,23 +21,23 @@
 @mixin popup {
   background: var(--term-js-popup-bg-color);
   border: 1px solid var(--term-js-popup-border-color);
-  border-radius: 0.25rem;
+  border-radius: unit(1);
   color: var(--term-js-popup-text-color);
 }
 
 @mixin popup-header {
-  @include flex-vertical;
+  @include flex-cv;
   @include font-size(1.15);
-  @include border-top-radius(0.25rem);
+  @include border-top-radius(unit(1));
 
   background: var(--term-js-popup-header-bg-color);
   color: var(--term-js-popup-header-text-color);
-  min-height: 2.5rem;
+  min-height: unit(10);
 }
 
 @mixin context-menu-list {
-  width: 10rem;
-  max-height: 15rem;
+  width: unit(40);
+  max-height: unit(60);
   overflow-y: auto;
 
   @include clear-list;
@@ -50,7 +50,7 @@
 
 @mixin icon-button($container-size: 2rem, $icon-size: 1rem) {
   @include clear-button;
-  @include flex-center;
+  @include flex-c;
 
   min-width: $container-size;
   min-height: $container-size;
@@ -75,13 +75,13 @@
 
 @mixin button($hover-color) {
   @include clear-button;
-  @include padding-horizontal(1rem);
-  @include padding-vertical(0.5rem);
+  @include padding-h(unit(4));
+  @include padding-v(unit(2));
   @include font-size(1);
 
   text-align: center;
-  border-radius: 0.125rem;
-  min-width: 6rem;
+  border-radius: unit(0.5);
+  min-width: unit(24);
 
   @if ($hover-color) {
     &:hover {

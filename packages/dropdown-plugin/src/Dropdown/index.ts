@@ -4,18 +4,17 @@ import ContextMenu, {
 } from '@neuint/context-menu-plugin';
 import '@neuint/context-menu-plugin/dist/index.css';
 
-import './theme.scss';
-
-import IDropdown from './IDropdown';
-import IList from './List/IList';
-import List from './List';
-import { NEXT_ACTION, DOWN_ACTION, UP_ACTION, SUBMIT_ACTION } from './constants/actions';
 import {
   DOWN_KEY_CODE,
   ENTER_KEY_CODE,
   TAB_KEY_CODE,
   UP_KEY_CODE,
-} from './constants/keyCodes';
+} from '@general/constants/keyCodes';
+
+import IDropdown from './IDropdown';
+import IList from './List/IList';
+import List from './List';
+import { NEXT_ACTION, DOWN_ACTION, UP_ACTION, SUBMIT_ACTION } from './constants/actions';
 import { PLUGIN_NAME } from './constants/general';
 
 export { default as IDropdown } from './IDropdown';
