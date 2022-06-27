@@ -86,6 +86,14 @@ class Term extends TemplateEngine implements ITerm {
     else keyboardShortcutsManager.activate();
   }
 
+  public get secret(): boolean {
+    return this.editLine.secret;
+  }
+
+  public set secret(value: boolean) {
+    this.editLine.secret = value;
+  }
+
   private headerField = '';
 
   public get header(): string {
@@ -144,6 +152,8 @@ class Term extends TemplateEngine implements ITerm {
   private lines: ValueType[] = [];
 
   private editLine?: ILine;
+
+  private skipHandler = false;
 
   private listeners: {
     [event: string]: ({ handler: (e: any) => void, options?: EventListenerOptions })[];
@@ -218,10 +228,11 @@ class Term extends TemplateEngine implements ITerm {
 
   public write = (
     data: string | FormattedValueFragmentType,
-    options: { withSubmit?: boolean; duration?: number } = {},
+    options: { withSubmit?: boolean, duration?: number, skipHandler?: boolean } = {},
   ): Promise<boolean> | boolean => {
     const { editLine, isEditing } = this;
-    const { withSubmit, duration = 0 } = options;
+    const { withSubmit, duration = 0, skipHandler } = options;
+    if (skipHandler) this.skipHandler = true;
     if (!editLine || isEditing) return duration ? Promise.resolve(false) : false;
     this.isEditing = true;
     editLine.disabled = true;
@@ -239,6 +250,7 @@ class Term extends TemplateEngine implements ITerm {
             clearInterval(this.writingInterval as unknown as number);
             this.updateEditLine(data, true, original);
             if (withSubmit) editLine.submit();
+            this.skipHandler = false;
             setTimeout(() => editLine.focus(), 0);
             res(true);
           } else if (updatingValue.str !== substr) {
@@ -250,6 +262,7 @@ class Term extends TemplateEngine implements ITerm {
     }
     this.updateEditLine(data, true);
     if (withSubmit) editLine.submit();
+    this.skipHandler = false;
     setTimeout(() => editLine.focus(), 0);
     return true;
   };
@@ -427,7 +440,7 @@ class Term extends TemplateEngine implements ITerm {
     params: { value: string; formattedValue: ValueType; lockString: string },
   ) => {
     const { value, formattedValue, lockString } = params;
-    const { vl, editLine, listeners, history: { list } } = this;
+    const { vl, editLine, listeners, skipHandler, history: { list } } = this;
     const historyValue = value.substring(lockString.length);
     if (historyValue && last(list) !== historyValue && !editLine?.secret) list.push(historyValue);
     if (!editLine) return;
@@ -443,7 +456,7 @@ class Term extends TemplateEngine implements ITerm {
     this.submitTimeout = setTimeout(() => {
       editLine.visible = true;
       editLine.focus();
-      if (listeners[SUBMIT_EVENT_NAME]) {
+      if (listeners[SUBMIT_EVENT_NAME] && !skipHandler) {
         const event = new ValueEvent(value, historyValue || undefined);
         listeners[SUBMIT_EVENT_NAME].forEach((item) => item.handler(event));
       }
