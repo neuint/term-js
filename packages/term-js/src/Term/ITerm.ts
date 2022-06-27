@@ -8,10 +8,11 @@ export default interface ITerm {
   pluginManager: IPluginManager;
   header: string;
   disabled: boolean;
+  secret: boolean;
   value: ValueType;
   write(
     data: string | FormattedValueFragmentType,
-    options?: { withSubmit?: boolean; duration?: number },
+    options?: { withSubmit?: boolean, duration?: number, skipHandler?: boolean }
   ): Promise<boolean> | boolean;
   blur(): void;
   setCaret(caret: string): void;
