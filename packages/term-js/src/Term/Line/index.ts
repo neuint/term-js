@@ -104,8 +104,8 @@ class Line extends TemplateEngine implements ILine {
   }
 
   private get characterSize(): { width: number; height: number } {
-    const { offsetWidth, offsetHeight } = this.getRef('helpContainer') as HTMLElement;
-    return { width: offsetWidth, height: offsetHeight };
+    const helpContainer = this.getRef('helpContainer') as HTMLElement;
+    return helpContainer.getBoundingClientRect();
   }
 
   private inputField?: IInput;
@@ -356,14 +356,14 @@ class Line extends TemplateEngine implements ILine {
   };
 
   private updateInputSize = () => {
-    const { width } = this.characterSize;
+    const { width: characterWidth } = this.characterSize;
     const inputContainer = this.getRef('inputContainer');
     const input = this.getRef('input') as HTMLInputElement;
-    const { offsetWidth } = inputContainer as HTMLElement;
+    const { width } = (inputContainer as HTMLElement).getBoundingClientRect();
     if (!input) return this.updateRowsCount(2);
     const value = this.editable ? input.value : input.innerHTML;
-    if (!width || !value || !offsetWidth) return this.updateRowsCount(2);
-    const rowLength = Math.floor(offsetWidth / width);
+    if (!characterWidth || !value || !width) return this.updateRowsCount(2);
+    const rowLength = Math.floor(width / characterWidth);
     return this.updateRowsCount(Math.ceil(value.length / rowLength) + 1);
   };
 
@@ -401,18 +401,18 @@ class Line extends TemplateEngine implements ILine {
 
   private showCaret(caretPosition: number) {
     const { caret, inputField } = this;
-    const { width, height } = this.characterSize;
+    const { width: characterWidth, height: characterHeight } = this.characterSize;
     const inputContainer = this.getRef('inputContainer');
     if (!caret || !inputContainer || !inputField) return;
-    const { offsetWidth } = inputContainer as HTMLElement;
+    const { width } = (inputContainer as HTMLElement).getBoundingClientRect();
     const value = inputField.getSimpleValue(false);
-    const rowLength = Math.floor(offsetWidth / width);
+    const rowLength = Math.floor(width / characterWidth);
     const row = Math.floor(caretPosition / rowLength);
     caret.hidden = false;
     const character = value[caretPosition] === ' '
       ? NON_BREAKING_SPACE : value[caretPosition] || NON_BREAKING_SPACE;
-    const top = Math.round(height * row);
-    const left = Math.round((caretPosition - row * rowLength) * width);
+    const top = Math.round(characterHeight * row);
+    const left = Math.round((caretPosition - row * rowLength) * characterWidth);
     caret.setPosition(left, top);
     caret.setValue(character);
   }
