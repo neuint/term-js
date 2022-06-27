@@ -20,9 +20,7 @@
 
 .ModalView__modal {
   position: relative;
-  border: unit(1) solid var(--term-js-modals-border);
-  border-top-width: unit(0.25);
-  border-bottom-width: unit(0.25);
+  border: unit(0.25) solid var(--term-js-modals-border);
   background: var(--term-js-modals-bg);
 }
 

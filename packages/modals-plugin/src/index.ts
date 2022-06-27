@@ -26,7 +26,6 @@ if (container) {
   plugin.show({
     escHide: true,
     overlayHide: true,
-    closeButton: true,
     content: 'Test 2',
     title: 'Test 2',
     position: TERMINAL_CENTER_POSITION,
