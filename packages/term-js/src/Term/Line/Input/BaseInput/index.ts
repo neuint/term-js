@@ -115,7 +115,7 @@ abstract class BaseInput extends TemplateEngine implements IInput {
   public get characterSize(): { width: number; height: number } {
     const { characterContainer } = this;
     return characterContainer
-      ? { width: characterContainer.offsetWidth, height: characterContainer.offsetHeight }
+      ? characterContainer.getBoundingClientRect()
       : { width: this.characterWidth, height: this.characterHeight };
   }
 
