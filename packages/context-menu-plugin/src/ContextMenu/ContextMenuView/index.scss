@@ -6,8 +6,6 @@
   top: 0;
   background: var(--term-js-context-menu-bg);
   color: var(--term-js-context-menu-color);
-  border: unit(1) solid var(--term-js-context-menu-border);
-  border-top-width: unit(0.25);
-  border-bottom-width: unit(0.25);
+  border: unit(0.25) solid var(--term-js-context-menu-border);
   visibility: hidden;
 }
