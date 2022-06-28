@@ -1,12 +1,15 @@
 {
   "private": true,
-  "version": "0.1.0",
+  "version": "0.3.0",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "license": "MIT",
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "release": "sh scripts/release/release.sh"
+  },
   "devDependencies": {
     "@modular-css/rollup": "^28.1.4",
     "@rollup/plugin-alias": "^3.1.9",
