@@ -253,7 +253,7 @@ class Term extends TemplateEngine implements ITerm {
     options: { withSubmit?: boolean, duration?: number, skipHandler?: boolean } = {},
   ): Promise<boolean> | boolean => {
     const { editLine, isEditing } = this;
-    const { withSubmit, duration = 0, skipHandler } = options;
+    const { withSubmit, duration = 0, skipHandler = true } = options;
     if (skipHandler) this.skipHandler = true;
     if (!editLine || isEditing) return duration ? Promise.resolve(false) : false;
     this.isEditing = true;
