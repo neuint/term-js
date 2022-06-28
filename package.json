@@ -8,7 +8,8 @@
     "packages/*"
   ],
   "scripts": {
-    "release": "sh scripts/release/release.sh"
+    "release": "sh scripts/release/release.sh",
+    "publish": "sh scripts/publish/publish.sh"
   },
   "devDependencies": {
     "@modular-css/rollup": "^28.1.4",
