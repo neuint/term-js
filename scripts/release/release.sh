@@ -25,3 +25,9 @@ yarn build
 
 cd ../modals-plugin
 yarn build
+
+cd ../..
+
+git add .
+
+git commit -m "build"
