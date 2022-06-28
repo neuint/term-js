@@ -6,7 +6,7 @@ import ITerm from './Term/ITerm';
 const container = document.querySelector('.content');
 let email = '';
 let pass = '';
-const re = /^(([^<>()[\].,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+const re = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
 if (container) {
   const term = new Term(container, {
     header: 'Term',
@@ -23,7 +23,7 @@ if (container) {
   });
   term.addEventListener('submit', (data) => {
     const { typedValue } = data;
-    if (!email) {
+    if (!email && false) {
       if (re.test(typedValue)) {
         email = typedValue;
         (term.write({ str: 'Enter password: ', lock: true, className: 'test' }) as Promise<boolean>).then(() => {
@@ -31,7 +31,7 @@ if (container) {
         });
       } else {
         (term.write(
-          { str: 'Invalid email', className: 'denied' }, { withSubmit: true, skipHandler: true },
+          { str: 'Invalid email', className: 'denied' }, { withSubmit: true },
         ) as Promise<boolean>).then(() => {
           return term.write({ str: 'Enter email: ', lock: true, className: 'test' }) as Promise<boolean>;
         });
