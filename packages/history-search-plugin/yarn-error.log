@@ -1,0 +1,53 @@
+Arguments: 
+  /Users/pashagusar/.nvm/versions/node/v14.18.2/bin/node /Users/pashagusar/.nvm/versions/node/v14.18.2/bin/yarn build
+
+PATH: 
+  /Users/pashagusar/Developer/term-js/node_modules/.bin:/Users/pashagusar/Developer/node_modules/.bin:/Users/pashagusar/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/Users/pashagusar/.nvm/versions/node/v14.18.2/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/pashagusar/.nvm/versions/node/v14.18.2/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Library/Apple/usr/bin:/Users/pashagusar/.cargo/bin
+
+Yarn version: 
+  1.22.17
+
+Node version: 
+  14.18.2
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/pashagusar/Developer/term-js/package.json: Unexpected token a in JSON at position 657
+      at JSON.parse (<anonymous>)
+      at /Users/pashagusar/.nvm/versions/node/v14.18.2/lib/node_modules/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/Users/pashagusar/.nvm/versions/node/v14.18.2/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /Users/pashagusar/.nvm/versions/node/v14.18.2/lib/node_modules/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "@neuint/history-search-plugin",
+    "version": "0.1.1",
+    "description": "History search for the terminal",
+    "repository": "git@github.com:neuint/term-js.git",
+    "author": "Pavlo Gusar <p.gusar@yahoo.com>",
+    "main": "dist/index.js",
+    "module": "dist/index.es.js",
+    "jsnext:main": "dist/index.es.js",
+    "types": "dist/HistorySearch/index.d.ts",
+    "license": "MIT",
+    "scripts": {
+      "dev": "rollup -c -w",
+      "build": "rollup -c",
+      "test": "jest",
+      "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
+    },
+    "dependencies": {
+      "@neuint/autocomplete-plugin": "^0.1.1",
+      "@neuint/term-js": "^0.1.13",
+      "lodash-es": "^4.17.21"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

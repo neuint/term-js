@@ -17,9 +17,12 @@ export { default as IPlugin } from './PluginManager/Plugin/IPlugin';
 export { default as TemplateEngine } from './TemplateEngine';
 export { default as ITemplateEngine } from './TemplateEngine/ITemplateEngine';
 declare class Term extends TemplateEngine implements ITerm {
+    private static processParams;
     private isDisabled;
     get disabled(): boolean;
     set disabled(val: boolean);
+    get secret(): boolean;
+    set secret(value: boolean);
     private headerField;
     get header(): string;
     set header(val: string);
@@ -38,6 +41,7 @@ declare class Term extends TemplateEngine implements ITerm {
     private heightCache;
     private lines;
     private editLine?;
+    private skipHandler;
     private listeners;
     constructor(container: Element, params?: TermConstructorParamsType);
     addEventListener: <K extends keyof ITermEventMap>(type: K, handler: (e: ITermEventMap[K]) => void, options?: EventListenerOptions) => void;
@@ -50,6 +54,7 @@ declare class Term extends TemplateEngine implements ITerm {
     write: (data: string | FormattedValueFragmentType, options?: {
         withSubmit?: boolean;
         duration?: number;
+        skipHandler?: boolean;
     }) => Promise<boolean> | boolean;
     setCaret(caret: string): void;
     setHeader(text: string): void;

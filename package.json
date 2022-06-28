@@ -7,6 +7,9 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "release": "sh scripts/release/release.sh"
+  },
   "devDependencies": {
     "@modular-css/rollup": "^28.1.4",
     "@rollup/plugin-alias": "^3.1.9",
