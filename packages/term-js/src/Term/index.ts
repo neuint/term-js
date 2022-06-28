@@ -71,6 +71,26 @@ export { default as TemplateEngine } from './TemplateEngine';
 export { default as ITemplateEngine } from './TemplateEngine/ITemplateEngine';
 
 class Term extends TemplateEngine implements ITerm {
+  private static processParams(
+    params: TermConstructorParamsType,
+  ): TermConstructorParamsType {
+    const { editLine } = params;
+    if (isString(editLine)) return params;
+    const { secret, value } = editLine as { value: ValueType; secret?: boolean };
+    if (!secret) return params;
+    let processedValue = value;
+    if (isString(value)) processedValue = value.split('');
+    if (isArray(value)) {
+      processedValue = value.reduce((acc, item) => {
+        acc.push(...(isString(item) ? item.split('') : item.str.split('').map((char: string) => {
+          return { ...item, str: char };
+        })));
+        return acc;
+      }, []);
+    }
+    return { ...params, editLine: { ...editLine, value: processedValue } };
+  }
+
   private isDisabled = false;
 
   public get disabled(): boolean {
@@ -161,6 +181,8 @@ class Term extends TemplateEngine implements ITerm {
 
   constructor(container: Element, params: TermConstructorParamsType = { lines: [], editLine: '' }) {
     super(template, container);
+    // eslint-disable-next-line no-param-reassign
+    params = Term.processParams(params);
     const { virtualizedTopOffset, virtualizedBottomOffset, header } = params;
     this.headerField = header || '';
     this.init(container, params);
