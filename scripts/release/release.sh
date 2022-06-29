@@ -1,6 +1,6 @@
 #!/bin/bash
 
-node ./scripts/release/updateVersion.js
+node ./scripts/release/updateVersion.js $1
 
 cd packages/term-js
 yarn build
