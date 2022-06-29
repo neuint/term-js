@@ -1,6 +1,6 @@
 {
   "name": "@neuint/dropdown-plugin",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "Dropdown for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/context-menu-plugin": "^0.3.0",
-    "@neuint/term-js": "^0.3.0",
+    "@neuint/context-menu-plugin": "^0.3.2",
+    "@neuint/term-js": "^0.3.2",
     "lodash-es": "^4.17.21"
   }
 }
