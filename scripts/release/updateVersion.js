@@ -3,6 +3,20 @@ const path = require('path');
 const { ROOT_DIR } = require('./constants');
 const { readFile, writeFile } = require('../utils/fs');
 
+const args = process.argv;
+
+const getNewVersion = (version) => {
+  let [major, minor, patch] = version.split('.').map(Number);
+  if (args.includes('-major')) {
+    major += 1;
+  } else if (args.includes('-minor')) {
+    minor += 1;
+  } else {
+    patch += 1;
+  }
+  return [major, minor, patch].join('.');
+};
+
 const PACKAGES = [
   'term-js',
   'status-bar-plugin',
@@ -28,11 +42,9 @@ const updatePackageVersion = async (name, newVersion) => {
 };
 
 const start = async () => {
-  console.log(path.join(ROOT_DIR, 'package.json'));
   const rootPackage = await readFile(path.join(ROOT_DIR, 'package.json'), true);
   const { version } = rootPackage;
-  const [major, minor] = version.split('.').map(Number);
-  const newVersion = `${major}.${minor + 1}.0`;
+  const newVersion = getNewVersion(version);
   rootPackage.version = newVersion;
   await writeFile(path.join(ROOT_DIR, 'package.json'), JSON.stringify(rootPackage, null, 2));
   return Promise.all(PACKAGES.map((name) => updatePackageVersion(name, newVersion)));

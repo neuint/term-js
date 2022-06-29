@@ -1,6 +1,15 @@
 @import '@styles/mixins';
 @import '@styles/functions';
 
+@keyframes ModalView__overlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .ModalView {
   position: absolute;
   left: 0;
@@ -8,6 +17,8 @@
   top: 0;
   bottom: 0;
   background: var(--term-js-modals-overlay-bg);
+  opacity: 1;
+  animation: ModalView__overlay ease-in-out 1 0.08s;
 
   @include flex-c;
 }
@@ -16,6 +27,8 @@
   max-width: unit(240);
   max-height: unit(120);
   min-width: unit(80);
+  opacity: 1;
+  @include blink-animation(ModalView__container);
 }
 
 .ModalView__modal {
