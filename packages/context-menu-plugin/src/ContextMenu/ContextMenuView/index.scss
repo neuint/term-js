@@ -9,5 +9,4 @@
   color: var(--term-js-context-menu-color);
   border: unit(0.25) solid var(--term-js-context-menu-border);
   visibility: hidden;
-  @include blink-animation(ContextMenuView__container);
 }
