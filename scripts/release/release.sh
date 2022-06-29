@@ -3,6 +3,7 @@
 node ./scripts/release/updateVersion.js $1
 
 cd packages/term-js
+yarn install
 yarn build
 git add .
 git commit -m "build term-js"
