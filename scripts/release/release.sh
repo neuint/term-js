@@ -59,6 +59,13 @@ git add .
 git commit -m "build modals-plugin"
 npm publish --access public
 
+cd ../flows-plugin
+yarn install
+yarn build
+git add .
+git commit -m "build flows-plugin"
+npm publish --access public
+
 cd ../..
 
 git add .

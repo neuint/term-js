@@ -1,7 +1,7 @@
 {
   "name": "@neuint/flows-plugin",
   "version": "0.3.3",
-  "description": "Decision tree for the terminal",
+  "description": "Commands flows for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "main": "dist/index.js",
