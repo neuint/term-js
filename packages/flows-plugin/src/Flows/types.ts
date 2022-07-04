@@ -1,13 +1,18 @@
-import { ValueType } from '@neuint/term-js';
+import { FormattedValueFragmentType } from '@neuint/term-js';
+
+export type StepResultType = {
+  to?: string,
+  data?: string | FormattedValueFragmentType,
+  duration?: number,
+  withSubmit?: boolean,
+};
 
 export type FlowType = Array<{
-  onEnter?: () => void;
-  write: { data: ValueType, duration?: number, withSubmit?: boolean };
+  onEnter?: (data: { [key: string]: string }) => void;
+  write: { data: string | FormattedValueFragmentType, duration?: number, withSubmit?: boolean };
   variableName: string;
-  skipEmpty?: boolean;
-  handler: (data: { [key: string]: string }) => Promise<{
-    to?: string, write?: ValueType, duration?: number, withSubmit?: boolean,
-  } | undefined>;
+  secret?: boolean;
+  handler: (data: { [key: string]: string }) => Promise<StepResultType | undefined>;
 }>;
 
 export type FlowsType = { [key: string]: FlowType };

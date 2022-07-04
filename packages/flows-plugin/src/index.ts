@@ -1,5 +1,5 @@
 import { identity } from 'lodash-es';
-import Term from '@neuint/term-js';
+import Term, { FormattedValueFragmentType } from '@neuint/term-js';
 
 import Flows, { FlowsType } from './Flows';
 
@@ -7,22 +7,34 @@ import './index.scss';
 
 const container = document.querySelector('#root');
 
+const getWrite = (
+  text: string, lock = false, withSubmit = false,
+): { data: string | FormattedValueFragmentType, duration: number, withSubmit: boolean } => {
+  return {
+    withSubmit,
+    data: { str: text, lock },
+    duration: Math.round((text.length / 68) * 250),
+  };
+};
+
 const flows: FlowsType = {
-  signIn: [
+  'sign in': [
     {
-      write: { data: 'enter email: ', duration: 200 },
+      write: getWrite('enter email: ', true),
       variableName: 'email',
-      skipEmpty: true,
       handler: (data) => {
-        return Promise.resolve(data.email.includes('@') ? undefined : { write: 'Incorrect email' });
+        return Promise.resolve(data.email.includes('@')
+          ? undefined
+          : { ...getWrite('Incorrect email', false, true), to: '0' });
       },
     },
     {
-      write: { data: 'enter password: ', duration: 200 },
+      write: getWrite('enter password: ', true),
       variableName: 'password',
-      skipEmpty: true,
       handler: (data) => {
-        return Promise.resolve(data.email.includes('@') ? undefined : { write: 'Incorrect email' });
+        return Promise.resolve(data.email.includes('@')
+          ? undefined
+          : { ...getWrite('Incorrect password', false, true), to: '1' });
       },
     },
   ],
@@ -37,6 +49,7 @@ if (container) {
     lines: [].map(identity),
   });
   const plugin = new Flows(term.pluginManager);
+  plugin.flows = flows;
   term.pluginManager.register(plugin);
   term.setHeader('flows-plugin');
   (window as unknown as { term: Term }).term = term;
