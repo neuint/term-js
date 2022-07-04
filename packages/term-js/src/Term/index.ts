@@ -309,10 +309,10 @@ class Term extends TemplateEngine implements ITerm {
     this.updateTermInfo();
   }
 
-  public blur() {
+  public blur = () => {
     const { editLine } = this;
     if (editLine) editLine.blur();
-  }
+  };
 
   private updateEditLine(
     data: string | FormattedValueFragmentType, stopEdit?: boolean, original?: ValueType,
@@ -620,6 +620,7 @@ class Term extends TemplateEngine implements ITerm {
     const { params: { header } } = this;
     return {
       title: header,
+      write: this.write,
       elements: this.getTermInfoElements(),
       label: this.getTermInfoLabel(),
       caret: this.getTermInfoCaret(),
