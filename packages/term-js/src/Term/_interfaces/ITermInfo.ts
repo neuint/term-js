@@ -1,4 +1,5 @@
 import {
+  FormattedValueFragmentType,
   TermInfoCaretType,
   TermInfoEditType,
   TermInfoElementsType,
@@ -15,6 +16,10 @@ export default interface ITermInfo {
   edit: TermInfoEditType;
   lines: TermInfoLinesTypes;
   history: string[];
+  write(
+    data: string | FormattedValueFragmentType,
+    options?: { withSubmit?: boolean, duration?: number, skipHandler?: boolean }
+  ): Promise<boolean> | boolean;
   addEventListener<K extends keyof ITermEventMap>(
     type: K,
     handler: (e: ITermEventMap[K]) => void,

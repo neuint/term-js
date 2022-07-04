@@ -628,6 +628,7 @@ class Term extends TemplateEngine implements ITerm {
       history: this.history.list,
       addEventListener: this.addEventListener,
       removeEventListener: this.removeEventListener,
+      write: this.write,
     };
   }
 
