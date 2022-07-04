@@ -31,6 +31,7 @@ const flows: FlowsType = {
     {
       write: getWrite('enter password: ', true),
       variableName: 'password',
+      secret: true,
       handler: (data) => {
         return Promise.resolve(data.email.includes('@')
           ? undefined
@@ -53,4 +54,5 @@ if (container) {
   term.pluginManager.register(plugin);
   term.setHeader('flows-plugin');
   (window as unknown as { term: Term }).term = term;
+  (window as any).plugin = plugin;
 }

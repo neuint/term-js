@@ -1330,16 +1330,6 @@
     "@rollup/pluginutils" "^4.1.2"
     slash "^3.0.0"
 
-"@neuint/term-js@^0.3.4":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@neuint/term-js/-/term-js-0.3.4.tgz#c86cffe4a8f72186b5da56b34ab5bddb34d493b6"
-  integrity sha512-sx47YArSkizv+XxBp+bwn5mV/d1iOLqSj4scNOxbIlaCepEd1TP+Qpo5LAi9bvzTvXtvdyd/BDXGnejoQehbbQ==
-  dependencies:
-    key-layers-js "^1.1.1"
-    lodash-es "^4.17.21"
-    resize-observer-polyfill "^1.5.1"
-    uuid "^8.3.2"
-
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
