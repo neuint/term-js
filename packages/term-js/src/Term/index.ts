@@ -629,6 +629,7 @@ class Term extends TemplateEngine implements ITerm {
       addEventListener: this.addEventListener,
       removeEventListener: this.removeEventListener,
       write: this.write,
+      secret: (val: boolean) => this.secret = val,
     };
   }
 

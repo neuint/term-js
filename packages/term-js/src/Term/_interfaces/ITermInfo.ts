@@ -16,6 +16,7 @@ export default interface ITermInfo {
   edit: TermInfoEditType;
   lines: TermInfoLinesTypes;
   history: string[];
+  secret: (val: boolean) => void;
   write(
     data: string | FormattedValueFragmentType,
     options?: { withSubmit?: boolean, duration?: number, skipHandler?: boolean }
