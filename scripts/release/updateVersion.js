@@ -26,6 +26,7 @@ const PACKAGES = [
   'history-search-plugin',
   'command-search-plugin',
   'modals-plugin',
+  'flows-plugin',
 ];
 
 const updatePackageVersion = async (name, newVersion) => {
