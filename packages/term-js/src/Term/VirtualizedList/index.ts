@@ -160,7 +160,7 @@ class VirtualizedList<T extends IVirtualizedItem<any>> extends TemplateEngine
     if (!root) return;
     this.restoreScrollTop();
     const viewportStart = Math.max(root.scrollTop - topOffset, 0);
-    const visibleViewportEnd = viewportStart + root.offsetHeight + topOffset;
+    const visibleViewportEnd = viewportStart + root.getBoundingClientRect().height + topOffset;
     const viewportEnd = visibleViewportEnd + bottomOffset;
     let itemOffsetStart = 0;
     let itemOffsetEnd = 0;
