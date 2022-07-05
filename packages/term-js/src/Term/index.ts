@@ -482,7 +482,7 @@ class Term extends TemplateEngine implements ITerm {
         const event = new ValueEvent(value, historyValue || undefined);
         listeners[SUBMIT_EVENT_NAME].forEach((item) => item.handler(event));
       }
-    }, 10);
+    }, 1);
   };
 
   private changeHandler = (value: string) => {

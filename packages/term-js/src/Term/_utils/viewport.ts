@@ -22,7 +22,7 @@ export const getItemSize = (() => {
   return (container?: HTMLElement, save = false): SizeType => {
     const target = container || document.body;
     const textContainer = addElement(target);
-    const size = { width: textContainer.offsetWidth, height: textContainer.offsetHeight };
+    const size = textContainer.getBoundingClientRect();
     if (container && save) {
       if (!cache.has(target)) cache.set(target, textContainer);
       return size;
