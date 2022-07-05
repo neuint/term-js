@@ -66,6 +66,13 @@ git add .
 git commit -m "build flows-plugin"
 npm publish --access public
 
+cd ../term-js-react
+yarn install
+yarn build
+git add .
+git commit -m "build term-js-react"
+npm publish --access public
+
 cd ../..
 
 git add .
