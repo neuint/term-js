@@ -1,13 +1,13 @@
 {
-  "name": "@neuint/dropdown-plugin",
+  "name": "@neuint/term-js-raect",
   "version": "0.3.8",
-  "description": "Dropdown for the terminal",
+  "description": "Simple terminal react component",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
-  "types": "dist/Dropdown/index.d.ts",
+  "types": "dist/TermComponent/index.d.ts",
   "license": "MIT",
   "scripts": {
     "dev": "rollup -c -w",
@@ -16,8 +16,9 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/context-menu-plugin": "^0.3.8",
     "@neuint/term-js": "^0.3.8",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
