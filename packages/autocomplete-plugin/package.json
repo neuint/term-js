@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/dropdown-plugin": "^0.3.6",
-    "@neuint/term-js": "^0.3.6",
+    "@neuint/dropdown-plugin": "^0.3.7",
+    "@neuint/term-js": "^0.3.7",
     "lodash-es": "^4.17.21",
     "uuid": "^8.3.2"
   }
