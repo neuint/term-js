@@ -30,6 +30,15 @@ ncu -u
 cd ../flows-plugin
 ncu -u
 
+cd ../term-js-react
+ncu -u
+
+cd ../status-bar-plugin-react
+ncu -u
+
+cd ../context-menu-plugin-react
+ncu -u
+
 cd ../..
 
 yarn install
