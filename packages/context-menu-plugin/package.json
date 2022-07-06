@@ -1,6 +1,6 @@
 {
   "name": "@neuint/context-menu-plugin",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Context menu for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
