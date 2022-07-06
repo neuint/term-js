@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "./serve",
+    "paths": {
+      "@neuint/term-js": ["../../term-js/src/Term"],
+      "@general/*": ["../../../general/*"]
+    }
+  }
+}

@@ -28,7 +28,7 @@ const alias = {
   '@styles/components': path.join(generalPath, 'styles/components.scss'),
 };
 
-module.exports = (build, pkg) => ({
+module.exports = (build, pkg, commonProps) => ({
   watch: {
     exclude: ['node_modules/**', './**/node_modules/**'],
   },
@@ -75,7 +75,7 @@ module.exports = (build, pkg) => ({
       ain: true,
       browser: true,
       preferBuiltins: false,
-      extensions: ['.ts', '.json'],
+      extensions: ['.ts', '.tsx', '.json'],
     }),
     copy({
       targets: [
@@ -87,7 +87,7 @@ module.exports = (build, pkg) => ({
       clean: true,
       tsconfig: build ? 'tsconfig.json' : 'tsconfig.dev.json',
     }),
-    commonjs(),
+    commonjs(commonProps),
     build ? null : sourcemaps(),
     build ? terser() : null,
     build ? null : serve({

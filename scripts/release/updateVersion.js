@@ -27,6 +27,7 @@ const PACKAGES = [
   'command-search-plugin',
   'modals-plugin',
   'flows-plugin',
+  'term-js-react',
 ];
 
 const updatePackageVersion = async (name, newVersion) => {
