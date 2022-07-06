@@ -13,7 +13,7 @@ declare type FullWriteType = {
     data: WriteItemType | WriteItemType[];
     duration?: number;
 };
-declare type WriteType = WriteItemType | FullWriteType;
+export declare type WriteType = WriteItemType | FullWriteType;
 declare type PropsType = {
     className?: string;
     header?: string;
