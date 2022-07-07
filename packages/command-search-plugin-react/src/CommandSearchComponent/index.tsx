@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect } from 'react';
+import { FC, useRef, useEffect } from 'react';
 import CommandSearch, { ICommandSearch } from '@neuint/command-search-plugin';
 import { ITerm } from '@neuint/term-js';
 

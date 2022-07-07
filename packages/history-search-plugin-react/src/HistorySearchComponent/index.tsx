@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect } from 'react';
+import { FC, useRef, useEffect } from 'react';
 import HistorySearch from '@neuint/history-search-plugin';
 import { ITerm, IPlugin } from '@neuint/term-js';
 

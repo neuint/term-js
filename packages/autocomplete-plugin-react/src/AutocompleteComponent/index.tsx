@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect } from 'react';
+import { FC, useRef, useEffect } from 'react';
 import Autocomplete, { IAutocomplete } from '@neuint/autocomplete-plugin';
 import { ITerm, ActionShortcutType } from '@neuint/term-js';
 
