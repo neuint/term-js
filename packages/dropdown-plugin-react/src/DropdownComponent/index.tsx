@@ -32,7 +32,11 @@ const DropdownComponent: FC<PropsType> = (props: PropsType) => {
   }, []);
 
   useEffect(() => {
-    term.pluginManager.register(plugin.current);
+    const { current } = plugin;
+    term.pluginManager.register(current);
+    return () => {
+      term.pluginManager.unregister(current);
+    };
   }, [term.pluginManager]);
 
   useEffect(() => {

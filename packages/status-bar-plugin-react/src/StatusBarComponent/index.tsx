@@ -12,7 +12,11 @@ const StatusBarComponent: FC<PropsType> = ({ text = '', icon = '', term }: Props
   const plugin = useRef<IStatusBar>(new StatusBar(term.pluginManager));
 
   useEffect(() => {
-    term.pluginManager.register(plugin.current);
+    const { current } = plugin;
+    term.pluginManager.register(current);
+    return () => {
+      term.pluginManager.unregister(current);
+    };
   }, [term.pluginManager]);
 
   useEffect(() => {

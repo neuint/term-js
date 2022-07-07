@@ -10,6 +10,8 @@ import icon from './icon.html';
 import IHistorySearch from './IHistorySearch';
 import { PLUGIN_NAME, HISTORY_KEY_CODE, IS_MAC } from './constants';
 
+export type { default as IHistorySearch } from './IHistorySearch';
+
 class HistorySearch extends Plugin implements IHistorySearch {
   public readonly name: string = PLUGIN_NAME;
 

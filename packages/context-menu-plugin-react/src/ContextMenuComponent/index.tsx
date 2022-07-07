@@ -22,7 +22,11 @@ const ContextMenuComponent: FC<PropsType> = (props: PropsType) => {
   const params = useRef<ParamsType>({ target, escHide, aroundClickHide, onHide });
 
   useEffect(() => {
-    term.pluginManager.register(plugin.current);
+    const { current } = plugin;
+    term.pluginManager.register(current);
+    return () => {
+      term.pluginManager.unregister(current);
+    };
   }, [term.pluginManager]);
 
   useEffect(() => {

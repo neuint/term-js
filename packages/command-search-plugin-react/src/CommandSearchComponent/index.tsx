@@ -11,7 +11,11 @@ const CommandSearchComponent: FC<PropsType> = ({ term, commands }: PropsType) =>
   const plugin = useRef<ICommandSearch>(new CommandSearch(term.pluginManager));
 
   useEffect(() => {
-    term.pluginManager.register(plugin.current);
+    const { current } = plugin;
+    term.pluginManager.register(current);
+    return () => {
+      term.pluginManager.unregister(current);
+    };
   }, [term.pluginManager]);
 
   useEffect(() => {

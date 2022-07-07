@@ -22,7 +22,11 @@ const AutocompleteComponent: FC<PropsType> = (props: PropsType) => {
   const removeList = useRef<Array<() => void>>([]);
 
   useEffect(() => {
-    term.pluginManager.register(plugin.current);
+    const { current } = plugin;
+    term.pluginManager.register(current);
+    return () => {
+      term.pluginManager.unregister(current);
+    };
   }, [term.pluginManager]);
 
   useEffect(() => {
