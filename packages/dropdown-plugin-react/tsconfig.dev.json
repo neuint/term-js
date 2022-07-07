@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "./serve",
+    "paths": {
+      "@neuint/term-js": ["../../term-js/src/Term"],
+      "@neuint/term-js-react": ["../../term-js-react/src/TermComponent"],
+      "@neuint/context-menu-plugin": ["../../context-menu-plugin/src/ContextMenu"],
+      "@neuint/dropdown-plugin": ["../../dropdown-plugin/src/Dropdown"],
+      "@general/*": ["../../../general/*"]
+    }
+  }
+}
