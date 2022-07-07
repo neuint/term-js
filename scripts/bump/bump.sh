@@ -39,6 +39,12 @@ ncu -u
 cd ../context-menu-plugin-react
 ncu -u
 
+cd ../dropdown-plugin-react
+ncu -u
+
+cd ../autocomplete-plugin-react
+ncu -u
+
 cd ../..
 
 yarn install

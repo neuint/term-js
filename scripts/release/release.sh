@@ -73,6 +73,34 @@ git add .
 git commit -m "build term-js-react"
 npm publish --access public
 
+cd ../status-bar-plugin-react
+yarn install
+yarn build
+git add .
+git commit -m "build status-bar-plugin-react"
+npm publish --access public
+
+cd ../context-menu-plugin-react
+yarn install
+yarn build
+git add .
+git commit -m "build context-menu-plugin-react"
+npm publish --access public
+
+cd ../dropdown-plugin-react
+yarn install
+yarn build
+git add .
+git commit -m "build dropdown-plugin-react"
+npm publish --access public
+
+cd ../autocomplete-plugin-react
+yarn install
+yarn build
+git add .
+git commit -m "build autocomplete-plugin-react"
+npm publish --access public
+
 cd ../..
 
 git add .

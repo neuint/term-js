@@ -28,6 +28,10 @@ const PACKAGES = [
   'modals-plugin',
   'flows-plugin',
   'term-js-react',
+  'status-bar-plugin-react',
+  'context-menu-plugin-react',
+  'dropdown-plugin-react',
+  'autocomplete-plugin-react',
 ];
 
 const updatePackageVersion = async (name, newVersion) => {
