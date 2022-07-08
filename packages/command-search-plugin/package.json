@@ -1,12 +1,12 @@
 {
   "name": "@neuint/command-search-plugin",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "description": "Command autocomplete for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.js",
+  "jsnext:main": "dist/index.js",
   "types": "dist/CommandSearch/index.d.ts",
   "license": "MIT",
   "scripts": {
@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/autocomplete-plugin": "^0.3.11",
-    "@neuint/term-js": "^0.3.11",
+    "@neuint/autocomplete-plugin": "^0.3.12",
+    "@neuint/term-js": "^0.3.12",
     "lodash-es": "^4.17.21"
   }
 }
