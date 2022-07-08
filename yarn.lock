@@ -1684,7 +1684,7 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
 
-"@types/lodash-es@^4.17.3":
+"@types/lodash-es@^4.17.6":
   version "4.17.6"
   resolved "https://registry.yarnpkg.com/@types/lodash-es/-/lodash-es-4.17.6.tgz#c2ed4c8320ffa6f11b43eb89e9eaeec65966a0a0"
   integrity sha512-R+zTeVUKDdfoRxpAryaQNRKk3105Rrgx2CFRClIgRGaqDTdjsm8h6IYA8ir584W3ePzkZfst5xIgDwYrlh9HLg==
@@ -5291,14 +5291,14 @@ just-extend@^6.0.1:
   resolved "https://registry.yarnpkg.com/just-extend/-/just-extend-6.0.1.tgz#e56276a36cbc360713612b9445f8753a7c73dd50"
   integrity sha512-CrwyGHRQ22XObWsZPQdnKlLLuCPj95OQ9HrLYdfjymCsYoYj7HPMFNrgqPW/LJjhK+CnVZAtftVSfo8Wr33RTA==
 
-key-layers-js@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/key-layers-js/-/key-layers-js-1.1.1.tgz#fdf36d9cb9821eea8be5bfee0bac7b393783a9b8"
-  integrity sha512-o18hJb5kZrnwxEaIK1vuk86qrwvVmvcEaLPPlaTnqBeKUD2OlbDA57fTHJJZUefP23BBHQCmPVHuTcAlLMj+Vw==
+key-layers-js@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/key-layers-js/-/key-layers-js-2.0.1.tgz#5c8f9736b3c3658fc2497fb3facc17d86262532d"
+  integrity sha512-Hr1JvpCPnkQF1D3O1jjoeiPup9JEJYR1RRzzdwdCf+Wk3/O2o6qh0j40yvNmCiw0RHLVFsy2Aecuc1XjJQHF6g==
   dependencies:
-    "@types/lodash-es" "^4.17.3"
+    "@types/lodash-es" "^4.17.6"
     guid-typescript "^1.0.9"
-    lodash-es "^4.17.15"
+    lodash-es "^4.17.21"
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
@@ -5392,7 +5392,7 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
-lodash-es@^4.17.15, lodash-es@^4.17.21:
+lodash-es@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
@@ -7228,10 +7228,10 @@ rollup-watch@^4.3.1:
     require-relative "0.8.7"
     rollup-pluginutils "^2.0.1"
 
-rollup@^2.75.7:
-  version "2.75.7"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.75.7.tgz#221ff11887ae271e37dcc649ba32ce1590aaa0b9"
-  integrity sha512-VSE1iy0eaAYNCxEXaleThdFXqZJ42qDBatAwrfnPlENEZ8erQ+0LYX4JXOLPceWfZpV1VtZwZ3dFCuOZiSyFtQ==
+rollup@^2.76.0:
+  version "2.76.0"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.76.0.tgz#c69fe03db530ac53fcb9523b3caa0d3c0b9491a1"
+  integrity sha512-9jwRIEY1jOzKLj3nsY/yot41r19ITdQrhs+q3ggNWhr9TQgduHqANvPpS32RNpzGklJu3G1AJfvlZLi/6wFgWA==
   optionalDependencies:
     fsevents "~2.3.2"
 
