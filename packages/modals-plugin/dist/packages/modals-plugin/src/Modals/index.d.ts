@@ -2,6 +2,7 @@ import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
 import IModals from './IModals';
 import { ModalOptionsType } from './types';
 export { default as IModals } from './IModals';
+export type { ModalOptionsType, PositionType } from './types';
 export { EDIT_CENTER_POSITION, TERMINAL_CENTER_POSITION, GENERAL_BUTTON_TYPE, PRIMARY_BUTTON_TYPE, } from './constants';
 declare class Modals extends Plugin implements IModals {
     readonly name: string;
