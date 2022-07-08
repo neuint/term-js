@@ -1,6 +1,6 @@
 {
   "name": "@neuint/term-js",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Simple terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,7 +16,7 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "key-layers-js": "^1.1.1",
+    "key-layers-js": "^2.0.1",
     "lodash-es": "^4.17.21",
     "resize-observer-polyfill": "^1.5.1",
     "uuid": "^8.3.2"
