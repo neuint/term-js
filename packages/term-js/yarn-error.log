@@ -1,19 +1,19 @@
-Arguments: 
+Arguments:
   /Users/pashagusar/.nvm/versions/node/v14.18.2/bin/node /Users/pashagusar/.nvm/versions/node/v14.18.2/bin/yarn build
 
-PATH: 
+PATH:
   /Users/pashagusar/Developer/term-js/node_modules/.bin:/Users/pashagusar/Developer/node_modules/.bin:/Users/pashagusar/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/Users/pashagusar/.nvm/versions/node/v14.18.2/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/pashagusar/.nvm/versions/node/v14.18.2/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Library/Apple/usr/bin:/Users/pashagusar/.cargo/bin
 
-Yarn version: 
+Yarn version:
   1.22.17
 
-Node version: 
+Node version:
   14.18.2
 
-Platform: 
+Platform:
   darwin x64
 
-Trace: 
+Trace:
   SyntaxError: /Users/pashagusar/Developer/term-js/package.json: Unexpected token a in JSON at position 657
       at JSON.parse (<anonymous>)
       at /Users/pashagusar/.nvm/versions/node/v14.18.2/lib/node_modules/yarn/lib/cli.js:1625:59
@@ -21,7 +21,7 @@ Trace:
       at step (/Users/pashagusar/.nvm/versions/node/v14.18.2/lib/node_modules/yarn/lib/cli.js:310:30)
       at /Users/pashagusar/.nvm/versions/node/v14.18.2/lib/node_modules/yarn/lib/cli.js:321:13
 
-npm manifest: 
+npm manifest:
   {
     "name": "@neuint/term-js",
     "version": "0.1.16",
@@ -29,8 +29,8 @@ npm manifest:
     "repository": "git@github.com:neuint/term-js.git",
     "author": "Pavlo Gusar <p.gusar@yahoo.com>",
     "main": "dist/index.js",
-    "module": "dist/index.es.js",
-    "jsnext:main": "dist/index.es.js",
+    "module": "dist/index.js",
+    "jsnext:main": "dist/index.js",
     "types": "dist/packages/term-js/src/Term/index.d.ts",
     "license": "MIT",
     "scripts": {
@@ -48,8 +48,8 @@ npm manifest:
     "devDependencies": {}
   }
 
-yarn manifest: 
+yarn manifest:
   No manifest
 
-Lockfile: 
+Lockfile:
   No lockfile
