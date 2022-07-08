@@ -12,10 +12,10 @@ ncu -u
 cd ../context-menu-plugin
 ncu -u
 
-cd ../autocomplete-plugin
+cd ../dropdown-plugin
 ncu -u
 
-cd ../dropdown-plugin
+cd ../autocomplete-plugin
 ncu -u
 
 cd ../history-search-plugin
@@ -43,6 +43,18 @@ cd ../dropdown-plugin-react
 ncu -u
 
 cd ../autocomplete-plugin-react
+ncu -u
+
+cd ../history-search-plugin-react
+ncu -u
+
+cd ../command-search-plugin-react
+ncu -u
+
+cd ../modals-plugin-react
+ncu -u
+
+cd ../flows-plugin-react
 ncu -u
 
 cd ../..

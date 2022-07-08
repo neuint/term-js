@@ -87,6 +87,13 @@ git add .
 git commit -m "build context-menu-plugin-react"
 npm publish --access public
 
+cd ../autocomplete-plugin-react
+yarn install
+yarn build
+git add .
+git commit -m "build autocomplete-plugin-react"
+npm publish --access public
+
 cd ../dropdown-plugin-react
 yarn install
 yarn build
@@ -94,11 +101,32 @@ git add .
 git commit -m "build dropdown-plugin-react"
 npm publish --access public
 
-cd ../autocomplete-plugin-react
+cd ../history-search-plugin-react
 yarn install
 yarn build
 git add .
-git commit -m "build autocomplete-plugin-react"
+git commit -m "build history-search-plugin-react"
+npm publish --access public
+
+cd ../command-search-plugin-react
+yarn install
+yarn build
+git add .
+git commit -m "build command-search-plugin-react"
+npm publish --access public
+
+cd ../modals-plugin-react
+yarn install
+yarn build
+git add .
+git commit -m "build modals-plugin-react"
+npm publish --access public
+
+cd ../flows-plugin-react
+yarn install
+yarn build
+git add .
+git commit -m "build flows-plugin-react"
 npm publish --access public
 
 cd ../..

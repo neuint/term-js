@@ -30,8 +30,12 @@ const PACKAGES = [
   'term-js-react',
   'status-bar-plugin-react',
   'context-menu-plugin-react',
-  'dropdown-plugin-react',
   'autocomplete-plugin-react',
+  'dropdown-plugin-react',
+  'history-search-plugin-react',
+  'command-search-plugin-react',
+  'modals-plugin-react',
+  'flows-plugin-react',
 ];
 
 const updatePackageVersion = async (name, newVersion) => {
