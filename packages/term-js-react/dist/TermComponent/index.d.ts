@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { ValueType, FormattedValueFragmentType } from '@neuint/term-js';
 declare type HandlersType = {
     onSubmit?: (line: string, lines: string[]) => void;
@@ -24,6 +24,7 @@ declare type PropsType = {
     initValue?: ValueType;
     write?: WriteType;
     onWritten?: () => void;
+    children?: React.ReactNode;
 } & HandlersType;
 declare const TermComponent: FC<PropsType>;
 export default TermComponent;
