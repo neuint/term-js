@@ -1,0 +1,1 @@
+import{useRef as r,useEffect as n}from"react";import e from"@neuint/history-search-plugin";const t=({term:t})=>{const a=r(new e(t.pluginManager));return n((()=>{const{current:r}=a;return t.pluginManager.register(r),()=>{t.pluginManager.unregister(r)}}),[t.pluginManager]),null};export{t as default};

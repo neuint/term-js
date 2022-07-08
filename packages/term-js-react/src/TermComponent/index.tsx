@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
-
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, Children, useState } from 'react';
 import Term, { ITerm, ValueType, FormattedValueFragmentType } from '@neuint/term-js';
 import { isArray, noop } from 'lodash-es';
 
@@ -39,6 +38,7 @@ type PropsType = {
   initValue?: ValueType;
   write?: WriteType;
   onWritten?: () => void;
+  children?: React.ReactNode;
 } & HandlersType;
 
 const updateHandler = (
@@ -116,9 +116,10 @@ const writeData = (term: ITerm, data: WriteType): Promise<undefined> => {
 const TermComponent: FC<PropsType> = (props: PropsType) => {
   const {
     className, label, header, delimiter, onSubmit, onChange, initLines = [], secret = false,
-    initValue, onWritten = noop, write,
+    initValue, onWritten = noop, write, children,
   } = props;
   const root = useRef();
+  const [isReady, setReady] = useState(false);
   const term = useRef<ITerm>();
   const prevProps = useRef<HandlersType>({ onSubmit, onChange });
   const nextWrite = useRef<WriteType | undefined>(undefined);
@@ -142,6 +143,7 @@ const TermComponent: FC<PropsType> = (props: PropsType) => {
       });
       if (onSubmit) term.current.addEventListener('submit', onSubmit);
       if (onChange) term.current.addEventListener('change', onChange);
+      setReady(true);
     }
   }, [initValue, secret, header, label, delimiter, onSubmit, onChange, initLines]);
 
@@ -158,7 +160,11 @@ const TermComponent: FC<PropsType> = (props: PropsType) => {
     });
   }, [onWritten, write]);
   return (
-    <div ref={root} className={className} />
+    <div ref={root} className={className}>
+      {children && term.current && isReady
+        ? Children.map(children, (child) => React.cloneElement(child, { term: term.current }))
+        : null}
+    </div>
   );
 };
 

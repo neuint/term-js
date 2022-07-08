@@ -45,6 +45,10 @@ class ModalView extends TemplateEngine implements IModalView {
       actions: Boolean(actions.length),
       content: typeof optionsContent === 'string' ? optionsContent : '',
     });
+    if (typeof optionsContent !== 'string') {
+      const contentContainer = this.getRef('content') as HTMLElement;
+      contentContainer.appendChild(optionsContent);
+    }
     if (isAbsolute) {
       const modal = this.getModalView() as HTMLElement;
       modal.classList.add('ModalView__absoluteModal');

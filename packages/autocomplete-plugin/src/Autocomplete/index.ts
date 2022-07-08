@@ -32,10 +32,13 @@ class Autocomplete extends Plugin implements IAutocomplete {
 
   private isSetShowHandler = false;
 
-  public addList(items: string[], actionShortcut: ActionShortcutType, icon?: string) {
+  public addList(
+    items: string[], actionShortcut: ActionShortcutType, icon?: string,
+  ): () => void {
     const info: ListInfoType = {
       icon, items, actionShortcut, isRegistered: false, uuid: uuid(),
     };
+    this.hideSuggestionsList();
     this.listsInfo.push(info);
     this.registerShortcut(info);
     return () => this.removeList(info.uuid);
