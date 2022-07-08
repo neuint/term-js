@@ -1,6 +1,7 @@
 import '@neuint/autocomplete-plugin/dist/index.css';
 import { Plugin, ITermInfo, IKeyboardShortcutsManager, ActionShortcutType, IPluginManager } from '@neuint/term-js';
 import IHistorySearch from './IHistorySearch';
+export type { default as IHistorySearch } from './IHistorySearch';
 declare class HistorySearch extends Plugin implements IHistorySearch {
     readonly name: string;
     private autocomplete?;

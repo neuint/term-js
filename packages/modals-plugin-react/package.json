@@ -1,0 +1,25 @@
+{
+  "name": "@neuint/modals-plugin-react",
+  "version": "0.3.10",
+  "description": "Modals plugin react component",
+  "repository": "git@github.com:neuint/term-js.git",
+  "author": "Pavlo Gusar <p.gusar@yahoo.com>",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "types": "dist/ModalsComponent/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
+    "test": "jest",
+    "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
+  },
+  "dependencies": {
+    "@neuint/modals-plugin": "^0.3.10",
+    "@neuint/term-js-react": "^0.3.10",
+    "lodash-es": "^4.17.21",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

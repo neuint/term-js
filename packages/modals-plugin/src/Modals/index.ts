@@ -12,6 +12,7 @@ import IModalView from './ModalView/IModalView';
 import ModalView from './ModalView';
 
 export { default as IModals } from './IModals';
+export type { ModalOptionsType, PositionType } from './types';
 export {
   EDIT_CENTER_POSITION, TERMINAL_CENTER_POSITION, GENERAL_BUTTON_TYPE, PRIMARY_BUTTON_TYPE,
 } from './constants';

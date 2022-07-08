@@ -1,0 +1,1 @@
+import{useRef as r,useEffect as t}from"react";import n from"@neuint/status-bar-plugin";const e=({text:e="",icon:u="",term:a})=>{const i=r(new n(a.pluginManager));return t((()=>{const{current:r}=i;return a.pluginManager.register(r),()=>{a.pluginManager.unregister(r)}}),[a.pluginManager]),t((()=>{i.current.status={text:e,icon:u}}),[e,u]),null};export{e as default};
