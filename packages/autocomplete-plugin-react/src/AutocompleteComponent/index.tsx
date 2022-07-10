@@ -2,6 +2,8 @@ import { FC, useRef, useEffect } from 'react';
 import Autocomplete, { IAutocomplete } from '@neuint/autocomplete-plugin';
 import { ITerm, ActionShortcutType } from '@neuint/term-js';
 
+import '@neuint/autocomplete-plugin/dist/index.css';
+
 type ParamsType = {
   // eslint-disable-next-line react/no-unused-prop-types
   items: string[];
