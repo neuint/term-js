@@ -17,10 +17,8 @@ const App = () => {
   }, []);
   return (
     <TermComponent
-      write={write}
       className="App__term"
-      header="TermComponent"
-      label="guest"
+      label=""
       onSubmit={console.log}
       onWritten={onWritten}
     />
