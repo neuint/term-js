@@ -2,6 +2,8 @@ import { FC, useRef, useEffect } from 'react';
 import CommandSearch, { ICommandSearch } from '@neuint/command-search-plugin';
 import { ITerm } from '@neuint/term-js';
 
+import '@neuint/command-search-plugin/dist/index.css';
+
 type PropsType = {
   commands: string[];
   term?: ITerm;

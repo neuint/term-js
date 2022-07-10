@@ -2,6 +2,8 @@ import { FC, useRef, useEffect } from 'react';
 import HistorySearch from '@neuint/history-search-plugin';
 import { ITerm, IPlugin } from '@neuint/term-js';
 
+import '@neuint/history-search-plugin/dist/index.css';
+
 type PropsType = {
   term?: ITerm;
 };

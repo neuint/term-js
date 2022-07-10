@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import Dropdown, { IDropdown } from '@neuint/dropdown-plugin';
 import { ITerm } from '@neuint/term-js';
 
+import '@neuint/dropdown-plugin/dist/index.css';
+
 type ParamsType = {
   className?: string;
   onSelect?: (text: string, index: number) => void;

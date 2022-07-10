@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { ITerm } from '@neuint/term-js';
+import '@neuint/dropdown-plugin/dist/index.css';
 declare type ParamsType = {
     className?: string;
     onSelect?: (text: string, index: number) => void;

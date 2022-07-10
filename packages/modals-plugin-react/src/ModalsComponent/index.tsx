@@ -2,6 +2,8 @@ import React, { FC, useRef, useEffect, Children, useMemo } from 'react';
 import Modals, { IModals } from '@neuint/modals-plugin';
 import { ITerm } from '@neuint/term-js';
 
+import '@neuint/modals-plugin/dist/index.css';
+
 export { default as ModalComponent } from '../ModalComponent';
 
 type PropsType = {

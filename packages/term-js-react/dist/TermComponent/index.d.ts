@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { ValueType, FormattedValueFragmentType } from '@neuint/term-js';
+import '@neuint/term-js/dist/index.css';
 declare type HandlersType = {
     onSubmit?: (line: string, lines: string[]) => void;
     onChange?: (e: InputEvent) => void;
