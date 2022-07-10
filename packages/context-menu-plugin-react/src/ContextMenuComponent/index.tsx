@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import ContextMenu, { IContextMenu, TargetType } from '@neuint/context-menu-plugin';
 import type { ITerm } from '@neuint/term-js';
 
+import '@neuint/context-menu-plugin/dist/index.css';
+
 type ParamsType = {
   target?: TargetType;
   escHide?: boolean;

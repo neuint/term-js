@@ -3,6 +3,8 @@ import React, { FC, useEffect, useRef, Children, useState } from 'react';
 import Term, { ITerm, ValueType, FormattedValueFragmentType } from '@neuint/term-js';
 import { isArray, noop } from 'lodash-es';
 
+import '@neuint/term-js/dist/index.css';
+
 type HandlersType = {
   onSubmit?: (line: string, lines: string[]) => void;
   onChange?: (e: InputEvent) => void;
@@ -149,6 +151,7 @@ const TermComponent: FC<PropsType> = (props: PropsType) => {
 
   useEffect(() => () => {
     term.current?.destroy();
+    term.current = undefined;
   }, []);
 
   useEffect(() => {
