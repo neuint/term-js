@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "0.3.13",
+  "version": "0.3.14",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "license": "MIT",

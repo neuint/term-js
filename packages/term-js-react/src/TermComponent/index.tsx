@@ -117,7 +117,7 @@ const writeData = (term: ITerm, data: WriteType): Promise<undefined> => {
 
 const TermComponent: FC<PropsType> = (props: PropsType) => {
   const {
-    className, label, header, delimiter, onSubmit, onChange, initLines = [], secret = false,
+    className, label, header = '', delimiter, onSubmit, onChange, initLines = [], secret = false,
     initValue, onWritten = noop, write, children,
   } = props;
   const root = useRef();
