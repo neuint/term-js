@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import type { ITerm } from '@neuint/term-js';
+import '@neuint/status-bar-plugin/dist/index.css';
 declare type PropsType = {
     text?: string;
     icon?: string;
