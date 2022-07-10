@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { TargetType } from '@neuint/context-menu-plugin';
 import type { ITerm } from '@neuint/term-js';
+import '@neuint/context-menu-plugin/dist/index.css';
 declare type ParamsType = {
     target?: TargetType;
     escHide?: boolean;
