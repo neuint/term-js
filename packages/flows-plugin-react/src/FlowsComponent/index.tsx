@@ -1,27 +1,27 @@
 import { FC, useRef, useEffect } from 'react';
-import Flows, { FlowsType } from '@neuint/flows-plugin';
-import { IPlugin, ITerm } from '@neuint/term-js';
+import Flows, { FlowsType, IFlows } from '@neuint/flows-plugin';
+import { ITerm } from '@neuint/term-js';
 
-export type { FlowsType } from '@neuint/flows-plugin';
+export type { FlowsType, IFlows } from '@neuint/flows-plugin';
 
 type PropsType = {
   term?: ITerm;
   flows?: FlowsType;
 };
 
-const FlowsComponent: FC<PropsType> = ({ term, flows }: PropsType) => {
-  const plugin = useRef<IPlugin>(new Flows(term.pluginManager));
+const FlowsComponent: FC<PropsType> = ({ term, flows = {} }: PropsType) => {
+  const plugin = useRef<IFlows | undefined>(term ? new Flows(term.pluginManager) : undefined);
 
   useEffect(() => {
     const { current } = plugin;
-    term.pluginManager.register(current);
+    if (term && current) term.pluginManager.register(current);
     return () => {
-      term.pluginManager.unregister(current);
+      if (term && current) term.pluginManager.unregister(current);
     };
-  }, [term.pluginManager]);
+  }, [term]);
 
   useEffect(() => {
-    plugin.current.flows = flows;
+    if (plugin.current) plugin.current.flows = flows;
   }, [flows]);
 
   return null;

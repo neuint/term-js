@@ -1,6 +1,6 @@
 {
   "name": "@neuint/flows-plugin-react",
-  "version": "0.3.14",
+  "version": "0.3.15",
   "description": "Commands flows component",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/term-js": "^0.3.14",
-    "@neuint/flows-plugin": "^0.3.14",
+    "@neuint/term-js": "^0.3.15",
+    "@neuint/flows-plugin": "^0.3.15",
     "lodash-es": "^4.17.21"
   }
 }
