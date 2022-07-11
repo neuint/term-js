@@ -21,9 +21,9 @@ type ComplexWriteItemType = {
   value: string | FormattedValueFragmentType;
 };
 
-type WriteItemType = string | FormattedValueFragmentType | ComplexWriteItemType;
+export type WriteItemType = string | FormattedValueFragmentType | ComplexWriteItemType;
 
-type FullWriteType = {
+export type FullWriteType = {
   data: WriteItemType | WriteItemType[];
   duration?: number;
 };
