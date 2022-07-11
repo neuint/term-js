@@ -9,8 +9,8 @@ declare type ComplexWriteItemType = {
     withSubmit?: boolean;
     value: string | FormattedValueFragmentType;
 };
-declare type WriteItemType = string | FormattedValueFragmentType | ComplexWriteItemType;
-declare type FullWriteType = {
+export declare type WriteItemType = string | FormattedValueFragmentType | ComplexWriteItemType;
+export declare type FullWriteType = {
     data: WriteItemType | WriteItemType[];
     duration?: number;
 };
