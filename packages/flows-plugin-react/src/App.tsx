@@ -4,6 +4,8 @@ import { FormattedValueFragmentType } from '@neuint/term-js';
 
 import FlowsComponent, { FlowsType } from './FlowsComponent';
 
+import '@neuint/term-js-react/dist/index.css';
+
 import './App.scss';
 
 const getWrite = (
@@ -55,7 +57,7 @@ const App = () => {
       header="FlowsComponent"
       label="guest"
     >
-      <FlowsComponent flows={flows} />
+      <FlowsComponent />
     </TermComponent>
   );
 };
