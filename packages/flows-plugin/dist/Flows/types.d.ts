@@ -6,17 +6,18 @@ export declare type StepResultType = {
     withSubmit?: boolean;
 };
 export declare type FlowType = Array<{
+    autostart?: boolean;
     onEnter?: (data: {
         [key: string]: string;
     }) => void;
-    write: {
+    write?: {
         data: string | FormattedValueFragmentType;
         duration?: number;
         withSubmit?: boolean;
     };
-    variableName: string;
+    variableName?: string;
     secret?: boolean;
-    handler: (data: {
+    handler?: (data: {
         [key: string]: string;
     }) => Promise<StepResultType | undefined>;
 }>;
