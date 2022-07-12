@@ -1,6 +1,6 @@
 {
   "name": "@neuint/dropdown-plugin-react",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "description": "Dropdown plugin react component",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/dropdown-plugin": "^0.3.19",
-    "@neuint/term-js-react": "^0.3.19",
+    "@neuint/dropdown-plugin": "^0.3.20",
+    "@neuint/term-js-react": "^0.3.20",
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
