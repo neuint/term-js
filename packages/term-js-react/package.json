@@ -1,13 +1,13 @@
 {
   "name": "@neuint/term-js-react",
-  "version": "0.3.20",
+  "version": "0.3.21",
   "description": "Simple terminal react component",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "jsnext:main": "dist/index.js",
-  "types": "dist/TermComponent/index.d.ts",
+  "types": "dist/packages/term-js-react/src/TermComponent/index.d.ts",
   "license": "MIT",
   "scripts": {
     "dev": "rollup -c -w",
@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/status-bar-plugin": "^0.3.20",
-    "@neuint/term-js": "^0.3.20",
+    "@neuint/status-bar-plugin": "^0.3.21",
+    "@neuint/term-js": "^0.3.21",
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
