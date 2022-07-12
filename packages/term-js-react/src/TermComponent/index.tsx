@@ -1,7 +1,9 @@
 /* eslint-disable no-param-reassign */
 import React, { FC, useEffect, useRef, Children, useState } from 'react';
-import Term, { ITerm, ValueType, FormattedValueFragmentType } from '@neuint/term-js';
-import { isArray, noop } from 'lodash-es';
+import { noop } from 'lodash-es';
+import Term, { ITerm, ValueType } from '@neuint/term-js';
+import { WriteType } from '@general/types/write';
+import { writeData } from '@general/utils/write';
 
 import '@neuint/term-js/dist/index.css';
 
@@ -10,25 +12,7 @@ type HandlersType = {
   onChange?: (e: InputEvent) => void;
 };
 
-type NormalizedWriteItemType = {
-  withSubmit?: boolean;
-  duration?: number;
-  value: FormattedValueFragmentType;
-};
-
-type ComplexWriteItemType = {
-  withSubmit?: boolean;
-  value: string | FormattedValueFragmentType;
-};
-
-export type WriteItemType = string | FormattedValueFragmentType | ComplexWriteItemType;
-
-export type FullWriteType = {
-  data: WriteItemType | WriteItemType[];
-  duration?: number;
-};
-
-export type WriteType = WriteItemType | FullWriteType;
+export type { WriteType, FullWriteType, WriteItemType } from '@general/types/write';
 
 type PropsType = {
   className?: string;
@@ -63,56 +47,6 @@ const changeSecretState = (term: ITerm, secret: boolean) => {
   // TODO: set value as secret
   term.value = '';
   term.secret = secret;
-};
-
-const normalizeWriteItem = (item: WriteItemType): NormalizedWriteItemType | undefined => {
-  if (typeof item === 'string') return { value: { str: item } };
-  if ((item as FormattedValueFragmentType)?.str !== undefined) {
-    return { value: item as FormattedValueFragmentType };
-  }
-  if ((item as ComplexWriteItemType)?.value !== undefined) {
-    const { value, withSubmit } = item as ComplexWriteItemType;
-    return { withSubmit, value: typeof value === 'string' ? { str: value } : value };
-  }
-  return undefined;
-};
-
-const getWriteData = (write: WriteType): NormalizedWriteItemType[] => {
-  if ((write as FullWriteType)?.data === undefined) {
-    return [normalizeWriteItem(write as WriteItemType)];
-  }
-  const { duration, data } = write as FullWriteType;
-  const normalizedData = isArray(data) ? data.map(normalizeWriteItem) : [normalizeWriteItem(data)];
-  const fullLength = duration ? normalizedData.reduce((acc, item) => {
-    return acc + item.value.str.length;
-  }, 0) : 0;
-  const characterDuration = duration && fullLength ? duration / fullLength : 0;
-  return normalizedData.map((item) => ({
-    ...item,
-    duration: duration ? item.value.str.length * characterDuration : undefined,
-  }));
-};
-
-const writeData = (term: ITerm, data: WriteType): Promise<undefined> => {
-  const normalizedData = getWriteData(data);
-  return new Promise<undefined>((resolve) => {
-    const next = () => {
-      const item = normalizedData.shift();
-      if (!item) {
-        resolve(undefined);
-        return;
-      }
-      const writeResponse = term.write(item.value, {
-        duration: item.duration, withSubmit: item.withSubmit,
-      });
-      if (writeResponse instanceof Promise) {
-        writeResponse.then(next);
-      } else {
-        next();
-      }
-    };
-    next();
-  });
 };
 
 const TermComponent: FC<PropsType> = (props: PropsType) => {
@@ -157,6 +91,7 @@ const TermComponent: FC<PropsType> = (props: PropsType) => {
   useEffect(() => {
     if (nextWrite.current !== undefined || write === undefined) return;
     nextWrite.current = write;
+    debugger;
     writeData(term.current, write).then(() => {
       nextWrite.current = undefined;
       onWritten();
