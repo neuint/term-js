@@ -464,7 +464,9 @@ class Term extends TemplateEngine implements ITerm {
     const { value, formattedValue, lockString } = params;
     const { vl, editLine, listeners, skipHandler, history: { list } } = this;
     const historyValue = value.substring(lockString.length);
-    if (historyValue && last(list) !== historyValue && !editLine?.secret) list.push(historyValue);
+    if (historyValue && last(list) !== historyValue && !editLine?.secret && !skipHandler) {
+      list.push(historyValue);
+    }
     if (!editLine) return;
     editLine.visible = false;
     this.lines.push(formattedValue);
