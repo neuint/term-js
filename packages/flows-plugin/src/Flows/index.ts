@@ -1,5 +1,5 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
-import { noop } from 'lodash-es';
+import { noop, get } from 'lodash-es';
 
 import IFlows from './IFlows';
 import { FlowsType, FlowType, StepResultType } from './types';
@@ -8,7 +8,16 @@ export type { FlowsType, FlowType, StepResultType } from './types';
 export type { default as IFlows } from './IFlows';
 
 class Flows extends Plugin implements IFlows {
-  public flows: FlowsType = {};
+  private flowsField: FlowsType = {};
+
+  public get flows(): FlowsType {
+    return this.flowsField;
+  }
+
+  public set flows(flows: FlowsType) {
+    this.flowsField = flows;
+    this.runAutoStartBranch();
+  }
 
   private branch?: FlowType;
 
@@ -23,6 +32,19 @@ class Flows extends Plugin implements IFlows {
   setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager) {
     super.setTermInfo(termInfo, keyboardShortcutsManager);
     this.termInfo.addEventListener('submit', this.onSubmit);
+    this.runAutoStartBranch();
+  }
+
+  private runAutoStartBranch() {
+    const { flows, termInfo, branch } = this;
+    if (!termInfo || branch) return;
+    const autoStartBranch = Object.keys(flows).find((flowName) => get(flows[flowName], '0.autostart'));
+    if (autoStartBranch) {
+      this.step = 0;
+      this.branch = flows[autoStartBranch];
+      this.branchData = {};
+      this.showStep();
+    }
   }
 
   private onSubmit = (data: { value: string, typedValue?: string }) => {
@@ -30,7 +52,7 @@ class Flows extends Plugin implements IFlows {
     if (isWaiting) return;
     let command = (data.typedValue || '');
     if (branch) {
-      const { handler, variableName } = branch[this.step];
+      const { handler = () => Promise.resolve(), variableName } = branch[this.step];
       if (variableName) branchData[variableName] = command;
       const result = handler(branchData);
       if (result) this.isWaiting = true;
@@ -70,7 +92,8 @@ class Flows extends Plugin implements IFlows {
       this.branchData = {};
       return;
     }
-    const { write, write: { data }, onEnter, secret = false } = branch[step];
+    const { write, onEnter, secret = false } = branch[step];
+    const { data } = write || {};
     const writeResponse = data ? this.termInfo.write(data, write) : undefined;
     (writeResponse instanceof Promise ? writeResponse : Promise.resolve(true)).then(() => {
       this.termInfo.secret(secret);

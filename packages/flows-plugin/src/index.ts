@@ -3,6 +3,7 @@ import Term, { FormattedValueFragmentType } from '@neuint/term-js';
 
 import Flows, { FlowsType } from './Flows';
 
+import '@neuint/term-js/dist/index.css';
 import './index.scss';
 
 const container = document.querySelector('#root');
@@ -20,6 +21,7 @@ const getWrite = (
 const flows: FlowsType = {
   'sign in': [
     {
+      autostart: true,
       write: getWrite('enter email: ', true),
       variableName: 'email',
       handler: (data) => {
