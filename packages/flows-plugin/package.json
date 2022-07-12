@@ -1,13 +1,13 @@
 {
   "name": "@neuint/flows-plugin",
-  "version": "0.3.20",
+  "version": "0.3.21",
   "description": "Commands flows for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "jsnext:main": "dist/index.js",
-  "types": "dist/Flows/index.d.ts",
+  "types": "dist/packages/flows-plugin/src/Flows/index.d.ts",
   "license": "MIT",
   "scripts": {
     "dev": "rollup -c -w",
@@ -16,7 +16,7 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/term-js": "^0.3.20",
+    "@neuint/term-js": "^0.3.21",
     "lodash-es": "^4.17.21"
   }
 }
