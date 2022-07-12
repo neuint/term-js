@@ -1,6 +1,7 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
 import { noop, get } from 'lodash-es';
 
+import { writeData } from '@general/utils/write';
 import IFlows from './IFlows';
 import { FlowsType, FlowType, StepResultType } from './types';
 
@@ -69,7 +70,7 @@ class Flows extends Plugin implements IFlows {
   };
 
   private onStepResult = (result: StepResultType | undefined) => {
-    const { to, duration, data, withSubmit } = result || {};
+    const { to, write } = result || {};
     if (to) {
       const [step, command] = to.split('|');
       this.step = parseInt(step, 10);
@@ -77,7 +78,7 @@ class Flows extends Plugin implements IFlows {
     } else {
       this.step += 1;
     }
-    const writeResponse = data ? this.termInfo.write(data, { duration, withSubmit }) : undefined;
+    const writeResponse = write ? writeData(this.termInfo, write) : undefined;
     (writeResponse instanceof Promise ? writeResponse : Promise.resolve(true)).then(() => {
       this.showStep();
     });
@@ -93,8 +94,7 @@ class Flows extends Plugin implements IFlows {
       return;
     }
     const { write, onEnter, secret = false } = branch[step];
-    const { data } = write || {};
-    const writeResponse = data ? this.termInfo.write(data, write) : undefined;
+    const writeResponse = write ? writeData(this.termInfo, write) : undefined;
     (writeResponse instanceof Promise ? writeResponse : Promise.resolve(true)).then(() => {
       this.termInfo.secret(secret);
     });

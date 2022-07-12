@@ -26,7 +26,7 @@ const flows: FlowsType = {
       handler: (data) => {
         return Promise.resolve(data.email.includes('@')
           ? undefined
-          : { ...getWrite('Incorrect email', false, true), to: '0' });
+          : { write: getWrite('Incorrect email', false, true), to: '0' });
       },
     },
     {
@@ -36,7 +36,7 @@ const flows: FlowsType = {
       handler: (data) => {
         return Promise.resolve(data.email.includes('@')
           ? undefined
-          : { ...getWrite('Incorrect password', false, true), to: '1' });
+          : { write: getWrite('Incorrect password', false, true), to: '1' });
       },
     },
   ],
@@ -57,7 +57,7 @@ const App = () => {
       header="FlowsComponent"
       label="guest"
     >
-      <FlowsComponent />
+      <FlowsComponent flows={flows} />
     </TermComponent>
   );
 };

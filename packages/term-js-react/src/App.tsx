@@ -17,6 +17,7 @@ const App = () => {
   }, []);
   return (
     <TermComponent
+      write={write}
       className="App__term"
       label=""
       onSubmit={console.log}

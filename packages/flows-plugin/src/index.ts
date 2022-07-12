@@ -1,6 +1,7 @@
 import { identity } from 'lodash-es';
-import Term, { FormattedValueFragmentType } from '@neuint/term-js';
+import Term from '@neuint/term-js';
 
+import { WriteType } from '@general/types/write';
 import Flows, { FlowsType } from './Flows';
 
 import '@neuint/term-js/dist/index.css';
@@ -10,7 +11,7 @@ const container = document.querySelector('#root');
 
 const getWrite = (
   text: string, lock = false, withSubmit = false,
-): { data: string | FormattedValueFragmentType, duration: number, withSubmit: boolean } => {
+): WriteType => {
   return {
     withSubmit,
     data: { str: text, lock },
@@ -27,7 +28,7 @@ const flows: FlowsType = {
       handler: (data) => {
         return Promise.resolve(data.email.includes('@')
           ? undefined
-          : { ...getWrite('Incorrect email', false, true), to: '0' });
+          : { write: getWrite('Incorrect email', false, true), to: '0' });
       },
     },
     {
@@ -37,7 +38,7 @@ const flows: FlowsType = {
       handler: (data) => {
         return Promise.resolve(data.email.includes('@')
           ? undefined
-          : { ...getWrite('Incorrect password', false, true), to: '1' });
+          : { write: getWrite('Incorrect password', false, true), to: '1' });
       },
     },
   ],
