@@ -1,0 +1,1 @@
+import{useRef as r,useEffect as n}from"react";import e from"@neuint/flows-plugin";const t=({term:t,flows:u={}})=>{const o=r(t?new e(t.pluginManager):void 0);return n((()=>{const{current:r}=o;return t&&r&&t.pluginManager.register(r),()=>{t&&r&&t.pluginManager.unregister(r)}}),[t]),n((()=>{o.current&&(o.current.flows=u)}),[u]),null};export{t as default};
