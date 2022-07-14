@@ -7,7 +7,7 @@ import '@neuint/modals-plugin/dist/index.css';
 export { default as ModalComponent } from '../ModalComponent';
 
 type PropsType = {
-  term: ITerm;
+  term?: ITerm;
   children?: React.ReactNode;
 };
 
