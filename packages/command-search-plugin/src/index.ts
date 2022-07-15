@@ -3,6 +3,7 @@ import Term, { ITerm } from '@neuint/term-js';
 import CommandSearch from './CommandSearch';
 import ICommandSearch from './CommandSearch/ICommandSearch';
 
+import '@neuint/term-js/dist/index.css';
 import './index.scss';
 
 const container = document.querySelector('#root');
@@ -11,7 +12,12 @@ if (container) {
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
     label: 'guest',
-    editLine: '',
+    editLine: {
+      secret: false,
+      value: [
+        { str: 'Please authorise: ', lock: true },
+      ],
+    },
     lines: [],
   });
   const plugin: ICommandSearch = new CommandSearch(term.pluginManager);

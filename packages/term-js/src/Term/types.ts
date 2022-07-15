@@ -1,3 +1,4 @@
+// TODO: use types from genral
 export type FormattedValueFragmentType = {
   str: string;
   clickHandler?: (e: Event, id?: string | number) => void;

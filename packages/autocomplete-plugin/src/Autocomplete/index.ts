@@ -7,8 +7,11 @@ import {
   InfoType,
 } from '@neuint/term-js';
 import Dropdown, { IDropdown } from '@neuint/dropdown-plugin';
-import '@neuint/dropdown-plugin/dist/index.css';
 
+import { getNotLockedString } from '@general/utils/string';
+import { ValueType } from '@general/types/value';
+
+import '@neuint/dropdown-plugin/dist/index.css';
 import './index.scss';
 
 import { PLUGIN_NAME, SHOW_ACTION } from './constants';
@@ -16,6 +19,15 @@ import IAutocomplete from './IAutocomplete';
 import { ListInfoType } from './types';
 
 export { default as IAutocomplete } from './IAutocomplete';
+
+const getEditLineNotLockedValue = (info: ITermInfo): string => {
+  const { edit: { parameterizedValue } } = info;
+  return getNotLockedString(
+    (parameterizedValue as { value?: ValueType }).value
+      ? (parameterizedValue as { value: ValueType }).value
+      : parameterizedValue as ValueType,
+  );
+};
 
 class Autocomplete extends Plugin implements IAutocomplete {
   public readonly name: string = PLUGIN_NAME;
@@ -63,8 +75,8 @@ class Autocomplete extends Plugin implements IAutocomplete {
 
   public updateTermInfo(termInfo: ITermInfo) {
     const { termInfo: termInfoPrev, active } = this;
-    const prevValue = termInfoPrev?.edit.value;
-    const currentValue = termInfo.edit.value;
+    const prevValue = getEditLineNotLockedValue(termInfoPrev);
+    const currentValue = getEditLineNotLockedValue(termInfo);
     super.updateTermInfo(termInfo);
     if (active && currentValue && prevValue !== currentValue) {
       this.setSuggestions();
@@ -136,8 +148,10 @@ class Autocomplete extends Plugin implements IAutocomplete {
   private setSuggestions(): boolean {
     const { termInfo, commandList } = this;
     if (!termInfo) return this.setNewSuggestions([]);
-    const { caret: { position }, edit: { value } } = termInfo;
-    return this.setNewSuggestions(position !== value.length
+    const { caret: { position }, edit: { value: simpleValue } } = termInfo;
+
+    const value = getEditLineNotLockedValue(termInfo);
+    return this.setNewSuggestions(position !== simpleValue.length
       ? []
       : commandList
         .filter((command) => command.indexOf(value) === 0 && command !== value));
@@ -161,7 +175,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
 
   private renderSuggestionsList() {
     const { dropdownPlugin, activeSuggestions, termInfo, active, listsInfo } = this;
-    const value = termInfo?.edit.value;
+    const value = getEditLineNotLockedValue(termInfo);
     if (!dropdownPlugin || !value) return;
     const icon = listsInfo.find((item) => item.uuid === active)?.icon;
     dropdownPlugin.show(activeSuggestions, {
@@ -184,7 +198,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
     if (termInfo) {
       const { edit } = termInfo;
       edit.focus();
-      edit.write(text.replace(edit.value, ''));
+      edit.write(text.replace(getEditLineNotLockedValue(termInfo), ''));
     }
     this.clear();
   };

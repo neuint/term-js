@@ -4,11 +4,12 @@ import {
   Plugin, ITermInfo, IKeyboardShortcutsManager, ActionShortcutType, IPluginManager,
 } from '@neuint/term-js';
 import Autocomplete, { IAutocomplete } from '@neuint/autocomplete-plugin';
+import { TAB_KEY_CODE } from '@general/constants/keyCodes';
 
 import icon from './icon.html';
 
 import ICommandSearch from './ICommandSearch';
-import { PLUGIN_NAME, SHOW_KEY_CODE } from './constants';
+import { PLUGIN_NAME } from './constants';
 
 export { default as ICommandSearch } from './ICommandSearch';
 
@@ -30,7 +31,7 @@ class CommandSearch extends Plugin implements ICommandSearch {
 
   private removeList?: () => void;
 
-  private readonly actionShortcut: ActionShortcutType = { code: SHOW_KEY_CODE };
+  private readonly actionShortcut: ActionShortcutType = { code: TAB_KEY_CODE };
 
   constructor(pluginManager: IPluginManager, actionShortcut?: ActionShortcutType) {
     super(pluginManager);
