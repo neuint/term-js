@@ -2,6 +2,7 @@ import Term, { ITerm } from '@neuint/term-js';
 
 import { TAB_KEY_CODE } from '@general/constants/keyCodes';
 
+import '@neuint/term-js/dist/index.css';
 import './index.scss';
 import icon from './icon.html';
 
@@ -14,7 +15,12 @@ if (container) {
     virtualizedTopOffset: 400,
     virtualizedBottomOffset: 400,
     label: 'guest',
-    editLine: '',
+    editLine: {
+      secret: false,
+      value: [
+        { str: 'Please authorise: ', lock: true },
+      ],
+    },
     lines: [],
   });
   term.setHeader('autocomplete-plugin');

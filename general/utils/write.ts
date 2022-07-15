@@ -1,6 +1,11 @@
 import { isArray } from 'lodash-es';
 import {
-  FullWriteType, NormalizedWriteItemType, WriteItemType, WriteType, FormattedValueFragmentType, ComplexWriteItemType,
+  FullWriteType,
+  NormalizedWriteItemType,
+  WriteItemType,
+  WriteType,
+  FormattedValueFragmentType,
+  ComplexWriteItemType,
 } from '../types/write';
 
 type TermType = {
@@ -59,4 +64,3 @@ export const writeData = (term: TermType, data: WriteType): Promise<undefined> =
     next();
   });
 };
-
