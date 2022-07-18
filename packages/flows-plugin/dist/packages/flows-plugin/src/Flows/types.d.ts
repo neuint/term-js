@@ -11,6 +11,9 @@ export declare type FlowType = Array<{
     write?: WriteType | ((data: {
         [key: string]: string;
     }) => WriteType);
+    onWrite?: (data: {
+        [key: string]: string;
+    }) => void;
     variableName?: string;
     secret?: boolean;
     handler?: (data: {

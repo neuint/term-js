@@ -1,6 +1,6 @@
 {
   "name": "@neuint/flows-plugin",
-  "version": "0.3.26",
+  "version": "0.3.27",
   "description": "Commands flows for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,7 +16,7 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/term-js": "^0.3.26",
+    "@neuint/term-js": "^0.3.27",
     "lodash-es": "^4.17.21"
   }
 }
