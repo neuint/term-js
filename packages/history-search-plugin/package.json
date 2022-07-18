@@ -1,6 +1,6 @@
 {
   "name": "@neuint/history-search-plugin",
-  "version": "0.3.24",
+  "version": "0.3.25",
   "description": "History search for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/autocomplete-plugin": "^0.3.24",
-    "@neuint/term-js": "^0.3.24",
+    "@neuint/autocomplete-plugin": "^0.3.25",
+    "@neuint/term-js": "^0.3.25",
     "lodash-es": "^4.17.21"
   }
 }
