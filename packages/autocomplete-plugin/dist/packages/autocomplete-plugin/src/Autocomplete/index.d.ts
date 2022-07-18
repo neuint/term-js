@@ -12,6 +12,7 @@ declare class Autocomplete extends Plugin implements IAutocomplete {
     private active;
     private isSetShowHandler;
     addList(items: string[], actionShortcut: ActionShortcutType, icon?: string): () => void;
+    showList(items: string[], actionShortcut: ActionShortcutType, icon?: string): () => void;
     removeList(uuidValue: string): void;
     setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager): void;
     updateTermInfo(termInfo: ITermInfo): void;
@@ -21,6 +22,7 @@ declare class Autocomplete extends Plugin implements IAutocomplete {
     private registerShortcut;
     private setDropdownPlugin;
     private onAutocomplete;
+    private showAutocomplete;
     private setSuggestions;
     private setNewSuggestions;
     private showSuggestions;
