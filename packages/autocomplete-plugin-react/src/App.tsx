@@ -34,7 +34,9 @@ const App = () => {
       label="guest"
       onWritten={onWritten}
     >
-      <AutocompleteComponent data={{ items, actionShortcut: { code: TAB_KEY_CODE } }} />
+      <AutocompleteComponent
+        data={{ items, autoOpen: true, actionShortcut: { code: TAB_KEY_CODE } }}
+      />
     </TermComponent>
   );
 };
