@@ -48,11 +48,24 @@ class Autocomplete extends Plugin implements IAutocomplete {
     items: string[], actionShortcut: ActionShortcutType, icon?: string,
   ): () => void {
     const info: ListInfoType = {
-      icon, items, actionShortcut, isRegistered: false, uuid: uuid(),
+      icon, items, actionShortcut, isRegistered: false, uuid: uuid(), emptyOpen: false,
     };
     this.hideSuggestionsList();
     this.listsInfo.push(info);
     this.registerShortcut(info);
+    return () => this.removeList(info.uuid);
+  }
+
+  public showList(
+    items: string[], actionShortcut: ActionShortcutType, icon?: string,
+  ): () => void {
+    const info: ListInfoType = {
+      icon, items, actionShortcut, isRegistered: false, uuid: uuid(), emptyOpen: true,
+    };
+    this.hideSuggestionsList();
+    this.listsInfo.push(info);
+    this.registerShortcut(info);
+    setTimeout(() => this.showAutocomplete(info.uuid), 0);
     return () => this.removeList(info.uuid);
   }
 
@@ -77,8 +90,9 @@ class Autocomplete extends Plugin implements IAutocomplete {
     const { termInfo: termInfoPrev, active } = this;
     const prevValue = getEditLineNotLockedValue(termInfoPrev);
     const currentValue = getEditLineNotLockedValue(termInfo);
+    const emptyOpen = this.listsInfo.find((item) => item.uuid === active)?.emptyOpen;
     super.updateTermInfo(termInfo);
-    if (active && currentValue && prevValue !== currentValue) {
+    if (active && (currentValue || emptyOpen) && prevValue !== currentValue) {
       this.setSuggestions();
       this.showSuggestions();
     } else if (active && !currentValue) {
@@ -131,19 +145,28 @@ class Autocomplete extends Plugin implements IAutocomplete {
   }
 
   private onAutocomplete = (action: string, e: Event, info?: { shortcut?: InfoType }) => {
+    const infoUuid = info?.shortcut as string;
+    if (this.showAutocomplete(infoUuid)) {
+      console.log('onAutocomplete');
+
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  };
+
+  private showAutocomplete(infoUuid: string): boolean {
     const { dropdownPlugin, listsInfo, active } = this;
-    const infoUuid = info?.shortcut;
-    if (!infoUuid || (active && active !== infoUuid)) return;
+    if (!infoUuid || (active && active !== infoUuid)) return false;
     this.commandList = listsInfo.find((item) => item.uuid === infoUuid)?.items || [];
-    e.stopPropagation();
-    e.preventDefault();
     if (dropdownPlugin && this.setSuggestions()) {
       this.active = infoUuid as string;
       dropdownPlugin.isActionsLock = true;
       this.showSuggestions();
       setTimeout(() => dropdownPlugin.isActionsLock = false, 0);
+      return true;
     }
-  };
+    return false;
+  }
 
   private setSuggestions(): boolean {
     const { termInfo, commandList } = this;
@@ -151,6 +174,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
     const { caret: { position }, edit: { value: simpleValue } } = termInfo;
 
     const value = getEditLineNotLockedValue(termInfo);
+    if (position === simpleValue.length) return this.setNewSuggestions(commandList);
     return this.setNewSuggestions(position !== simpleValue.length
       ? []
       : commandList
@@ -176,8 +200,10 @@ class Autocomplete extends Plugin implements IAutocomplete {
   private renderSuggestionsList() {
     const { dropdownPlugin, activeSuggestions, termInfo, active, listsInfo } = this;
     const value = getEditLineNotLockedValue(termInfo);
-    if (!dropdownPlugin || !value) return;
-    const icon = listsInfo.find((item) => item.uuid === active)?.icon;
+
+    const { icon, emptyOpen } = listsInfo.find((item) => item.uuid === active) || {};
+
+    if (!dropdownPlugin || (!value && !emptyOpen)) return;
     dropdownPlugin.show(activeSuggestions, {
       onSelect: this.onSelect,
       onClose: this.onClose,
