@@ -92,10 +92,10 @@ class Autocomplete extends Plugin implements IAutocomplete {
     const currentValue = getEditLineNotLockedValue(termInfo);
     const emptyOpen = this.listsInfo.find((item) => item.uuid === active)?.emptyOpen;
     super.updateTermInfo(termInfo);
-    if (active && (currentValue || emptyOpen) && prevValue !== currentValue) {
+    if (active && (currentValue || (!currentValue && emptyOpen)) && prevValue !== currentValue) {
       this.setSuggestions();
       this.showSuggestions();
-    } else if (active && !currentValue) {
+    } else if (active) {
       this.clear();
     }
   }
@@ -146,12 +146,9 @@ class Autocomplete extends Plugin implements IAutocomplete {
 
   private onAutocomplete = (action: string, e: Event, info?: { shortcut?: InfoType }) => {
     const infoUuid = info?.shortcut as string;
-    if (this.showAutocomplete(infoUuid)) {
-      console.log('onAutocomplete');
-
-      e.stopPropagation();
-      e.preventDefault();
-    }
+    this.showAutocomplete(infoUuid);
+    e.stopPropagation();
+    e.preventDefault();
   };
 
   private showAutocomplete(infoUuid: string): boolean {
@@ -174,7 +171,6 @@ class Autocomplete extends Plugin implements IAutocomplete {
     const { caret: { position }, edit: { value: simpleValue } } = termInfo;
 
     const value = getEditLineNotLockedValue(termInfo);
-    if (position === simpleValue.length) return this.setNewSuggestions(commandList);
     return this.setNewSuggestions(position !== simpleValue.length
       ? []
       : commandList
