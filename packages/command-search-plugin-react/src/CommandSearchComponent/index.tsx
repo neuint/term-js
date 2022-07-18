@@ -6,10 +6,11 @@ import '@neuint/command-search-plugin/dist/index.css';
 
 type PropsType = {
   commands: string[];
+  autoOpen?: boolean;
   term?: ITerm;
 };
 
-const CommandSearchComponent: FC<PropsType> = ({ term, commands }: PropsType) => {
+const CommandSearchComponent: FC<PropsType> = ({ term, commands, autoOpen }: PropsType) => {
   const plugin = useRef<ICommandSearch>(new CommandSearch(term.pluginManager));
 
   useEffect(() => {
@@ -22,7 +23,8 @@ const CommandSearchComponent: FC<PropsType> = ({ term, commands }: PropsType) =>
 
   useEffect(() => {
     plugin.current.commands = commands;
-  }, [commands]);
+    plugin.current.autoOpen = autoOpen;
+  }, [commands, autoOpen]);
 
   return null;
 };
