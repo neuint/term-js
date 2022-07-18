@@ -3,6 +3,7 @@ import TermComponent from '@neuint/term-js-react';
 
 import CommandSearchComponent from './CommandSearchComponent';
 
+import '@neuint/term-js-react/dist/index.css';
 import './App.scss';
 
 const App = () => {
