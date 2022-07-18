@@ -2,6 +2,7 @@ import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
 import { noop, get } from 'lodash-es';
 
 import { writeData } from '@general/utils/write';
+import { WriteType } from '@general/types/write';
 import IFlows from './IFlows';
 import { FlowsType, FlowType, StepResultType } from './types';
 
@@ -94,7 +95,8 @@ class Flows extends Plugin implements IFlows {
       return;
     }
     const { write, onEnter, secret = false } = branch[step];
-    const writeResponse = write ? writeData(this.termInfo, write) : undefined;
+    const writeInfo = (write && typeof write === 'function' ? write(this.branchData) : write) as WriteType;
+    const writeResponse = writeInfo ? writeData(this.termInfo, writeInfo) : undefined;
     (writeResponse instanceof Promise ? writeResponse : Promise.resolve(true)).then(() => {
       this.termInfo.secret(secret);
     });

@@ -8,7 +8,9 @@ export declare type FlowType = Array<{
     onEnter?: (data: {
         [key: string]: string;
     }) => void;
-    write?: WriteType;
+    write?: WriteType | ((data: {
+        [key: string]: string;
+    }) => WriteType);
     variableName?: string;
     secret?: boolean;
     handler?: (data: {
