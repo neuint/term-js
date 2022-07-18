@@ -5,6 +5,7 @@ declare type ParamsType = {
     items: string[];
     actionShortcut: ActionShortcutType;
     icon?: string;
+    autoOpen?: boolean;
 };
 declare type PropsType = {
     data: ParamsType | ParamsType[];
