@@ -11,6 +11,8 @@ type ParamsType = {
   actionShortcut: ActionShortcutType;
   // eslint-disable-next-line react/no-unused-prop-types
   icon?: string;
+  // eslint-disable-next-line react/no-unused-prop-types
+  autoOpen?: boolean;
 };
 
 type PropsType = {
@@ -35,8 +37,10 @@ const AutocompleteComponent: FC<PropsType> = (props: PropsType) => {
     const { current } = plugin;
     removeList.current.forEach((remove) => remove());
     const newRemoveList = [];
-    (Array.isArray(data) ? data : [data]).forEach(({ items, actionShortcut, icon }) => {
-      newRemoveList.push(current.addList(items, actionShortcut, icon));
+    (Array.isArray(data) ? data : [data]).forEach(({ items, actionShortcut, icon, autoOpen }) => {
+      newRemoveList.push(autoOpen
+        ? current.showList(items, actionShortcut, icon)
+        : current.addList(items, actionShortcut, icon));
     });
     removeList.current = newRemoveList;
   }, [data]);

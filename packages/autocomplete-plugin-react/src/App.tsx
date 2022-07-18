@@ -4,6 +4,7 @@ import { TAB_KEY_CODE } from '@general/constants/keyCodes';
 
 import AutocompleteComponent from './AutocompleteComponent';
 
+import '@neuint/term-js-react/dist/index.css';
 import './App.scss';
 
 const App = () => {
