@@ -1,6 +1,6 @@
 {
   "name": "@neuint/term-js",
-  "version": "0.3.25",
+  "version": "0.3.26",
   "description": "Simple terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
