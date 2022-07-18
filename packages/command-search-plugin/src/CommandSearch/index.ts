@@ -27,6 +27,17 @@ class CommandSearch extends Plugin implements ICommandSearch {
     return this.commandList;
   }
 
+  private autoOpenField = false;
+
+  public set autoOpen(value: boolean) {
+    this.autoOpenField = value;
+    this.setList();
+  }
+
+  public get autoOpen(): boolean {
+    return this.autoOpenField;
+  }
+
   private autocomplete?: IAutocomplete;
 
   private removeList?: () => void;
@@ -70,10 +81,12 @@ class CommandSearch extends Plugin implements ICommandSearch {
   }
 
   private setList() {
-    const { termInfo, removeList, autocomplete } = this;
+    const { termInfo, removeList, autocomplete, autoOpen } = this;
     if (!termInfo || !autocomplete) return;
     if (removeList) removeList();
-    this.removeList = autocomplete.addList(this.commandList, this.actionShortcut, icon);
+    this.removeList = autoOpen
+      ? autocomplete.showList(this.commandList, this.actionShortcut, icon)
+      : autocomplete.addList(this.commandList, this.actionShortcut, icon);
   }
 }
 

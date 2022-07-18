@@ -7,6 +7,9 @@ declare class CommandSearch extends Plugin implements ICommandSearch {
     private commandList;
     set commands(list: string[]);
     get commands(): string[];
+    private autoOpenField;
+    set autoOpen(value: boolean);
+    get autoOpen(): boolean;
     private autocomplete?;
     private removeList?;
     private readonly actionShortcut;
