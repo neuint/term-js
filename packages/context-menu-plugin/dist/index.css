@@ -1,1 +1,1 @@
-.ContextMenuView{background:var(--term-js-context-menu-bg);border:calc(var(--unit)*.25) solid var(--term-js-context-menu-border);color:var(--term-js-context-menu-color);left:0;position:absolute;top:0;visibility:hidden}
+.ContextMenuView{background:var(--term-js-context-menu-bg);border:calc(var(--unit)*.25) solid var(--term-js-context-menu-border);color:var(--term-js-context-menu-color);left:0;overflow:hidden;position:absolute;top:0;visibility:hidden}

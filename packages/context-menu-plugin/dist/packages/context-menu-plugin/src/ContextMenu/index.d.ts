@@ -1,19 +1,17 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
 import IContextMenu from './IContextMenu';
-import { ShowOptionsType, TargetType } from './types';
+import { ShowOptionsType } from './types';
 export { default as IContextMenu } from './IContextMenu';
-export { PositionType, ShowOptionsType, TargetType } from './types';
-export { END_OF_LINE_TYPE, CLOSE_ACTION } from './constants';
+export { ShowOptionsType } from './types';
+export { CLOSE_ACTION } from './constants';
 declare class ContextMenu extends Plugin implements IContextMenu {
     readonly name: string;
     private contextMenuView?;
-    private target?;
-    private position?;
     private isVisible;
     private escHide;
     private aroundClickHide;
     private onHide?;
-    show(content: HTMLElement | string, target: TargetType, options?: ShowOptionsType): void;
+    show(content: HTMLElement | string, options?: ShowOptionsType): void;
     hide(): void;
     setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager): void;
     updateTermInfo(termInfo: ITermInfo): void;
@@ -24,7 +22,6 @@ declare class ContextMenu extends Plugin implements IContextMenu {
     private render;
     private updatePosition;
     private updateEndOfLinePosition;
-    private updateFixedPosition;
     private setVisible;
     private normalizedPosition;
 }
