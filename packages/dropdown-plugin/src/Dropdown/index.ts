@@ -1,7 +1,5 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager, IPluginManager } from '@neuint/term-js';
-import ContextMenu, {
-  IContextMenu, END_OF_LINE_TYPE, CLOSE_ACTION,
-} from '@neuint/context-menu-plugin';
+import ContextMenu, { IContextMenu, CLOSE_ACTION } from '@neuint/context-menu-plugin';
 import '@neuint/context-menu-plugin/dist/index.css';
 
 import {
@@ -215,7 +213,7 @@ class Dropdown extends Plugin implements IDropdown {
     list.items = itemsList;
     list.value = highlightField.trim();
     this.isActive = false;
-    contextMenuPlugin.show(container, END_OF_LINE_TYPE, {
+    contextMenuPlugin.show(container, {
       escHide: true, aroundClickHide: true, onHide: this.hideContextMenuHandler,
     });
     this.isActive = true;
