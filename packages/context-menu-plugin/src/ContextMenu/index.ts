@@ -77,6 +77,8 @@ class ContextMenu extends Plugin implements IContextMenu {
       keyboardShortcutsManager.removeShortcut(CLOSE_ACTION);
     }
     if (root) root.removeEventListener('click', this.rootClickHandler);
+    termInfo?.elements?.root?.querySelector('.VirtualizedList__root')
+      ?.removeEventListener('scroll', this.updatePosition);
     super.destroy();
   }
 
