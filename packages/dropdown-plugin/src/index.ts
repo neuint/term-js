@@ -3,6 +3,7 @@ import Term, { ITerm } from '@neuint/term-js';
 import Dropdown from './Dropdown';
 import IDropdown from './Dropdown/IDropdown';
 
+import '@neuint/term-js/dist/index.css';
 import './index.scss';
 
 const append = `
@@ -26,6 +27,6 @@ if (container) {
   (window as unknown as { term: ITerm }).term = term;
   (window as unknown as { plugin: IDropdown }).plugin = plugin;
   setTimeout(() => {
-    plugin.show(['test 1', 'test 2']);
+    plugin.show(['test 1', 'test 2', 'test 3', 'test 4', 'test 5', 'test 6', 'test 7', 'test 8', 'test 9', 'test 10']);
   }, 1000);
 }

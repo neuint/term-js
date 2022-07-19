@@ -19,6 +19,7 @@ declare class List extends TemplateEngine implements IList {
     private onItemHover;
     private onItemClick;
     private renderItems;
+    private showIndexItem;
     private destroyItems;
 }
 export default List;

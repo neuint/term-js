@@ -1,5 +1,7 @@
 import { TemplateEngine } from '@neuint/term-js';
 
+import { getRelativePosition } from '@general/utils/viewport';
+
 import template from './template.html';
 import './index.scss';
 
@@ -20,6 +22,7 @@ class List extends TemplateEngine implements IList {
 
   public set items(val: string[]) {
     this.itemsField = val;
+    this.destroyItems();
     this.render();
   }
 
@@ -32,6 +35,7 @@ class List extends TemplateEngine implements IList {
   public set value(val: string) {
     if (this.valueField !== val) {
       this.valueField = val;
+      this.destroyItems();
       this.render();
     }
   }
@@ -88,8 +92,7 @@ class List extends TemplateEngine implements IList {
     const { itemsField, valueField, indexField } = this;
     const listItems: IItem[] = [];
     let isSetActive = false;
-    if (root) {
-      this.destroyItems();
+    if (root && !listItems.length) {
       itemsField.forEach((item: string, index: number) => {
         if (!valueField || item.includes(valueField)) {
           const isActive = indexField === index;
@@ -111,6 +114,22 @@ class List extends TemplateEngine implements IList {
         this.indexField = 0;
         if (listItems[0]) listItems[0].active = true;
       }
+    }
+    this.showIndexItem();
+  }
+
+  private showIndexItem() {
+    const { index, listItems } = this;
+    const indexItem = listItems[index];
+    if (!indexItem?.nodeList?.length || !indexItem?.container) return;
+    const root = this.getRef('root');
+    const {
+      bottom, top,
+    } = getRelativePosition(indexItem.nodeList[0] as HTMLElement, root as HTMLElement);
+    if (top < 0) {
+      root.scrollTop += top;
+    } else if (bottom < 0) {
+      root.scrollTop -= bottom;
     }
   }
 
