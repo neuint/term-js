@@ -1,7 +1,7 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager } from '@neuint/term-js';
 import IFlows from './IFlows';
 import { FlowsType } from './types';
-export type { FlowsType, FlowType, StepResultType } from './types';
+export type { FlowsType, FlowType, StepType, StepResultType } from './types';
 export type { default as IFlows } from './IFlows';
 declare class Flows extends Plugin implements IFlows {
     private flowsField;

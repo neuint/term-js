@@ -5,7 +5,7 @@ export type StepResultType = {
   write?: WriteType,
 };
 
-export type FlowType = Array<{
+export type StepType = {
   autostart?: boolean,
   onEnter?: (data: { [key: string]: string }) => void;
   write?: WriteType | ((data: { [key: string]: string }) => WriteType);
@@ -13,6 +13,8 @@ export type FlowType = Array<{
   variableName?: string;
   secret?: boolean;
   handler?: (data: { [key: string]: string }) => Promise<StepResultType | undefined>;
-}>;
+};
+
+export type FlowType = StepType[];
 
 export type FlowsType = { [key: string]: FlowType };

@@ -3,7 +3,7 @@ export declare type StepResultType = {
     to?: string;
     write?: WriteType;
 };
-export declare type FlowType = Array<{
+export declare type StepType = {
     autostart?: boolean;
     onEnter?: (data: {
         [key: string]: string;
@@ -19,7 +19,8 @@ export declare type FlowType = Array<{
     handler?: (data: {
         [key: string]: string;
     }) => Promise<StepResultType | undefined>;
-}>;
+};
+export declare type FlowType = StepType[];
 export declare type FlowsType = {
     [key: string]: FlowType;
 };

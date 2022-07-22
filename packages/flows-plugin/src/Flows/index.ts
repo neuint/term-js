@@ -6,7 +6,7 @@ import { WriteType } from '@general/types/write';
 import IFlows from './IFlows';
 import { FlowsType, FlowType, StepResultType } from './types';
 
-export type { FlowsType, FlowType, StepResultType } from './types';
+export type { FlowsType, FlowType, StepType, StepResultType } from './types';
 export type { default as IFlows } from './IFlows';
 
 class Flows extends Plugin implements IFlows {
