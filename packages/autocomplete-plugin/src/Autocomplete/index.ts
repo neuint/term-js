@@ -170,10 +170,10 @@ class Autocomplete extends Plugin implements IAutocomplete {
     if (!termInfo) return this.setNewSuggestions([]);
     const { caret: { position }, edit: { value: simpleValue } } = termInfo;
 
-    const value = getEditLineNotLockedValue(termInfo);
+    const value = getEditLineNotLockedValue(termInfo).toLowerCase();
     return this.setNewSuggestions(position !== simpleValue.length
       ? []
-      : commandList
+      : commandList.map((command) => command.toLowerCase())
         .filter((command) => command.indexOf(value) === 0 && command !== value));
   }
 
