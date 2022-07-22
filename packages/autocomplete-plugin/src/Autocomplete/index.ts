@@ -9,7 +9,9 @@ import {
 import Dropdown, { IDropdown } from '@neuint/dropdown-plugin';
 
 import { getNotLockedString } from '@general/utils/string';
-import { ValueType } from '@general/types/value';
+import {
+  ValueType, FormattedValueType, ValueFragmentType, FormattedValueFragmentType,
+} from '@general/types/value';
 
 import '@neuint/dropdown-plugin/dist/index.css';
 import './index.scss';
@@ -27,6 +29,22 @@ const getEditLineNotLockedValue = (info: ITermInfo): string => {
       ? (parameterizedValue as { value: ValueType }).value
       : parameterizedValue as ValueType,
   );
+};
+
+const getEditLineLockedValue = (info: ITermInfo): ValueType => {
+  const { edit: { parameterizedValue } } = info;
+  if (typeof parameterizedValue === 'string') return '';
+  let lastLockIndex = -1;
+  const result = (parameterizedValue as FormattedValueType)
+    .reduce((acc: FormattedValueType, item: ValueFragmentType, index: number): ValueType => {
+      if (typeof item === 'string') acc.push(item);
+      if ((item as FormattedValueFragmentType).lock) {
+        acc.push(item);
+        lastLockIndex = index;
+      }
+      return acc;
+    }, [] as FormattedValueType);
+  return lastLockIndex === -1 ? '' : result.slice(0, lastLockIndex + 1);
 };
 
 class Autocomplete extends Plugin implements IAutocomplete {
@@ -172,9 +190,10 @@ class Autocomplete extends Plugin implements IAutocomplete {
 
     const value = getEditLineNotLockedValue(termInfo).toLowerCase();
     return this.setNewSuggestions(position !== simpleValue.length
-      ? []
-      : commandList.map((command) => command.toLowerCase())
-        .filter((command) => command.indexOf(value) === 0 && command !== value));
+      ? [] : commandList.filter((command) => {
+        const commandLower = command.toLowerCase();
+        return commandLower.indexOf(value) === 0 && commandLower !== value;
+      }));
   }
 
   private setNewSuggestions(newActiveSuggestions: string[]): boolean {
@@ -195,7 +214,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
 
   private renderSuggestionsList() {
     const { dropdownPlugin, activeSuggestions, termInfo, active, listsInfo } = this;
-    const value = getEditLineNotLockedValue(termInfo);
+    const value = getEditLineNotLockedValue(termInfo).toLowerCase();
 
     const { icon, emptyOpen } = listsInfo.find((item) => item.uuid === active) || {};
 
@@ -206,7 +225,7 @@ class Autocomplete extends Plugin implements IAutocomplete {
       append: icon,
       className: icon ? 'Autocomplete__withIcon' : '',
     });
-    dropdownPlugin.highlight = value.trim();
+    dropdownPlugin.highlight = value;
   }
 
   private hideSuggestionsList() {
@@ -219,8 +238,14 @@ class Autocomplete extends Plugin implements IAutocomplete {
     const { termInfo } = this;
     if (termInfo) {
       const { edit } = termInfo;
+      let value = getEditLineLockedValue(termInfo);
       edit.focus();
-      edit.write(text.replace(getEditLineNotLockedValue(termInfo), ''));
+      if (typeof value === 'string') {
+        value = text;
+      } else {
+        value.push(text);
+      }
+      edit.update(value);
     }
     this.clear();
   };
