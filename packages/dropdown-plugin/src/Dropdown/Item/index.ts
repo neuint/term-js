@@ -54,7 +54,7 @@ class Item extends TemplateEngine implements IItem {
     this.match = value;
     this.onHover = onHover;
     this.onClick = onClick;
-    this.suggestion = text.replace(value, '');
+    this.suggestion = text.replace(new RegExp(`^${value}`, 'i'), '');
   }
 
   public render() {
