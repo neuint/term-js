@@ -1,6 +1,6 @@
 {
   "name": "@neuint/context-menu-plugin-react",
-  "version": "0.3.31",
+  "version": "0.3.32",
   "description": "Context menu plugin react component",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/context-menu-plugin": "^0.3.31",
-    "@neuint/term-js-react": "^0.3.31",
+    "@neuint/context-menu-plugin": "^0.3.32",
+    "@neuint/term-js-react": "^0.3.32",
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
