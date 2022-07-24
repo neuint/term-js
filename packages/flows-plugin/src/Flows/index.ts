@@ -43,8 +43,13 @@ class Flows extends Plugin implements IFlows {
   }
 
   private onKeyboardShortcut = () => {
-    this.branch = undefined;
-    this.step = 0;
+    const { branch, step } = this;
+    if (branch) {
+      branch[step]?.onExit?.(this.branchData);
+      this.branch = undefined;
+      this.step = 0;
+      this.branchData = {};
+    }
     this.termInfo.edit.write('', { withSubmit: true });
   };
 

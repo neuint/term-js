@@ -19,6 +19,9 @@ export declare type StepType = {
     handler?: (data: {
         [key: string]: string;
     }) => Promise<StepResultType | undefined>;
+    onExit?: (data: {
+        [key: string]: string;
+    }) => void;
 };
 export declare type FlowType = StepType[];
 export declare type FlowsType = {

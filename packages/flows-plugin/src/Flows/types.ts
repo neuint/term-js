@@ -13,6 +13,7 @@ export type StepType = {
   variableName?: string;
   secret?: boolean;
   handler?: (data: { [key: string]: string }) => Promise<StepResultType | undefined>;
+  onExit?: (data: { [key: string]: string }) => void;
 };
 
 export type FlowType = StepType[];
