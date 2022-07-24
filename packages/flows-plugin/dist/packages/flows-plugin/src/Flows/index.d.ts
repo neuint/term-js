@@ -13,6 +13,7 @@ declare class Flows extends Plugin implements IFlows {
     private isWaiting;
     clear: (...args: any[]) => void;
     setTermInfo(termInfo: ITermInfo, keyboardShortcutsManager: IKeyboardShortcutsManager): void;
+    private onKeyboardShortcut;
     private runAutoStartBranch;
     private onSubmit;
     private onStepResult;

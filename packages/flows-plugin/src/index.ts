@@ -22,7 +22,6 @@ const getWrite = (
 const flows: FlowsType = {
   'sign in': [
     {
-      autostart: true,
       write: getWrite('enter email: ', true),
       variableName: 'email',
       handler: (data) => {

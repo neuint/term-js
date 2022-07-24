@@ -3,11 +3,14 @@ import { noop, get } from 'lodash-es';
 
 import { writeData } from '@general/utils/write';
 import { WriteType } from '@general/types/write';
+import { C_KEY_CODE } from '@general/constants/keyCodes';
 import IFlows from './IFlows';
 import { FlowsType, FlowType, StepResultType } from './types';
 
 export type { FlowsType, FlowType, StepType, StepResultType } from './types';
 export type { default as IFlows } from './IFlows';
+
+const ACTION_NAME = 'flows';
 
 class Flows extends Plugin implements IFlows {
   private flowsField: FlowsType = {};
@@ -35,7 +38,15 @@ class Flows extends Plugin implements IFlows {
     super.setTermInfo(termInfo, keyboardShortcutsManager);
     this.termInfo.addEventListener('submit', this.onSubmit);
     this.runAutoStartBranch();
+    keyboardShortcutsManager.addShortcut(ACTION_NAME, { code: C_KEY_CODE, ctrl: true });
+    keyboardShortcutsManager.addListener(ACTION_NAME, this.onKeyboardShortcut);
   }
+
+  private onKeyboardShortcut = () => {
+    this.branch = undefined;
+    this.step = 0;
+    this.termInfo.edit.write('', { withSubmit: true });
+  };
 
   private runAutoStartBranch() {
     const { flows, termInfo, branch } = this;
