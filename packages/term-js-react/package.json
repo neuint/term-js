@@ -1,6 +1,6 @@
 {
   "name": "@neuint/term-js-react",
-  "version": "0.3.35",
+  "version": "0.3.36",
   "description": "Simple terminal react component",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/status-bar-plugin": "^0.3.35",
-    "@neuint/term-js": "^0.3.35",
+    "@neuint/status-bar-plugin": "^0.3.36",
+    "@neuint/term-js": "^0.3.36",
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
