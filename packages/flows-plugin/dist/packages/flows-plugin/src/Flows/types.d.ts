@@ -16,7 +16,7 @@ export declare type StepType = {
     }) => WriteType);
     onWrite?: (data: {
         [key: string]: string;
-    }) => void;
+    }) => void | Promise<StepResultType | undefined>;
     variableName?: string;
     secret?: boolean;
     handler?: (data: {

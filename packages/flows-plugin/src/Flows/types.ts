@@ -10,7 +10,7 @@ export type StepType = {
   before?: (data: { [key: string]: string }) => undefined | WriteType;
   onEnter?: (data: { [key: string]: string }) => undefined | WriteType;
   write?: WriteType | ((data: { [key: string]: string }) => WriteType);
-  onWrite?: (data: { [key: string]: string }) => void;
+  onWrite?: (data: { [key: string]: string }) => void | Promise<StepResultType | undefined>;
   variableName?: string;
   secret?: boolean;
   handler?: (data: { [key: string]: string }) => Promise<StepResultType | undefined>;

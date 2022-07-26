@@ -125,7 +125,10 @@ class Flows extends Plugin implements IFlows {
     const writeResponse = writeInfo ? writeData(this.termInfo, writeInfo) : undefined;
     (writeResponse instanceof Promise ? writeResponse : Promise.resolve(true)).then(() => {
       this.termInfo.secret(secret);
-      if (onWrite) onWrite(this.branchData);
+      if (onWrite) {
+        const result = onWrite(this.branchData);
+        if (result) result.then(this.onStepResult);
+      }
     });
     if (!onEnter) return;
     const enterResult = onEnter(this.branchData);
