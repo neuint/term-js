@@ -1,6 +1,6 @@
 {
   "name": "@neuint/modals-plugin",
-  "version": "0.3.37",
+  "version": "0.3.38",
   "description": "Modals for the terminal",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,7 +16,7 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/term-js": "^0.3.37",
+    "@neuint/term-js": "^0.3.38",
     "lodash-es": "^4.17.21",
     "uuid": "^8.3.2"
   }
