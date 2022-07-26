@@ -1,6 +1,6 @@
 {
   "name": "@neuint/history-search-plugin-react",
-  "version": "0.3.37",
+  "version": "0.3.38",
   "description": "History search plugin react component",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
@@ -16,8 +16,8 @@
     "test-coverage": "jest --coverage --collectCoverageFrom=src/**/*.ts"
   },
   "dependencies": {
-    "@neuint/history-search-plugin": "^0.3.37",
-    "@neuint/term-js-react": "^0.3.37",
+    "@neuint/history-search-plugin": "^0.3.38",
+    "@neuint/term-js-react": "^0.3.38",
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
