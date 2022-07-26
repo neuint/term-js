@@ -110,7 +110,17 @@ class Flows extends Plugin implements IFlows {
       this.branchData = {};
       return;
     }
-    const { write, onEnter, onWrite, secret = false } = branch[step];
+    const { write, onEnter, before, onWrite, secret = false } = branch[step];
+    if (before) {
+      const beforeResult = before(this.branchData);
+      if (beforeResult) {
+        writeData(this.termInfo, beforeResult);
+        this.branch = undefined;
+        this.step = 0;
+        this.branchData = {};
+        return;
+      }
+    }
     const writeInfo = (write && typeof write === 'function' ? write(this.branchData) : write) as WriteType;
     const writeResponse = writeInfo ? writeData(this.termInfo, writeInfo) : undefined;
     (writeResponse instanceof Promise ? writeResponse : Promise.resolve(true)).then(() => {
@@ -118,9 +128,9 @@ class Flows extends Plugin implements IFlows {
       if (onWrite) onWrite(this.branchData);
     });
     if (!onEnter) return;
-    const result = onEnter(this.branchData);
-    if (result) {
-      writeData(this.termInfo, writeInfo);
+    const enterResult = onEnter(this.branchData);
+    if (enterResult) {
+      writeData(this.termInfo, enterResult);
       this.branch = undefined;
       this.step = 0;
       this.branchData = {};

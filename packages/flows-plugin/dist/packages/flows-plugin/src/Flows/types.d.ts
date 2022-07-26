@@ -5,6 +5,9 @@ export declare type StepResultType = {
 };
 export declare type StepType = {
     autostart?: boolean;
+    before?: (data: {
+        [key: string]: string;
+    }) => undefined | WriteType;
     onEnter?: (data: {
         [key: string]: string;
     }) => undefined | WriteType;
