@@ -7,7 +7,7 @@ export declare type StepType = {
     autostart?: boolean;
     onEnter?: (data: {
         [key: string]: string;
-    }) => void;
+    }) => undefined | WriteType;
     write?: WriteType | ((data: {
         [key: string]: string;
     }) => WriteType);

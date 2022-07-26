@@ -24,6 +24,9 @@ const flows: FlowsType = {
     {
       write: getWrite('enter email: ', true),
       variableName: 'email',
+      onExit: (data) => {
+        console.log('Test');
+      },
       handler: (data) => {
         return Promise.resolve(data.email.includes('@')
           ? undefined
