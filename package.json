@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "0.3.38",
+  "version": "0.3.39",
   "repository": "git@github.com:neuint/term-js.git",
   "author": "Pavlo Gusar <p.gusar@yahoo.com>",
   "license": "MIT",
@@ -43,7 +43,7 @@
     "postcss-import-alias": "^0.0.1",
     "postcss-import-alias-resolver": "^0.1.1",
     "postcss-import-resolver": "^2.0.0",
-    "rollup": "^2.77.1",
+    "rollup": "^2.77.2",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-hot": "^0.1.1",
