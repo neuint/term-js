@@ -24,6 +24,7 @@ declare class Line extends TemplateEngine implements ILine {
     set value(val: ValueType);
     get disabled(): boolean;
     set disabled(value: boolean);
+    get focused(): boolean;
     private isVisible;
     get visible(): boolean;
     set visible(value: boolean);

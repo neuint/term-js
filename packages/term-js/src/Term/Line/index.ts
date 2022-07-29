@@ -76,6 +76,11 @@ class Line extends TemplateEngine implements ILine {
     }
   }
 
+  public get focused(): boolean {
+    const { inputField } = this;
+    return inputField ? inputField.isFocused : false;
+  }
+
   private isVisible = true;
 
   public get visible(): boolean {

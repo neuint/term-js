@@ -9,11 +9,13 @@ export default interface ITerm {
     disabled: boolean;
     secret: boolean;
     value: ValueType;
+    focused: boolean;
     write(data: string | FormattedValueFragmentType, options?: {
         withSubmit?: boolean;
         duration?: number;
         skipHandler?: boolean;
     }): Promise<boolean> | boolean;
+    focus(): void;
     blur(): void;
     setCaret(caret: string): void;
     addEventListener<K extends keyof ITermEventMap>(type: K, handler: (e: ITermEventMap[K]) => void, options?: EventListenerOptions): void;

@@ -28,6 +28,7 @@ declare class Term extends TemplateEngine implements ITerm {
     set header(val: string);
     get value(): ValueType;
     set value(val: ValueType);
+    get focused(): boolean;
     private readonly ro;
     private readonly vl;
     readonly keyboardShortcutsManager: IKeyboardShortcutsManager;
@@ -59,6 +60,7 @@ declare class Term extends TemplateEngine implements ITerm {
     setCaret(caret: string): void;
     setHeader(text: string): void;
     blur(): void;
+    focus(): void;
     private updateEditLine;
     private init;
     private preStart;

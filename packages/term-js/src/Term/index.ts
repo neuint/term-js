@@ -138,6 +138,11 @@ class Term extends TemplateEngine implements ITerm {
     if (editLine) editLine.value = val;
   }
 
+  public get focused(): boolean {
+    const { editLine } = this;
+    return editLine?.focused;
+  }
+
   private readonly ro: ResizeObserver;
 
   private readonly vl: IVirtualizedList<ILine>;
@@ -312,6 +317,11 @@ class Term extends TemplateEngine implements ITerm {
   public blur() {
     const { editLine } = this;
     if (editLine) editLine.blur();
+  }
+
+  public focus() {
+    const { editLine } = this;
+    if (editLine) editLine.focus();
   }
 
   private updateEditLine(
