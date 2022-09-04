@@ -25,6 +25,7 @@ type PropsType = {
   write?: WriteType;
   onWritten?: () => void;
   children?: React.ReactNode;
+  disabled?: boolean;
 } & HandlersType;
 
 const updateHandler = (
@@ -52,13 +53,18 @@ const changeSecretState = (term: ITerm, secret: boolean) => {
 const TermComponent: FC<PropsType> = (props: PropsType) => {
   const {
     className, label, header = '', delimiter, onSubmit, onChange, initLines = [], secret = false,
-    initValue, onWritten = noop, write, children,
+    initValue, onWritten = noop, write, children, disabled = false,
   } = props;
   const root = useRef();
   const [isReady, setReady] = useState(false);
   const term = useRef<ITerm>();
   const prevProps = useRef<HandlersType>({ onSubmit, onChange });
   const nextWrite = useRef<WriteType | undefined>(undefined);
+
+  useEffect(() => {
+    if (!term.current || term.current.disabled === disabled) return;
+    term.current.disabled = disabled;
+  }, [disabled]);
 
   useEffect(() => {
     const { current } = term;
@@ -91,7 +97,6 @@ const TermComponent: FC<PropsType> = (props: PropsType) => {
   useEffect(() => {
     if (nextWrite.current !== undefined || write === undefined) return;
     nextWrite.current = write;
-    debugger;
     writeData(term.current, write).then(() => {
       nextWrite.current = undefined;
       onWritten();
