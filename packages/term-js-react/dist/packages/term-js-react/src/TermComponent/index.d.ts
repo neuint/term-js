@@ -18,6 +18,7 @@ declare type PropsType = {
     write?: WriteType;
     onWritten?: () => void;
     children?: React.ReactNode;
+    disabled?: boolean;
 } & HandlersType;
 declare const TermComponent: FC<PropsType>;
 export default TermComponent;
