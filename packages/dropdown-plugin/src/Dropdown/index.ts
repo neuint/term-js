@@ -2,6 +2,8 @@ import { Plugin, ITermInfo, IKeyboardShortcutsManager, IPluginManager } from '@n
 import ContextMenu, { IContextMenu, CLOSE_ACTION } from '@neuint/context-menu-plugin';
 import '@neuint/context-menu-plugin/dist/index.css';
 
+import './index.scss';
+
 import {
   DOWN_KEY_CODE,
   ENTER_KEY_CODE,
@@ -201,7 +203,7 @@ class Dropdown extends Plugin implements IDropdown {
     } = this;
     const { className = '', append } = params;
     if (!contextMenuPlugin || !keyboardShortcutsManager) return;
-    container.className = className;
+    container.className = className ? ['Dropdown', className].join(' ') : 'Dropdown';
     if (!this.list) this.list = new List(container, this.selectHandler);
     this.renderAppend(append);
     if (!unlockCallback) {
