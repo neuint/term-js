@@ -1,5 +1,6 @@
 import { Plugin, ITermInfo, IKeyboardShortcutsManager, IPluginManager } from '@neuint/term-js';
 import '@neuint/context-menu-plugin/dist/index.css';
+import './index.scss';
 import IDropdown from './IDropdown';
 export { default as IDropdown } from './IDropdown';
 declare class Dropdown extends Plugin implements IDropdown {
